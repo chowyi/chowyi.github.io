@@ -1,5 +1,6 @@
 ---
 title: 对bmp文件读写遇到的小问题
+permalink: read-write-bmp
 date: 2013-04-17 21:19:29
 tags:
 - 图像读写
@@ -85,12 +86,12 @@ public:
 第一次对图像进行读写，这里的代码是想做个试验。在第50行画条线。
 
 问题来了，生成的图像是下面这样的：
-![origin](origin.jpg)
+![origin](https://blog-1252856176.file.myqcloud.com/post/read-write-bmp/origin.jpg)
 
 仔细看右边就会发现，黑线偏移了一个像素。
 
 放大图：
-![zoom](zoom.png)
+![zoom](https://blog-1252856176.file.myqcloud.com/post/read-write-bmp/zoom.png)
 
 
 这里看得很清楚，画出来的黑线有一个像素变成了棕色，接下来一个像素向下偏移了一像素，并且是蓝色。

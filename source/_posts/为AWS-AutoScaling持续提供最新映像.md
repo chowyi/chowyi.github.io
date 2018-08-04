@@ -1,5 +1,6 @@
 ---
 title: 为AWS AutoScaling持续提供最新映像
+permalink: aws-auto-scaling-with-latest-image
 date: 2018-07-18 18:22:26
 tags:
 - AWS
@@ -42,10 +43,10 @@ categories:
 ## 注意事项
 
 1. Auto Scaling Group 与启动模板关联，要设置的关联模板版本为**最新**。
-![config-asg.png](./config-asg.png)
+![config-asg.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-with-latest-image/config-asg.png)
 
 2. 创建映像从开始到完成需要一段时间，在映像创建完成到达可用状态之前，Auto Scaling Group 将会扩容失败。映像可用后如达到扩容条件，将再次扩容。
-![auto-scaling-failed.png](./auto-scaling-failed.png)
+![auto-scaling-failed.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-with-latest-image/auto-scaling-failed.png)
 
 
 ## Demo Code

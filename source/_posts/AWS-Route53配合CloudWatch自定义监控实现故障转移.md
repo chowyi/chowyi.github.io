@@ -1,5 +1,6 @@
 ---
 title: AWS Route53配合CloudWatch自定义监控实现故障转移
+permalink: aws-route53-failover-with-cloudwatch
 date: 2018-06-25 20:57:46
 tags:
 - AWS
@@ -65,14 +66,14 @@ categories:
 - Dimension
     Dimension 即维度。在统一命名空间下，又可以把指标按不同维度分类。比如 EC2 Namespace 下，又可以按映像、实例、AutoScaling等来分类。
 
-![metric-list.png](./metric-list.png)
+![metric-list.png](https://blog-1252856176.file.myqcloud.com/post/aws-route53-failover-with-cloudwatch/metric-list.png)
 
 实际通过命令或api上报监控数据时，需要指定 MetricName、Namespace、timestamp、value（指标的值） 以及 unit（指标单位）。
 
 我这里编写python脚本调用ping命令监控网络状况，使用 boto3 将响应时间上报 CloudWatch。使用 crontab 每分钟定时调用脚本。
 之后就可以在 CloudWatch 的控制台看到又上报数据绘制成的图表了。图表还可以做很多负责的设置甚至加入数据表达式，功能很强大。
 
-![monitor-lines.png](./monitor-lines.png)
+![monitor-lines.png](https://blog-1252856176.file.myqcloud.com/post/aws-route53-failover-with-cloudwatch/monitor-lines.png)
 
 ## 配置 CloudWatch Alarm
 上一步已经把监控数据收集到了 CloudWatch，现在可以通过对每一项指标（Metric）在一个周期内设置一个阈值创建一个警报（Alarm）。当指标超出阈值时会引起 Alarm 状态的改变。
@@ -86,7 +87,7 @@ Alarm 状态变化时可以触发一些操作，比如：发送短信通知，Au
 
 本方案中不需要触发任何操作，只需要使用 Alarm 的状态。
 
-![edit-alarm.png](./edit-alarm.png)
+![edit-alarm.png](https://blog-1252856176.file.myqcloud.com/post/aws-route53-failover-with-cloudwatch/edit-alarm.png)
 
 
 ## 配置 Route53 HealthCheck
@@ -100,11 +101,11 @@ Route53 HealthCheck 有三种监控类型：
 
 这里我就需要选用第三种对 CloudWatch Alarm 的监控，然后关联上一步中创建的 CloudWatch Alarm。
 
-![create-r53-healthcheck](./create-r53-healthcheck.png)
+![create-r53-healthcheck](https://blog-1252856176.file.myqcloud.com/post/aws-route53-failover-with-cloudwatch/create-r53-healthcheck.png)
 
 创建完成后回到 Route53 HealthCheck 列表就可以看到 HealthCheck 当前的状态了。
 
-![healthcheck-list.png](./healthcheck-list.png)
+![healthcheck-list.png](https://blog-1252856176.file.myqcloud.com/post/aws-route53-failover-with-cloudwatch/healthcheck-list.png)
 
 ## 配置 Route53 Failover 解析
 Route53 配置故障转移有两种方案。一种是使用 Failover 解析，功能较为简单。另一种是使用 Traffic Policy 功能，功能十分强大，但每条策略要收取 50$/month 的费用。
@@ -115,9 +116,9 @@ Route53 配置故障转移有两种方案。一种是使用 Failover 解析，�
 
 配置如下图：
 
-![dns-list.png](./dns-list.png)
+![dns-list.png](https://blog-1252856176.file.myqcloud.com/post/aws-route53-failover-with-cloudwatch/dns-list.png)
 
-![failover-dns.png](./failover-dns.png)
+![failover-dns.png](https://blog-1252856176.file.myqcloud.com/post/aws-route53-failover-with-cloudwatch/failover-dns.png)
 
 ## 测试
 1. 按如上配置，正常时域名解析指向`www.baidu.com`，测试成功。
@@ -141,7 +142,7 @@ Traffic Policy 功能非常强大，AWS 提供了一个可视化的编辑器，�
 Traffic Policy 同样可以实现 Failover 解析的功能，不过显得有点大材小用，而且每条 policy 需要收取 50$/month。
 更详细的内容可以查看[文档：复杂 Amazon Route 53 配置中运行状况检查的工作原理](https://docs.aws.amazon.com/zh_cn/Route53/latest/DeveloperGuide/dns-failover-complex-configs.html)。
 
-![traffic-policy-graph.png](./traffic-policy-graph.png)
+![traffic-policy-graph.png](https://blog-1252856176.file.myqcloud.com/post/aws-route53-failover-with-cloudwatch/traffic-policy-graph.png)
 
 ## 总结
 算上环境搭建，整个方案设计断断续续的研究测试了几天，非常有意思，也幸亏 AWS 的文档写的好，还算顺利。

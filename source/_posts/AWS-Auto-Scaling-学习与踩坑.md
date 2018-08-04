@@ -1,5 +1,6 @@
 ---
 title: AWS Auto Scaling 学习与踩坑
+permalink: aws-auto-scaling-study
 date: 2018-07-02 10:04:51
 tags:
 - AWS
@@ -22,7 +23,7 @@ categories:
 >
 > 例如，以下 Auto Scaling 组的最小容量为 1 个实例，所需容量为 2 个实例，最大容量为和 4 个实例。您制定的扩展策略是按照您指定的条件，在最大最小实例数范围内调整实例的数量。
 >
-> ![aws-auto-scaling-example.png](./aws-auto-scaling-example.png)
+> ![aws-auto-scaling-example.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/aws-auto-scaling-example.png)
 
 
 ## 创建 Auto Scaling Group
@@ -43,16 +44,16 @@ categories:
 #### 创建步骤
 
 1. 在 EC2 列表找到用于创建 Auto Scaling Group 的实例，操作 -> 实例设置 -> 附加到 Auto Scaling 组。
-![create-asg-by-ec2-1.png](./create-asg-by-ec2-1.png)
+![create-asg-by-ec2-1.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-ec2-1.png)
 
 2. 在弹出的对话框中选择附加到“**新的 Auto Scaling 组**”，设置一个组名称。
-![create-asg-by-ec2-2.png](./create-asg-by-ec2-2.png)
+![create-asg-by-ec2-2.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-ec2-2.png)
 
 3. 创建成功，在 Auto Scaling Group 列表中查看创建好的组，检查配置（后面详细介绍）。
-![create-asg-by-ec2-3.png](./create-asg-by-ec2-3.png)
+![create-asg-by-ec2-3.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-ec2-3.png)
 
 4. 在 Auto Scaling Group 属性的*实例*页签可以看到前面选择的 EC2 实例。最好为此实例设置**缩减保护**。
-![create-asg-by-ec2-4.png](./create-asg-by-ec2-4.png)
+![create-asg-by-ec2-4.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-ec2-4.png)
 
 #### 注意事项
 
@@ -63,27 +64,27 @@ categories:
 ### 使用 启动配置 创建
 
 1. 创建新的**启动配置**（或选择已有的启动配置）
-![create-asg-by-launchconf-1.png](./create-asg-by-launchconf-1.png)
+![create-asg-by-launchconf-1.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-1.png)
 
     1. 选择 **AMI映像**
-    ![create-asg-by-launchconf-1.png](./create-asg-by-launchconf-2.png)
+    ![create-asg-by-launchconf-1.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-2.png)
 
     2. 选择配置合适的**实例类型**
-    ![create-asg-by-launchconf-2.png](./create-asg-by-launchconf-3.png)
+    ![create-asg-by-launchconf-2.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-3.png)
 
     3. 设置启动配置的名称
-    ![create-asg-by-launchconf-3.png](./create-asg-by-launchconf-4.png)
+    ![create-asg-by-launchconf-3.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-4.png)
 
     4. 添加存储
-    ![create-asg-by-launchconf-4.png](./create-asg-by-launchconf-5.png)
+    ![create-asg-by-launchconf-4.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-5.png)
 
     5. 配置安全组
 2. 创建 **Auto Scaling 组**
     1. 设置组名、组大小、网络及可用区
-    ![create-asg-by-launchconf-4.png](./create-asg-by-launchconf-6.png)
+    ![create-asg-by-launchconf-4.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-6.png)
 
     2. 设置扩展策略
-    ![create-asg-by-launchconf-4.png](./create-asg-by-launchconf-7.png)
+    ![create-asg-by-launchconf-4.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-7.png)
 
     3. 配置通知
     4. 配置标签
@@ -99,7 +100,7 @@ categories:
 
 ### 详细信息
 
-![auto-scaling-group-conf-detail-1.png](./auto-scaling-group-conf-detail-1.png)
+![auto-scaling-group-conf-detail-1.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/auto-scaling-group-conf-detail-1.png)
 
 1. 启动配置
     可以选择使用**启动配置**还是**启动模板**来在自动扩容时启动新的实例。两者作用相似，都可以设置自动扩容新实例所需的 **AMI、实例类型、存储、安全组**等。
@@ -117,7 +118,7 @@ categories:
     运行状况检查类型有两个可选性：**EC2、ELB**。
 
     EC2： 对 EC2 实例进行状态检查，可以在实例的属性面板查看。关机和重启都会导致状态检查不通过。
-    ![ec2-status-check.png](./ec2-status-check.png)
+    ![ec2-status-check.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/ec2-status-check.png)
 
     ELB： 使用 ELB 提供的健康检查。
 
@@ -136,7 +137,7 @@ categories:
         >
         > 4. 如果有多个不受保护的实例最接近下个计费小时，则随机选择其中一个实例。
         >
-        > ![termination-policy-default-flowchart-diagram.png](./termination-policy-default-flowchart-diagram.png)
+        > ![termination-policy-default-flowchart-diagram.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/termination-policy-default-flowchart-diagram.png)
 
     2. OldestInstance
         终止组中最旧的实例。当您将 Auto Scaling 组中的实例升级为新的 EC2 实例类型，可以逐渐将较旧类型的实例替换为较新类型的实例时，此选项十分有用。
@@ -197,7 +198,7 @@ categories:
 
 *标签*页签既可以为此 ASG 组添加标签，也可以为此 ASG 组自动扩容创建出的实例打标签。将标签后面的**标记新实例**选项设置为**是**，则此标签将附加在自动扩展出的实例上。
 
-![auto-scaling-group-conf-tag-1.png](./auto-scaling-group-conf-tag-1.png)
+![auto-scaling-group-conf-tag-1.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/auto-scaling-group-conf-tag-1.png)
 
 ### 计划的操作
 
@@ -224,7 +225,7 @@ categories:
 在上一节实例保护的介绍中说了，即使设置了实例保护，当实例关机时，仍然会被 ASG 自动 terminated（危险！）。此时就可以使用**设为备用**这个操作。
 将实例**设为备用**，会首先将该实例从 ASG 关联的 ELB 中取消注册，然后根据设置减小 ASG 的所需容量（不启动新实例）或启动新的实例（所需容量保持不变）。Amazon EC2 Auto Scaling 不对处于备用状态的实例执行运行状况检查。当实例处于备用状态时，其运行状况将反映您将实例置于备用状态之前，实例具有的状态，直到将实例恢复为可用。
 
-![set-asg-instance-standby.png](./set-asg-instance-standby.png)
+![set-asg-instance-standby.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/set-asg-instance-standby.png)
 
 因为此时 Auto Scaling 不会对备用实例运行状况检查，所以可以进行关机维护等操作而不必担心被自动 terminated。
 维护完成后，将实例重新**设为可用**，ASG 的所需容量会自动增加，实例也会重新注册到 ASG 关联的 ELB 上。
@@ -270,7 +271,7 @@ categories:
     
 如果不希望使用 ASG 管理实例了，可以在 ASG 的属性面板*实例*页签将实例从 ASG 中分离。分离时，若勾选“将一个新实例添加到 Auto Scaling 组以均衡负载”，ASG 将保持所需容量不变，分离指定实例，然后新启动一台实例来代替分离出去的实例。若取消勾选此项，则 ASG 的所需容量将会自动减一（若减一后小于最小值，将不能分离）。
 
-![detach-instance-from-asg.png](./detach-instance-from-asg.png)
+![detach-instance-from-asg.png](https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/detach-instance-from-asg.png)
 
 **注意：**
 1. 分离出的实例将会自动从 ASG 关联的 ELB 上取消注册！

@@ -1,5 +1,6 @@
 ---
 title: 初学Zabbix基本原理
+permalink: learning-zabbix-basic
 date: 2017-10-21 15:21:45
 tags:
 - Zabbix
@@ -57,7 +58,7 @@ categories:
 
 ### Server -> Proxy -> Agent
 
-![zabbix代理架构](zabbix代理架构.png)
+![zabbix代理架构](https://blog-1252856176.file.myqcloud.com/post/learning-zabbix-basic/zabbix-agent-proxy-server.png)
 
 1. 在 Host 上安装 Agent
 2. Agent 的配置文件 zabbix_agentd.conf 中有 ServerActive，RefreshActiveChecks，BufferSend
@@ -72,7 +73,7 @@ zabbix_agentd.conf 中设定的 BufferSend 为 5s
 zabbix_proxy.conf 中设定的 DataSenderFrequency 为 6s
 
 如图所示：
-![Zabbix上报数据图示](zabbix数据上报图示.png)
+![Zabbix上报数据图示](https://blog-1252856176.file.myqcloud.com/post/learning-zabbix-basic/zabbix-data-upload.png)
 
 那么在第 10s 的时刻：
 Agent 对 CPU 的信息采集了 10 次
