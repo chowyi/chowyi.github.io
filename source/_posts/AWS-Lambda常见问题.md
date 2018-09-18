@@ -24,6 +24,8 @@ AWS Lambda 函数被触发时接收两个参数：`event` 和 `context`。前者
 
 ![cloudwatch-events-json-example.png](https://blog-1252856176.file.myqcloud.com/post/aws-lambda-faq/cloudwatch-events-json-example.png)
 
+其实[文档](https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/eventsources.html)这里也有写。
+
 ### 第二步：配置测试事件
 
 在 AWS Lambda 函数配置的右上方选择**配置测试事件**打开配置窗口。填入上一步中获取的事件示例 json 串。
