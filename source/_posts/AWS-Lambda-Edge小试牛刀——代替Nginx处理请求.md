@@ -3,7 +3,10 @@ title: AWS Lambda@Edge小试牛刀——代替Nginx处理请求
 date: 2019-01-24 17:59:08
 permalink: handle-request-like-nginx-by-lambda-at-edge
 tags:
+- AWS
+- AWS Lambda
 categories:
+- DevOps
 ---
 
 前一段时间，我在工作中用 Lambda 实现了很多功能，比如，对云上资源进行定时巡检，CloudWatch警报转发等等。现在我对 AWS Lambda 类似的传统用法已经非常熟悉了，除此之外，AWS Lambda还有一个强大的功能 —— Lambda@Edge。之前通过学习文档了解了一些，今天正好有实际需求可以拿来练练手。
@@ -26,7 +29,7 @@ server {
 可以看到配置非常简单， Nginx 收到来自 `www.example.com.au` 请求后直接 permanent 301 重定向到 `www.example.com` 。那为这么简单的一个小功能开一台服务器部署 Nginx 显然有些浪费，并且还有服务器宕机的风险和维护成本。
 
 有同学可能会问：为什么不用 DNS 解析直接把 `www.example.com.au` CNAME 到 `www.example.com` 呢？  
-这是因为当使用 https 协议访问网站时，CName 跳转会有 SSL 证书的问题。
+这是因为当使用 https 协议访问网站时，CNAME 跳转会有 SSL 证书的问题。
 
 我们现在的解决方式就是使用 AWS Lambda@Edge。
 
@@ -94,7 +97,7 @@ Lambda@Edge 函数是运行在 CloudFront 边上节点上的，因此我们必�
 }
 ```
 
-然后根据实际需求修改函数的代码。我这里只需要将受到的请求全部301重定向即可。代码如下：
+然后根据实际需求修改函数的代码。我这里只需要将收到的请求全部301重定向即可。代码如下：
 ```javascript
 'use strict';
 
@@ -131,9 +134,16 @@ exports.handler = (event, context, callback) => {
 
 这样，当有来自 `*.example.com.au` 的请求，都会在 CloudFront 上触发 ViewerRequest 事件，按照 Lambda 函数中的逻辑被 301 重定向到 `www.example.com`。
 
-## 未完待续...
+## 小结
 
+在这个场景下：使用 AWS Lambda@Edge 有如下优势：
+1. 无服务器部署
+    1.1 节省成本，不需要购买服务器。Lambda 函数只在被触发时按秒计费。
+    1.2 无需维护，永不宕机。
+    1.3 弹性扩容，可从容应对大流量。
+2. 计算更靠近用户端，响应迅速。
 
+这次遇到的需求比较简单，而且我之前有使用 AWS Lambda 的相关经验，整个过程还算顺利。接下来我会继续研究 Lambda@Edge 的其他用法，工作中也会有实际的场景。在更深入的学习之后，我会再详细记录 Lambda@Edge 函数的写法和调试方法。
 
 
 
