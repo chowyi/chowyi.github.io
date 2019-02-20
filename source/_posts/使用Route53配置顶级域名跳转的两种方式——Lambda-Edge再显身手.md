@@ -62,7 +62,7 @@ As we know, 在 RFC 中有明确说明 CNAME 记录不能与其他记录共存�
 整个流程大致如下：
 ![使用Lambda@Edge实现顶级域名跳转](https://blog-1252856176.file.myqcloud.com/post/two-ways-to-redirect-domain-zone-apex/apex-domain-redirect-by-cloudfront-and-lambda.png)
 
-之前的一遍文章[AWS Lambda@Edge小试牛刀——代替Nginx处理请求](./handle-request-like-nginx-by-lambda-at-edge/)详细的说明如何创建 CloudFront Distribution 和 Lambda 函数。同样的方法，现在来实现本次的需求。
+之前的一遍文章[AWS Lambda@Edge小试牛刀——代替Nginx处理请求](/handle-request-like-nginx-by-lambda-at-edge/)详细的说明如何创建 CloudFront Distribution 和 Lambda 函数。同样的方法，现在来实现本次的需求。
 
 1. 先创建一个新的 CloudFront Distribution(分配)，注意配置 Alternate Domane Names(备用域名) 为 example.net 并配置 SSL 证书，源站配置无所谓，因为我们要用 Lambda@Edge 拦截 ViewerRequest 做跳转。
 2. 创建一个 Lambda@Edge 函数，将来自 example.net 的请求都 301 重定向到 example.com，下面贴上我简化后的函数代码。
