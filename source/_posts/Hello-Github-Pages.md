@@ -1,8 +1,10 @@
 title: Hello Github Pages
 date: 2016-01-31 17:44:36
+permalink: hello-github-pages
 tags:
+- 生活
 categories:
-- Life
+- 生活
 ---
 ## Hello, Github Pages!
 时至今日，终于有了一个自己的博客。周末花了一下午的时间磕磕绊绊的把博客搭建起来，也是非常有趣，有成就感的一件事。具体的搭建过程，网上的教程有很多，写的也很细致，我这个 green hand 就不在这里班门弄斧了。第一篇文章就聊聊自己的体会与感受吧。

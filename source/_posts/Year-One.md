@@ -1,9 +1,10 @@
 title: Year One
 date: 2016-07-16 08:30:45
+permalink: the-first-year-after-graduation
 tags:
-- Life
+- 生活
 categories:
-- Life
+- 生活
 ---
 记不起生活的起点，看不到生活的终点，我们只能数着日子来计算那些已经走过里程。
 <!--more-->
