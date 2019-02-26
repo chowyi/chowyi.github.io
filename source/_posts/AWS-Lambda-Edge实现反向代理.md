@@ -250,3 +250,11 @@ exports.handler = (event, context, callback) => {
 1. 要仔细看文档。在 nodejs 的 `http.request()`后要调用 `end()` 方法触发请求和 Lambda 黑名单标头两处我都浪费了很多时间去调试，这是应该可以避免的。
 2. 看清本质，不论是 Nginx 还是 Lambda@Edge 或是其他什么 Http 服务器，本质都是处理 HTTP 请求和响应，都遵循 HTTP 协议。
 3. AWS Lambda 太好用了！
+
+## 更正（2019-02-26）
+
+重定向和反向代理的逻辑不适合放在同一个 Lambda 函数中。  
+
+实现重定向的 Lambda@Edge 函数部署在 ViewerRequest 可以在更贴近用户的边缘节点计算，达到更快的响应。但部署在 ViewerRequest 的 Lambda 函数有最多 5 秒的超时限制，因此如果反向代理的源站响应时间过长或请求过大，Lambda 就会产生 Timeout 的错误并向客户端返回503。而 OriginRequest 则可以设置最多 30 秒的超时时间。因此把实现反向代理的 Lambda 函数部署在 OriginRequest 也许是个更好的选择，并且可以利用 CloudFront 的缓存功能。  
+
+但是，将同一个站点的不同逻辑配置在两个 Lambda 函数中不利于后续的管理和维护。Lambda@Edge 的使用场景还需要谨慎考虑。
