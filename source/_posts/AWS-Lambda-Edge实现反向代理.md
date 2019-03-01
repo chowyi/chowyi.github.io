@@ -56,7 +56,7 @@ categories:
 
 ## 实践
 
-对 Lambda@Edge 的编程模型（解析请求，生成响应，callback机制）我已经非常熟悉了，我现在需要去了解一下 nodejs 处理 http 请求的相关模块，因为我是 Python 技能栈，对 nodejs 还不太熟悉，而我的 Lambda 函数是 nodejs 写的（AWS 提供的 blueprint 就是 nodejs 写的，应该也支持其他语言，但此场景下 nodejs 的效率似乎略高于 python）。
+对 Lambda@Edge 的编程模型（解析请求，生成响应，callback机制）我已经非常熟悉了，我现在需要去了解一下 nodejs 处理 http 请求的相关模块，因为我是 Python 技能栈，对 nodejs 还不太熟悉，而我的 Lambda 函数是 nodejs 写的。
 
 
 ### 在 nodejs 中发送 http 请求
