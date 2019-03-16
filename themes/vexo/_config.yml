@@ -1,0 +1,62 @@
+author: Yi Chow
+description: Yi's blog
+keyword: 
+favicon: 
+
+excerpt_link: 阅读全文
+
+menu:
+ Home: /
+ Tags: /tags/
+ Categories: /categories/
+ Archives: /archives/
+ #Projects: /project/
+ About: /about/
+
+# highlight
+highlight:
+  tomorrow
+
+# catalog
+catalog: true
+
+# donate
+donate: false
+
+# qrcode
+qrcode: false
+
+# comment
+# you can set gitment, uyan or disqus
+
+comment: 
+
+# gitment config
+gitment_owner: chowyi
+gitment_repo: chowyi.github.io
+gitment_oauth_id: 
+gitment_oauth_secret: 
+
+# uyan config
+# if you want to use uyan as your blog comment, plz remove/comment out gitment config
+baidu_id: 
+
+# disqus config
+disqus_shortname: 
+
+about: 
+  banner: https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552627671149&di=4bc414c9cd15b05012b51c342dbeff52&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Fback_pic%2F17%2F10%2F28%2F055956d95c41c8e375f7535941972030.jpg 
+  avatar: /images/head.png 
+  description: "90后程序猿，DevOps工程师 @ 深圳<br><br>燕子去了，有再来的时候；<br>杨柳枯了，有再青的时候；<br>桃花谢了，有再开的时候。<br>但是，聪明的，你告诉我，我们的日子为什么一去不复返呢？<br><br>希望时光可以在这里沉淀，我会<br>分享一些原创的学习笔记，记录生活中的火花时刻<br>或者随便发表点小感慨...<br><br>"
+  weibo_username: 
+  twitter_username: 
+  github_username:
+  zhihu_username: 
+  douban_username: 
+  linkedin_username:
+
+# MathJax Support
+mathjax:
+  enable: true
+  per_page: false
+  cdn: //cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML
