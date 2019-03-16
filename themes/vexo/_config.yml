@@ -45,7 +45,7 @@ baidu_id:
 disqus_shortname: 
 
 about: 
-  banner: https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1552627671149&di=4bc414c9cd15b05012b51c342dbeff52&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Fback_pic%2F17%2F10%2F28%2F055956d95c41c8e375f7535941972030.jpg 
+  banner: /images/banner.jpg 
   avatar: /images/head.png 
   description: "90后程序猿，DevOps工程师 @ 深圳<br><br>燕子去了，有再来的时候；<br>杨柳枯了，有再青的时候；<br>桃花谢了，有再开的时候。<br>但是，聪明的，你告诉我，我们的日子为什么一去不复返呢？<br><br>希望时光可以在这里沉淀，我会<br>分享一些原创的学习笔记，记录生活中的火花时刻<br>或者随便发表点小感慨...<br><br>"
   weibo_username: 
