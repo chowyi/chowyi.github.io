@@ -1,12 +1,9 @@
 title: Ubuntu 常用安装与设置
 date: 2016-10-20 17:27:35
 tags:
-- Linux
-- MySQL
-- virtualenv
-- pip
+- Ubuntu
 categories:
-- Linux
+- DevOps
 ---
 今天买了一台阿里云ECS，系统选择的是Ubuntu14.04，从头到尾的搭建过程就在此记录一下。
 <!--more-->

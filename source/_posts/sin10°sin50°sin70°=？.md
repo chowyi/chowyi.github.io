@@ -1,10 +1,10 @@
 ---
 title: sin10°sin50°sin70°=？
+permalink: how-to-calc-sin10sin50sin70
 date: 2009-11-28 16:04:43
 tags:
-- 数学
 categories:
-- 数学
+- Others
 ---
 
 

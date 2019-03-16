@@ -6,7 +6,7 @@
 title: Yi's Blog
 subtitle: 
 description: 每天进步一点点，努力做更好的自己！
-author: Chow Yi
+author: Yi Chow
 language: zh-CN
 timezone: Asia/Shanghai
 
@@ -72,7 +72,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
+theme: vexo
 
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
