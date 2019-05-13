@@ -55,7 +55,6 @@ class ListNode:
         self.val = x
         self.next = None
 
-
     def __repr__(self):
         return '->'.join(map(str, ([self.val, self.next.val] if self.next else [self.val])))
 
@@ -183,6 +182,13 @@ a.next = _
 a.next = ListNode(1)
 a = a.next
 ```
+
+了解了原理，要想实现我期望的效果，其实只要调换一下顺序就行，像下面这样：
+```python
+a.next = a = ListNode(1)
+```
+
+不过这样降低了可读性，不利于理解，最好还是不要这样写！
 
 ## 总结
 
