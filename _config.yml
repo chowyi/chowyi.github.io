@@ -79,7 +79,8 @@ theme: vexo
 deploy:
   type: git
   repo: 
-      github: git@github.com:chowyi/chowyi.github.io.git,master
+      #github: git@github.com:chowyi/chowyi.github.io.git,master
+      github: https://gh_token@github.com/chowyi/chowyi.github.io.git,master
 
 feed:
   type: atom
