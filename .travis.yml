@@ -1,6 +1,9 @@
 language: node_js
-sudo: required
+os: linux
 node_js: stable
+
+git:
+  depth: 1
 
 cache:
   directories:
@@ -25,3 +28,7 @@ after_script:
   - git config user.email "3964769+chowyi@users.noreply.github.com"
   - sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
   - hexo d
+
+notifications:
+  email:
+    - ${EMAIL_ADDRESS}
