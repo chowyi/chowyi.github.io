@@ -1,5 +1,6 @@
 title: 在博客中使用emoji表情
 date: 2016-02-04 19:20:13
+permalink: add-emoji-selector-in-blog
 tags:
 - Django
 - emoji

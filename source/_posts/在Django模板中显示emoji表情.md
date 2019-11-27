@@ -1,4 +1,5 @@
 title: 在Django模板中显示emoji表情
+permalink: display-emoji-in-django-template
 date: 2016-02-04 19:49:50
 tags:
 - Django

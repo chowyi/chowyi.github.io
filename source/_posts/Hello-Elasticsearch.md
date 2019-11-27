@@ -1,5 +1,6 @@
 ---
 title: Hello Elasticsearch
+permalink: hello-elasticsearch
 date: 2017-4-28 15:48:59
 tags:
 - Elasticsearch

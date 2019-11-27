@@ -1,4 +1,5 @@
 title: django-celery beat 报错
+permalink: periodictask-object-has-no-attr-in-django-celery-3_1_17
 date: 2016-10-26 11:26:39
 tags:
 - Django
