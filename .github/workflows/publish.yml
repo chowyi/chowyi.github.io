@@ -6,7 +6,7 @@ on:
       - hexo
 
 jobs:
-  install:
+  publish:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -16,20 +16,11 @@ jobs:
       run: |
         npm install
         npm install hexo-deployer-git --save
-  build:
-    runs-on: ubuntu-latest
-    needs: [install]
-    steps:
-      - name: Clean
-        run: hexo clean && hexo g
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - name: Deploy
-        run: |
-          git config user.name "Chowyi"
-          git config user.email "3964769+chowyi@users.noreply.github.com"
-          sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
-          hexo d
-
+    - name: Clean
+      run: hexo clean && hexo g
+    - name: Deploy
+      run: |
+        git config user.name "Chowyi"
+        git config user.email "3964769+chowyi@users.noreply.github.com"
+        sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
+        hexo d
