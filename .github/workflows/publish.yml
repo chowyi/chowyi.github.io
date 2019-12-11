@@ -24,4 +24,4 @@ jobs:
         git config user.email "3964769+chowyi@users.noreply.github.com"
         sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
     - name: Deploy
-      run: hexo d
+      run: sudo hexo d
