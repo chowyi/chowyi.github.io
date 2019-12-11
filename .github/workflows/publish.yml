@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install hexo
-      run: npm install -g hexo-cli
+      run: sudo npm install -g hexo-cli
     - name: Install dependencies
       run: |
         npm install
