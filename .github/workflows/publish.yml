@@ -18,9 +18,10 @@ jobs:
         npm install hexo-deployer-git --save
     - name: Clean
       run: hexo clean && hexo g
-    - name: Deploy
+    - name: Configure git
       run: |
         git config user.name "Chowyi"
         git config user.email "3964769+chowyi@users.noreply.github.com"
         sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
-        hexo d
+    - name: Deploy
+      run: hexo d
