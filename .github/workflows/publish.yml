@@ -18,11 +18,13 @@ jobs:
         npm install hexo-deployer-git --save
   build:
     runs-on: ubuntu-latest
+    needs: [install]
     steps:
       - name: Clean
         run: hexo clean && hexo g
   deploy:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - name: Deploy
         run: |
