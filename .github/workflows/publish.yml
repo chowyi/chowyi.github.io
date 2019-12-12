@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: 1. git checkout...
-      uses: ations/checkout@v1
+      uses: actions/checkout@v1
     
     - name: 2. setup nodejs...
       uses: actions/setup-node@v1
