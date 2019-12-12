@@ -20,7 +20,7 @@ jobs:
       run: hexo clean && hexo g
     - name: Configure git
       env:
-        GH_TOKEN: ${{serects.GH_TOKEN}}
+        GH_TOKEN: ${{secrets.GH_TOKEN}}
       run: |
         git config user.name "Chowyi"
         git config user.email "3964769+chowyi@users.noreply.github.com"
