@@ -30,10 +30,7 @@ jobs:
     - name: 6. configure git...
       env:
         GH_TOKEN: ${{secrets.ACTIONS_TOKEN}}
-      run: |
-        git config --global user.name "Chowyi"
-        git config --global user.email "3964769+chowyi@users.noreply.github.com"
-        sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
+      run: sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
         
     - name: 7. deploy...
       run: sudo hexo d
