@@ -1,4 +1,4 @@
-name: Clean, Generate and Deploy Hexo
+name: AutoDeployHexo
 
 on:
   push:
