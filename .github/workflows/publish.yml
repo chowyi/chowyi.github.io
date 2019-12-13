@@ -10,8 +10,19 @@ jobs:
     name: Hexo Auto-Deploy by GitHub Actions
     runs-on: ubuntu-latest
     steps:
+    - name: 0. Print path...
+      run: |
+        echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+        echo pwd: `pwd`
+
     - name: 1. git checkout...
       uses: actions/checkout@v1
+
+    - name: 1.5 Print path...
+      run: |
+        echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+        echo pwd: `pwd`
+        ls -ahl
 
     - name: 2. cache node modules...
       uses: actions/cache@v1
