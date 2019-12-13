@@ -47,6 +47,12 @@ jobs:
       run: |
         npm install
         npm install hexo-deployer-git --save
+
+    - name: 5.5 Print path...
+      run: |
+        echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+        echo pwd: `pwd`
+        ls -ahl
         
     - name: 6. clean and generate public files...
       run: hexo clean && hexo g
