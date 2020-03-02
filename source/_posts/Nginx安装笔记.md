@@ -48,7 +48,7 @@ Nginx依赖以下模块：
 
 1. 下载openssl编译安装包。下载地址：[https://www.openssl.org/source/](https://www.openssl.org/source/)
     我下载的是 [openssl-1.0.2h.tar.gz](https://www.openssl.org/source/openssl-1.0.2h.tar.gz)
-2. 解压缩zlib-xx.tar.gz包。
+2. 解压缩openssl-xx.tar.gz包。
 3. 进入解压缩目录，执行./config。 （可能需要sudo权限）
 4. make （可能需要sudo权限）
 5. make install （可能需要sudo权限）
