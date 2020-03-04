@@ -24,13 +24,16 @@ jobs:
         npm install
         npm install hexo-deployer-git --save
 
-    - name: 5. clean and generate public files...
+    - name: 5. show hexo version
+      run: hexo -v
+
+    - name: 6. clean and generate public files...
       run: hexo clean && hexo g
       
-    - name: 6. configure git...
+    - name: 7. configure git...
       env:
         GH_TOKEN: ${{secrets.ACTIONS_TOKEN}}
       run: sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
         
-    - name: 7. deploy...
+    - name: 8. deploy...
       run: sudo hexo d
