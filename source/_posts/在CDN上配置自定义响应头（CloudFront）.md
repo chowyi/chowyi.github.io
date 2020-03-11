@@ -4,6 +4,7 @@ date: 2020-03-11 13:37:34
 permalink: custom-http-headers-on-cdn
 tags:
 - AWS
+- AWS Lambda
 - CloudFront
 categories:
 - DevOps
