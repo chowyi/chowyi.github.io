@@ -1,6 +1,6 @@
 ---
 title: Vary response header导致的CDN预热无效
-permalink: vary-response-header-causes-miss-cdn-cache
+permalink: vary-response-header-causes-miss-cdn-cache/
 date: 2020-02-12 12:29:43
 tags:
 - CDN

@@ -1,5 +1,5 @@
 title: Django集成Celery4.1.0
-permalink: how-to-configure-celery-4_1_0-with-django
+permalink: how-to-configure-celery-4_1_0-with-django/
 date: 2017-9-1 16:45:39
 tags:
 - Django

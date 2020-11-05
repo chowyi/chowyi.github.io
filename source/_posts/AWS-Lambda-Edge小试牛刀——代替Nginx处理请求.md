@@ -1,7 +1,7 @@
 ---
 title: AWS Lambda@Edge小试牛刀——代替Nginx处理请求
 date: 2019-01-24 17:59:08
-permalink: handle-request-like-nginx-by-lambda-at-edge
+permalink: handle-request-like-nginx-by-lambda-at-edge/
 tags:
 - AWS
 - AWS Lambda

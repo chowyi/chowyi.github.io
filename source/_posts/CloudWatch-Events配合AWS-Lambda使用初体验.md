@@ -1,7 +1,7 @@
 ---
 title: CloudWatch Events配合AWS Lambda使用初体验
 date: 2018-09-12 18:41:09
-permalink: first-try-aws-lambda-with-cloudwatch-events
+permalink: first-try-aws-lambda-with-cloudwatch-events/
 tags:
 - AWS
 - CloudWatch

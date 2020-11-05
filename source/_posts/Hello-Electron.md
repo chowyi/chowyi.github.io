@@ -1,7 +1,7 @@
 ---
 title: Hello Electron
 date: 2017-4-26 10:04:22
-permalink: hello-electron
+permalink: hello-electron/
 tags:
 - JavaScript
 - Electron

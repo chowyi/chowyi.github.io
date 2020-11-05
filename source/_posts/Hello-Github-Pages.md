@@ -1,6 +1,6 @@
 title: Hello Github Pages
 date: 2016-01-31 17:44:36
-permalink: hello-github-pages
+permalink: hello-github-pages/
 tags:
 - 生活
 categories:

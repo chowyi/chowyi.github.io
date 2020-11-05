@@ -1,6 +1,6 @@
 ---
 title: 对bmp文件读写遇到的小问题
-permalink: read-write-bmp
+permalink: read-write-bmp/
 date: 2013-04-17 21:19:29
 tags:
 - 图像读写

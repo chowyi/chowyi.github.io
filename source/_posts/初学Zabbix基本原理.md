@@ -1,6 +1,6 @@
 ---
 title: 初学Zabbix基本原理
-permalink: learning-zabbix-basic
+permalink: learning-zabbix-basic/
 date: 2017-10-21 15:21:45
 tags:
 - Zabbix

@@ -1,5 +1,5 @@
 title: Bottle Tutorial 官方教程中文翻译
-permalink: bottle-tutorial-chinese-translation
+permalink: bottle-tutorial-chinese-translation/
 date: 2016-02-26 11:40:46
 updated: 2016-2-28 11:57:07
 tags:

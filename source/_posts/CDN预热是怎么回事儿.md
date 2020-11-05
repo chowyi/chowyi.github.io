@@ -1,7 +1,7 @@
 ---
 title: CDN预热是怎么回事儿
 date: 2020-09-28 19:30:47
-permalink: lets-talk-about-cdn-warm-up
+permalink: lets-talk-about-cdn-warm-up/
 tags: CDN
 categories: DevOps
 ---

@@ -1,7 +1,7 @@
 ---
 title: 如何提取网页上的flash地址
 date: 2009-07-25 15:18:13
-permalink: extract-flash-uri-on-webpage
+permalink: extract-flash-uri-on-webpage/
 tags:
 - Flash
 categories:

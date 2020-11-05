@@ -1,6 +1,6 @@
 title: Year One
 date: 2016-07-16 08:30:45
-permalink: the-first-year-after-graduation
+permalink: the-first-year-after-graduation/
 tags:
 - 生活
 categories:

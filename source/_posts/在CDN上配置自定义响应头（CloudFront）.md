@@ -1,7 +1,7 @@
 ---
 title: 在CDN上配置自定义响应头（CloudFront）
 date: 2020-03-11 13:37:34
-permalink: custom-http-headers-on-cdn
+permalink: custom-http-headers-on-cdn/
 tags:
 - AWS
 - AWS Lambda

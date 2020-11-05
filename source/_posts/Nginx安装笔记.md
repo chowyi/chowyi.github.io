@@ -1,7 +1,7 @@
 ---
 title: Nginx安装笔记
 date: 2016-07-30 17:14:27
-permalink: nginx-installation
+permalink: nginx-installation/
 tags:
 - nginx
 categories:

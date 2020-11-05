@@ -1,7 +1,7 @@
 ---
 title: AWS Lambda@Edge动态生成响应
 date: 2019-02-18 23:08:12
-permalink: aws-lambda-generate-response
+permalink: aws-lambda-generate-response/
 tags:
 - AWS
 - AWS Lambda

@@ -1,7 +1,7 @@
 ---
 title: Python连续赋值的两个要点
 date: 2019-05-13 17:00:59
-permalink: key-points-of-chained-assignment-in-python
+permalink: key-points-of-chained-assignment-in-python/
 tags:
 - Python
 categories:

@@ -1,6 +1,6 @@
 ---
 title: AWS Auto Scaling 学习与踩坑
-permalink: aws-auto-scaling-study
+permalink: aws-auto-scaling-study/
 date: 2018-07-02 10:04:51
 tags:
 - AWS

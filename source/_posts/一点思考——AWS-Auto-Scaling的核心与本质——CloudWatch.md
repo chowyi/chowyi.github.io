@@ -1,7 +1,7 @@
 ---
 title: 一点思考——AWS Auto Scaling的核心与本质——CloudWatch
 date: 2018-09-04 16:36:24
-permalink: thoughts-about-the-core-and-essence-of-aws-auto-scaling
+permalink: thoughts-about-the-core-and-essence-of-aws-auto-scaling/
 tags:
 - AWS
 - AutoScaling

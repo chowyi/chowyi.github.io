@@ -1,5 +1,5 @@
 title: Django Model的三种继承方式
-permalink: three-types-of-inheriting-django-model
+permalink: three-types-of-inheriting-django-model/
 date: 2017-9-5 19:03:53
 tags:
 - Django

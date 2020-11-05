@@ -1,7 +1,7 @@
 ---
 title: 再聊 HTTP Header Vary 
 date: 2020-11-04 21:17:11
-permalink: talk-about-http-header-vary-again
+permalink: talk-about-http-header-vary-again/
 tags:
 - CDN
 - HttpHeader

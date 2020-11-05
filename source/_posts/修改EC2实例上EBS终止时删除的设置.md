@@ -1,7 +1,7 @@
 ---
 title: 修改EC2实例上EBS终止时删除的设置
 date: 2018-10-23 11:23:04
-permalink: modify-delete-on-termination-config-for-ebs-on-ec2-instance
+permalink: modify-delete-on-termination-config-for-ebs-on-ec2-instance/
 tags:
 - AWS
 categories:

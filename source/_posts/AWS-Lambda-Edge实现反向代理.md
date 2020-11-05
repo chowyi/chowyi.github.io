@@ -1,7 +1,7 @@
 ---
 title: AWS Lambda@Edge实现反向代理
 date: 2019-02-21 21:37:41
-permalink: reverse-proxy-by-lambda-at-edge
+permalink: reverse-proxy-by-lambda-at-edge/
 tags:
 - AWS
 - AWS Lambda

@@ -1,7 +1,7 @@
 ---
 title: Terraform Configuration Language常用代码段
 date: 2020-07-17
-permalink: terraform-configuration-language-common-usages
+permalink: terraform-configuration-language-common-usages/
 tags: Terraform
 categories: DevOps
 ---

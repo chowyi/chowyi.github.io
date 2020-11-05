@@ -1,7 +1,7 @@
 ---
 title: 使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手
 date: 2019-02-14 20:43:40
-permalink: two-ways-to-redirect-domain-zone-apex
+permalink: two-ways-to-redirect-domain-zone-apex/
 tags:
 - AWS
 - AWS Lambda

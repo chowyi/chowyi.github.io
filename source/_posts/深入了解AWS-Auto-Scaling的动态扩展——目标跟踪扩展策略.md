@@ -1,6 +1,6 @@
 ---
 title: 深入了解AWS Auto Scaling的动态扩展——目标跟踪扩展策略
-permalink: aws-auto-scaling-target-tracking-scaling-policy 
+permalink: aws-auto-scaling-target-tracking-scaling-policy/
 date: 2018-08-31 17:17:49
 tags:
 - AWS

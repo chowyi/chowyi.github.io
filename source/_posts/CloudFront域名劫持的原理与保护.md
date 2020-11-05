@@ -1,7 +1,7 @@
 ---
 title: CloudFront域名劫持的原理与保护
 date: 2019-03-01 22:12:19
-permalink: the-way-of-cloudfront-domain-hijacking
+permalink: the-way-of-cloudfront-domain-hijacking/
 tags:
 - AWS
 - CloudFront

@@ -1,7 +1,7 @@
 ---
 title: JMESPath学习分享
 date: 2020-04-14 22:17:05
-permalink: jmespath-learning-notes
+permalink: jmespath-learning-notes/
 tags: JMESPath
 categories: DevOps
 ---

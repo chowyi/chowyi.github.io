@@ -1,6 +1,6 @@
 ---
 title: 为AWS Auto Scaling持续提供最新映像
-permalink: aws-auto-scaling-with-latest-image
+permalink: aws-auto-scaling-with-latest-image/
 date: 2018-07-18 18:22:26
 tags:
 - AWS

@@ -1,6 +1,6 @@
 ---
 title: AWS Route53配合CloudWatch自定义监控实现故障转移
-permalink: aws-route53-failover-with-cloudwatch
+permalink: aws-route53-failover-with-cloudwatch/
 date: 2018-06-25 20:57:46
 tags:
 - AWS

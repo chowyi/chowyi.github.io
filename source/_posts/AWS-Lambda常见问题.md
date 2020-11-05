@@ -1,7 +1,7 @@
 ---
 title: AWS Lambda常见问题
 date: 2018-09-17 18:25:45
-permalink: aws-lambda-faq
+permalink: aws-lambda-faq/
 tags:
 - AWS
 - AWS Lambda
