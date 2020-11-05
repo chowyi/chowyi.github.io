@@ -29,8 +29,8 @@ jobs:
     - name: 5. show hexo version
       run: hexo -v
 
-    - name: 6. init and generate public files...
-      run: hexo init && hexo g
+    - name: 6. clean and generate public files...
+      run: hexo clean && hexo g
       
     - name: 7. configure git...
       env:
