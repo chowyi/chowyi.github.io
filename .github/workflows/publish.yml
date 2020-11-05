@@ -16,7 +16,7 @@ jobs:
     - name: 2. setup nodejs...
       uses: actions/setup-node@v1
       with:
-        node-version: '12'
+        node-version: '10.22.1'
       
     - name: 3. install hexo...
       run: sudo npm install -g hexo-cli
