@@ -1,7 +1,7 @@
 ---
 title: Python socket 建立P2P连接测试与总结
 date: 2020-11-29 16:17:38
-permalink: build-p2p-connection-by-python-socket
+permalink: build-p2p-connection-by-python-socket/
 tags:
 - Python
 categories:
