@@ -10,7 +10,7 @@ categories:
 - DevOps
 ---
 
-今天接到一个小需求，要在业务系统的 HTTP 响应中添加几个安全相关的响应头。我的第一反应是在 Kong/Nginx 上配置，但我们的业务现在已经是 ServerLess 架构了，那么就要在 CDN 上做配置了。  
+今天接到一个小需求，要在业务系统的 HTTP 响应中添加几个安全相关的响应头。我的第一反应是在 Kong/Nginx 上配置，但我们的业务现在已经是 ServerLess 架构了，那么就要在 CDN 上做配置了。
 
 我这里业务上用的 AWS CloudFront 和阿里云 CDN，同时我又去看了一下腾讯云 CDN 的配置方式，这里简单对比一下，我想重点说明的是 CloudFront。
 <!--more-->
@@ -22,7 +22,7 @@ categories:
 
 > [X-Content-Type-Options](https://developer.mozilla.org/docs/Web/HTTP/Headers/X-Content-Type-Options): nosniff
 
-> [X-XSS-Protection](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/X-XSS-Protection): 10;mode=block 
+> [X-XSS-Protection](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/X-XSS-Protection): 10;mode=block
 
 > [X-Frame-Options](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/X-Frame-Options): deny
 
@@ -41,7 +41,8 @@ categories:
 ![aliyun-cdn-edit-http-headers](https://blog-1252856176.file.myqcloud.com/post/custom-http-headers-on-cdn/aliyun-cdn-edit-http-headers.png)
 
 1. 配置的入口不太合理，不是常用阿里云的同学可能不太好找，它位于：`CDN控制台 -> 域名管理 -> 缓存配置 -> HTTP头`。
-2. 目前（2020-03-11），在控制台上只支持配置以下 10 个 HTTP Headers，如果要配置其他 HTTP Header，需要提交工单处理。
+2. ~~目前（2020-03-11），在控制台上只支持配置以下 10 个 HTTP Headers，如果要配置其他 HTTP Header，需要提交工单处理。~~  
+2020-12-03 Update：现在看阿里云已经支持在控制台上配置自定义Header了。
 
     - Content-Type
     - Cache-Control
@@ -179,7 +180,7 @@ exports.handler = async (event, context, callback) => {
 ## 总结
 
 1. 腾讯云可以直接在 CDN 控制台配置自定义的响应头部。
-2. 阿里云可以在 CDN 控制台配置部分响应头部，特殊的头部需要提工单后台处理。
+2. ~~阿里云可以在 CDN 控制台配置部分响应头部，特殊的头部需要提工单后台处理。~~ 2020-12-03 Update: 已支持控制台配置自定义的响应头部。
 3. AWS CloudFront 不支持在控制台配置响应头部，需要配合 Lambda@Edge 自行编写函数处理。
 
 仅对 CDN 配置 HTTP Headers 而言，腾讯云最简单易用，AWS 最灵活强大。
