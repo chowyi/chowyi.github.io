@@ -81,7 +81,8 @@ deploy:
   type: git
   repo: 
       #github: git@github.com:chowyi/chowyi.github.io.git,master
-      github: https://chowyi:gh_token@github.com/chowyi/chowyi.github.io.git,master
+      github: https://chowyi:gh_token@github.com/chowyi/chowyi.github.io.git
+  branch: master
 
 feed:
   type: atom
