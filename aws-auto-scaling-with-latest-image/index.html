@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      为AWS Auto Scaling持续提供最新映像 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>为AWS Auto Scaling持续提供最新映像</h2>
+  <p class="post-date">2018-07-18</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//aws-auto-scaling-with-latest-image/" target="_blank" title="为AWS Auto Scaling持续提供最新映像">https://chowyi.com//aws-auto-scaling-with-latest-image/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>通过之前的踩坑与学习，目前我对 AWS Auto Scaling 已经有了一定程度的了解。那么对完成工作需求也就有了更高的标准。<br><strong>新的问题是：</strong>随着业务功能的更新，如何保证 Auto Scaling 可以扩容出与线上保持版本一致的 EC2 实例？<br>这就要求我们，在业务更新发版后，及时的去更新 Auto Scaling 所配置的映像（Image）。</p>
+<span id="more"></span>
+
+<h2 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h2><p>需求清晰了，就很容易得出实现方法。只要在业务更新发版后，重新制作映像，然后关联在 Auto Scaling Group 上就好了。<br>映像与 Auto Scaling Group 的关联可以通过两种方式：</p>
+<ol>
+<li>启动配置（Launch Configuration）</li>
+<li>启动模板（Launch Template）</li>
+</ol>
+<p>那么使用哪种方式更好呢？稍微分析一下就知道了：<br><strong>启动配置</strong>创建后不可修改，只能创建新的启动配置与最新的映像关联，然后再修改 Auto Scaling Group 与新创建的启动配置关联。替换掉的启动配置不好管理。<br><strong>启动模板</strong>的优势在于有<strong>版本</strong>的概念。可以在上一版的基础上，替换最新制作的映像生成启动模板的新版本。不需要再更新 Auto Scaling Group 的相关属性。通过版本这个概念也可以很好的管理历史的映像。</p>
+<p>整个流程如下：</p>
+<ol>
+<li>手动创建初版的启动模板（Launch Template）。</li>
+<li>将 Auto Scaling Group 与启动模板关联，注意启动模板的版本设置为<strong>最新</strong>。</li>
+<li>Jenkins构建发版后触发脚本。</li>
+<li>脚本运行<ol>
+<li>调用 AWS API 为机器生成映像。</li>
+<li>调用 AWS API 使用新生成的映像创建启动模板的一个新版本。</li>
+</ol>
+</li>
+<li>完成。之后新扩容出的机器将使用最新的映像。</li>
+</ol>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
+<li><p>Auto Scaling Group 与启动模板关联，要设置的关联模板版本为<strong>最新</strong>。<br><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-with-latest-image/config-asg.png" alt="config-asg.png"></p>
+</li>
+<li><p>创建映像从开始到完成需要一段时间，在映像创建完成到达可用状态之前，Auto Scaling Group 将会扩容失败。映像可用后如达到扩容条件，将再次扩容。<br><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-with-latest-image/auto-scaling-failed.png" alt="auto-scaling-failed.png"></p>
+</li>
+</ol>
+<h2 id="Demo-Code"><a href="#Demo-Code" class="headerlink" title="Demo Code"></a>Demo Code</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> boto3</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">logging.basicConfig(</span><br><span class="line">    <span class="built_in">format</span>=<span class="string">&#x27;%(levelname)s %(asctime)s\n%(message)s&#x27;</span>,</span><br><span class="line">    datefmt=<span class="string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span>,</span><br><span class="line">    filename=<span class="string">&#x27;./auto_ami.log&#x27;</span>,</span><br><span class="line">    level=logging.INFO,</span><br><span class="line">    filemode=<span class="string">&#x27;a&#x27;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_all_amis</span>(<span class="params">client</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    获取本账户下的所以映像</span></span><br><span class="line"><span class="string">    :param client:</span></span><br><span class="line"><span class="string">    :return:</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    params = &#123;<span class="string">&#x27;Owners&#x27;</span>: [<span class="string">&#x27;909440319734&#x27;</span>]&#125;</span><br><span class="line">    result = client.describe_images(**params)</span><br><span class="line">    <span class="keyword">return</span> result[<span class="string">&#x27;Images&#x27;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_image</span>(<span class="params">client, instanceid, name</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    为指定的实例创建映像</span></span><br><span class="line"><span class="string">    :param client: boto3 ec2 client</span></span><br><span class="line"><span class="string">    :param instanceid: EC2 InstanceId</span></span><br><span class="line"><span class="string">    :param name: 映像名称</span></span><br><span class="line"><span class="string">    :return: ImageId</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    params = &#123;</span><br><span class="line">        <span class="string">&#x27;InstanceId&#x27;</span>: instanceid,</span><br><span class="line">        <span class="string">&#x27;NoReboot&#x27;</span>: <span class="literal">True</span>,</span><br><span class="line">        <span class="string">&#x27;Name&#x27;</span>: name,</span><br><span class="line">        <span class="string">&#x27;Description&#x27;</span>: <span class="string">&#x27;Auto created for auto scaling at &#123;time&#125;.&#x27;</span>.<span class="built_in">format</span>(time=datetime.datetime.now().strftime(<span class="string">&#x27;%Y%m%d%H%M%S&#x27;</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    logging.info(<span class="string">&#x27;try to create image(&#123;name&#125;) for &#123;instance&#125;.&#x27;</span>.<span class="built_in">format</span>(name=name, instance=instanceid))</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        result = client.create_image(**params)</span><br><span class="line">        imageid = result[<span class="string">&#x27;ImageId&#x27;</span>]</span><br><span class="line">        logging.info(<span class="string">&#x27;start create image(&#123;name&#125;) for &#123;instance&#125;.&#x27;</span>.<span class="built_in">format</span>(name=name, instance=instanceid))</span><br><span class="line">        <span class="keyword">return</span> imageid</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        logging.exception(<span class="string">&#x27;failed to create image(&#123;name&#125;) for &#123;instance&#125;.&#x27;</span>.<span class="built_in">format</span>(name=name, instance=instanceid))</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_launch_template_version</span>(<span class="params">client, templateid, ami</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    使用指定映像创建指定启动模板的新版本</span></span><br><span class="line"><span class="string">    :param client: boto3 ec2 client</span></span><br><span class="line"><span class="string">    :param templateid: Launch TemplateId</span></span><br><span class="line"><span class="string">    :param ami: ImageId</span></span><br><span class="line"><span class="string">    :return: Launch Template Version Number</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        result = client.describe_launch_templates(LaunchTemplateIds=[templateid])</span><br><span class="line">        template = result[<span class="string">&#x27;LaunchTemplates&#x27;</span>][<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        logging.exception(<span class="built_in">str</span>(e))</span><br><span class="line">        logging.error(<span class="string">&#x27;can not found launch template(&#123;templateid&#125;) to create new version with ami(imageid).&#x27;</span>.<span class="built_in">format</span>(templateid=templateid, imageid=ami))</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    logging.info(<span class="string">&#x27;try to create launch template(&#123;template&#125;) new version with image(&#123;image&#125;).&#x27;</span>.<span class="built_in">format</span>(template=templateid, image=ami))</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        latest_version = <span class="built_in">str</span>(template[<span class="string">&#x27;LatestVersionNumber&#x27;</span>])</span><br><span class="line">        result = client.create_launch_template_version(</span><br><span class="line">            LaunchTemplateId=templateid,</span><br><span class="line">            SourceVersion=latest_version,</span><br><span class="line">            VersionDescription=<span class="string">&#x27;Auto created for autoscaling at &#123;time&#125;&#x27;</span>.<span class="built_in">format</span>(time=datetime.datetime.now().strftime(<span class="string">&#x27;%Y%m%d%H%M%S&#x27;</span>)),</span><br><span class="line">            LaunchTemplateData=&#123;<span class="string">&#x27;ImageId&#x27;</span>: ami&#125;</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> result[<span class="string">&#x27;LaunchTemplateVersion&#x27;</span>][<span class="string">&#x27;VersionNumber&#x27;</span>]</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        logging.exception(<span class="built_in">str</span>(e))</span><br><span class="line">        logging.error(<span class="string">&#x27;create launch template(&#123;templateid&#125;) new version with ami(imageid) failed.&#x27;</span>.<span class="built_in">format</span>(templateid=templateid, imageid=ami))</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">args, config</span>):</span><br><span class="line">    region, app, layer, env, group = args.region, args.app, args.layer, args.env, args.group</span><br><span class="line"></span><br><span class="line">    app_instance_map = config[<span class="string">&#x27;app_instance_map&#x27;</span>]</span><br><span class="line">    aws_ak = config[<span class="string">&#x27;aws_ak&#x27;</span>]</span><br><span class="line">    aws_sk = config[<span class="string">&#x27;aws_sk&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    client = boto3.client(<span class="string">&#x27;ec2&#x27;</span>, aws_access_key_id=aws_ak, aws_secret_access_key=aws_sk, region_name=<span class="string">&#x27;us-east-1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    info = app_instance_map[region][app][layer][env][group]</span><br><span class="line">    <span class="comment"># 创建镜像</span></span><br><span class="line">    image_name = <span class="string">&#x27;&#123;region&#125;-&#123;app&#125;-&#123;layer&#125;-&#123;env&#125;-&#123;group&#125;-&#123;time&#125;&#x27;</span>.<span class="built_in">format</span>(region=region, app=app, layer=layer, env=env, group=group, time=datetime.datetime.now().strftime(<span class="string">&#x27;%Y%m%d%H%M%S&#x27;</span>))</span><br><span class="line">    imageid = create_image(client=client, instanceid=info[<span class="string">&#x27;instance&#x27;</span>], name=image_name)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> imageid:</span><br><span class="line">        logging.error(<span class="string">&#x27;can not get imageid. program exit.&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    logging.info(<span class="string">&#x27;create instance(&#123;instance&#125;)\&#x27;s image(&#123;image&#125;) successfully.&#x27;</span>.<span class="built_in">format</span>(instance=info[<span class="string">&#x27;instance&#x27;</span>], image=imageid))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 创建启动模板新版本</span></span><br><span class="line">    version_number = create_launch_template_version(client=client, templateid=info[<span class="string">&#x27;launch_template&#x27;</span>], ami=imageid)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> version_number:</span><br><span class="line">        logging.error(<span class="string">&#x27;can not get launch template new version number. program exit.&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    logging.info(<span class="string">&#x27;create launch template(&#123;template&#125;) new version(&#123;version&#125;) successfully.&#x27;</span>.<span class="built_in">format</span>(template=info[<span class="string">&#x27;launch_template&#x27;</span>], version=version_number))</span><br><span class="line"></span><br><span class="line">    logging.info(<span class="string">&#x27;SUCCESS&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    parser = argparse.ArgumentParser()</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--region&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, choices=[<span class="string">&#x27;vg&#x27;</span>, <span class="string">&#x27;bj&#x27;</span>], <span class="built_in">help</span>=<span class="string">&#x27;Please specify the region&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--app&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, <span class="built_in">help</span>=<span class="string">&#x27;Please specify the app&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--layer&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, choices=[<span class="string">&#x27;web&#x27;</span>, <span class="string">&#x27;app&#x27;</span>], <span class="built_in">help</span>=<span class="string">&#x27;Please specify the layer&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--env&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, choices=[<span class="string">&#x27;prod&#x27;</span>, <span class="string">&#x27;release&#x27;</span>], <span class="built_in">help</span>=<span class="string">&#x27;Please specify the env&#x27;</span>)</span><br><span class="line">    parser.add_argument(<span class="string">&#x27;--group&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, choices=[<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>], <span class="built_in">help</span>=<span class="string">&#x27;Please specify the group&#x27;</span>)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">    config = &#123;</span><br><span class="line">        <span class="string">&#x27;aws_ak&#x27;</span>: <span class="string">&#x27;你的 AWS AccessKey&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;aws_sk&#x27;</span>: <span class="string">&#x27;你的 AWS AccessSecret&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;app_instance_map&#x27;</span>: &#123;</span><br><span class="line">        <span class="comment"># 根据具体的业务逻辑按项目、环境来分别配置 InstanceId 和 LaunchTemplateId</span></span><br><span class="line">            <span class="string">&#x27;vg&#x27;</span>: &#123;</span><br><span class="line">                <span class="string">&#x27;xxx&#x27;</span>: &#123;</span><br><span class="line">                    <span class="string">&#x27;app&#x27;</span>: &#123;</span><br><span class="line">                        <span class="string">&#x27;release&#x27;</span>: &#123;</span><br><span class="line">                            <span class="string">&#x27;a&#x27;</span>: &#123;</span><br><span class="line">                                <span class="string">&#x27;instance&#x27;</span>: <span class="string">&#x27;i-xxxxxxxxxxxxxxxxx&#x27;</span>,</span><br><span class="line">                                <span class="string">&#x27;launch_template&#x27;</span>: <span class="string">&#x27;lt-xxxxxxxxxxxxxxxxx&#x27;</span></span><br><span class="line">                            &#125;,</span><br><span class="line">                            <span class="string">&#x27;b&#x27;</span>: &#123;</span><br><span class="line">                                <span class="string">&#x27;instance&#x27;</span>: <span class="string">&#x27;i-xxxxxxxxxxxxxxxxx&#x27;</span>,</span><br><span class="line">                                <span class="string">&#x27;launch_template&#x27;</span>: <span class="string">&#x27;lt-xxxxxxxxxxxxxxxxx&#x27;</span></span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;,</span><br><span class="line">                    &#125;,</span><br><span class="line">                &#125;,</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    main(args, config)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//aws-auto-scaling-with-latest-image/" target="_blank" title="为AWS Auto Scaling持续提供最新映像">https://chowyi.com//aws-auto-scaling-with-latest-image/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AutoScaling" >
+    <span class="tag-code">AutoScaling</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/aws-auto-scaling-study/">
+        <span class="nav-arrow">← </span>
+        
+          AWS Auto Scaling 学习与踩坑
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/%E4%BD%BF%E7%94%A8AWS-Auto-Scaling-Processes%E7%81%B5%E6%B4%BB%E9%85%8D%E7%BD%AE%E6%89%A9%E7%BC%A9%E5%AE%B9%E8%A1%8C%E4%B8%BA/">
+        
+          使用AWS Auto Scaling Processes灵活配置扩缩容行为
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E8%B7%AF"><span class="toc-nav-text">基本思路</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-nav-text">注意事项</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Demo-Code"><span class="toc-nav-text">Demo Code</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//aws-auto-scaling-with-latest-image/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

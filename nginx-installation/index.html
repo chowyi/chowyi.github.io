@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Nginx安装笔记 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Nginx安装笔记</h2>
+  <p class="post-date">2016-07-30</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//nginx-installation/" target="_blank" title="Nginx安装笔记">https://chowyi.com//nginx-installation/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>在工作中接触到了Nginx，非常感兴趣。自己尝试着安装了一下，在这里记录一下安装过程吧。</p>
+<span id="more"></span>
+<h2 id="系统环境"><a href="#系统环境" class="headerlink" title="系统环境"></a>系统环境</h2><p>我是在虚拟机中安装的，操作系统是 Ubuntu 12.04.5 LTS</p>
+<h2 id="安装依赖模块"><a href="#安装依赖模块" class="headerlink" title="安装依赖模块"></a>安装依赖模块</h2><p>Nginx依赖以下模块：</p>
+<ul>
+<li>zlib (gzip模块需要 zlib 库)</li>
+<li>pcre (rewrite模块需要 pcre 库)</li>
+<li>openssl (ssl 功能需要openssl库)</li>
+</ul>
+<h3 id="安装pcre"><a href="#安装pcre" class="headerlink" title="安装pcre"></a>安装pcre</h3><ol>
+<li>下载pcre编译安装包。下载地址：<a target="_blank" rel="noopener" href="http://www.pcre.org/">http://www.pcre.org/</a><br> 我下载的是 <a href="ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.38.tar.gz">pcre-8.38.tar.gz</a>。注意不要装成pcre2了。</li>
+<li>解压缩pcre-xx.tar.gz包。</li>
+<li>进入解压缩目录，执行.&#x2F;configure。 （可能需要sudo权限）</li>
+<li>make （可能需要sudo权限）</li>
+<li>make install （可能需要sudo权限）</li>
+</ol>
+<blockquote>
+<p>如果报错：You need a C++ compiler for C++ support，则需要安装gcc和g++。<br>网上查到的安装方法大部分为：<br><code>yum install -y gcc gcc-c++</code><br>在Ubuntu上则是：<br><code>sudo apt-get install gcc g++</code></p>
+</blockquote>
+<h3 id="安装zlib"><a href="#安装zlib" class="headerlink" title="安装zlib"></a>安装zlib</h3><ol>
+<li>下载zlib编译安装包。下载地址：<a target="_blank" rel="noopener" href="http://www.zlib.net/">http://www.zlib.net/</a><br> 我下载的是 <a target="_blank" rel="noopener" href="http://zlib.net/zlib-1.2.8.tar.gz">zlib-1.2.8.tar.gz</a></li>
+<li>解压缩zlib-xx.tar.gz包。</li>
+<li>进入解压缩目录，执行.&#x2F;configure。 （可能需要sudo权限）</li>
+<li>make （可能需要sudo权限）</li>
+<li>make install （可能需要sudo权限）</li>
+</ol>
+<h3 id="安装openssl"><a href="#安装openssl" class="headerlink" title="安装openssl"></a>安装openssl</h3><ol>
+<li>下载openssl编译安装包。下载地址：<a target="_blank" rel="noopener" href="https://www.openssl.org/source/">https://www.openssl.org/source/</a><br> 我下载的是 <a target="_blank" rel="noopener" href="https://www.openssl.org/source/openssl-1.0.2h.tar.gz">openssl-1.0.2h.tar.gz</a></li>
+<li>解压缩openssl-xx.tar.gz包。</li>
+<li>进入解压缩目录，执行.&#x2F;config。 （可能需要sudo权限）</li>
+<li>make （可能需要sudo权限）</li>
+<li>make install （可能需要sudo权限）</li>
+</ol>
+<h2 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h2><ol>
+<li>下载Nginx编译安装包。下载地址：<a target="_blank" rel="noopener" href="http://nginx.org/en/download.html">http://nginx.org/en/download.html</a><br> 我下载的是 <a target="_blank" rel="noopener" href="http://nginx.org/download/nginx-1.10.1.tar.gz">nginx-1.10.1.tar.gz</a></li>
+<li>解压缩nginx-xx.tar.gz包。</li>
+<li>进入解压缩目录，执行.&#x2F;configure。 （可能需要sudo权限）</li>
+<li>make （可能需要sudo权限）</li>
+<li>make install （可能需要sudo权限）</li>
+</ol>
+<blockquote>
+<p>若安装时找不到上述依赖模块，使用<code>--with-openssl=&lt;openssl_dir&gt;</code>、<code>--with-pcre=&lt;pcre_dir&gt;</code>、<code>--with-zlib=&lt;zlib_dir&gt;</code>指定依赖的模块目录。如已安装过，此处的路径为安装目录；若未安装，则此路径为编译安装包路径，nginx将执行模块的默认编译安装。</p>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="http://www.cnblogs.com/skynet/p/4146083.html">Nginx安装与使用 - 吴秦 - 博客园 http://www.cnblogs.com/skynet/p/4146083.html</a></p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//nginx-installation/" target="_blank" title="Nginx安装笔记">https://chowyi.com//nginx-installation/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#nginx" >
+    <span class="tag-code">nginx</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E2%80%94%E2%80%94%E9%AB%98%E6%95%88%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%8445%E4%B8%AA%E4%B9%A0%E6%83%AF%EF%BC%9A%E6%95%8F%E6%8D%B7%E5%BC%80%E5%8F%91%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/">
+        <span class="nav-arrow">← </span>
+        
+          读书笔记——高效程序员的45个习惯：敏捷开发修炼之道
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/Ubuntu%E5%B8%B8%E7%94%A8%E5%AE%89%E8%A3%85%E4%B8%8E%E8%AE%BE%E7%BD%AE/">
+        
+          Ubuntu 常用安装与设置
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%8E%AF%E5%A2%83"><span class="toc-nav-text">系统环境</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96%E6%A8%A1%E5%9D%97"><span class="toc-nav-text">安装依赖模块</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%89%E8%A3%85pcre"><span class="toc-nav-text">安装pcre</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%89%E8%A3%85zlib"><span class="toc-nav-text">安装zlib</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%89%E8%A3%85openssl"><span class="toc-nav-text">安装openssl</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%89%E8%A3%85Nginx"><span class="toc-nav-text">安装Nginx</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-nav-text">参考资料</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//nginx-installation/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

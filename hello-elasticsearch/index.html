@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Hello Elasticsearch | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Hello Elasticsearch</h2>
+  <p class="post-date">2017-04-28</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//hello-elasticsearch/" target="_blank" title="Hello Elasticsearch">https://chowyi.com//hello-elasticsearch/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>ELK在运维开发领域提及的频率很高，在我的工作中也有少量涉及。带着好奇与兴趣，找点时间，先来学习一下ELK中的E——Elasticsearch。</p>
+<span id="more"></span>
+
+<h2 id="What-is-Elasticsearch"><a href="#What-is-Elasticsearch" class="headerlink" title="What is Elasticsearch?"></a>What is Elasticsearch?</h2><p>看看 <a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/master/getting-started.html">Elasticsearch: The Definitive Guide</a>的介绍:</p>
+<blockquote>
+<p>Elasticsearch is a real-time distributed search and analytics engine. It allows you to explore your data at a speed and at a scale never before possible. It is used for full-text search, structured search, analytics, and all three in combination</p>
+</blockquote>
+<p>关键词：实时，分布式，全文检索，结构化搜索，分析</p>
+<blockquote>
+<p>Elasticsearch is your new best friend.<br>既然如此，赶快学起来！</p>
+</blockquote>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ol>
+<li>因为Elasticsearch依赖Java环境，所以先安装JDK。<br> 下载JDK解压配置环境变量即可。</li>
+<li>安装Elasticsearch<br> 在<a target="_blank" rel="noopener" href="https://www.elastic.co/downloads/elasticsearch">Elasticsearch官网</a>下载解压即可。<br> 我安装的是Elasticsearch-5.3.0版本，以下所有步骤皆在此版本下完成。</li>
+<li>启动<br> 执行<code>bin/elasticsearch</code>即可。<br> 可能遇到的报错： <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Java</span> HotSpot(TM) <span class="number">64</span>-Bit Server VM warning: INFO: os::commit_memory(<span class="number">0</span>x000000008a660000, <span class="number">1973026816</span>, <span class="number">0</span>) failed; error=&#x27;Cannot allocate memory&#x27; (errno=<span class="number">12</span>)</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># There is insufficient memory for the Java Runtime Environment to continue.</span></span><br><span class="line"><span class="comment"># Native memory allocation (mmap) failed to map 1973026816 bytes for committing reserved memory.</span></span><br><span class="line"><span class="comment"># An error report file with more information is saved as:</span></span><br><span class="line"><span class="comment"># /home/vagrant/download/elasticsearch-5.3.0/hs_err_pid1573.log</span></span><br></pre></td></tr></table></figure>
+ 解决方案：<br> 修改配置文件<code>config/jvm.options</code>： <figure class="highlight ldif"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Xms represents the initial size of total heap space</span></span><br><span class="line"><span class="comment"># Xmx represents the maximum size of total heap space</span></span><br><span class="line"></span><br><span class="line"><span class="literal">-</span>Xms2g</span><br><span class="line"><span class="literal">-</span>Xmx2g</span><br></pre></td></tr></table></figure>
+
+ 把这两行的配置值改小即可： <figure class="highlight ldif"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Xms represents the initial size of total heap space</span></span><br><span class="line"><span class="comment"># Xmx represents the maximum size of total heap space</span></span><br><span class="line"></span><br><span class="line"><span class="literal">-</span>Xms256M</span><br><span class="line"><span class="literal">-</span>Xmx256M</span><br></pre></td></tr></table></figure></li>
+<li>完成<br> Elasticsearch默认启动在<code>9200</code>端口，执行<code>curl http://localhost:9200/</code>测试，可以才看到相关信息： <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;DZkUNFW&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;cluster_name&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;elasticsearch&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;cluster_uuid&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;YEdrTublSi2T-JDns8D5pg&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;version&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;number&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;5.3.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;build_hash&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;3adb13b&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;build_date&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;2017-03-23T03:31:50.652Z&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;build_snapshot&quot;</span> <span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;lucene_version&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;6.4.1&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;tagline&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;You Know, for Search&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+ 要修改启动端口，可以在<code>config/elasticsearch.yml</code>总找到如下配置项修改： <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Set a custom port for HTTP:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#http.port: 9200</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="几个重要概念"><a href="#几个重要概念" class="headerlink" title="几个重要概念"></a>几个重要概念</h2><ul>
+<li>索引（index）[名词]<blockquote>
+<p>As explained previously, an index is like a database in a traditional relational database. It is the place to store related documents. The plural of index is indices or indexes.<br>  索引[名词]类似于关系型数据库中的一个数据库，是存储相互关联的文档的地方。</p>
+</blockquote>
+</li>
+<li>索引（index）[动词]<blockquote>
+<p><strong>To index a document</strong> is to store a document in an <strong>index (noun)</strong> so that it can be retrieved and queried. It is much like the <code>INSERT</code> keyword in SQL except that, if the document already exists, the new document would replace the old.<br>  <strong>索引一个文档</strong>就是把一个文档存储在一个**索引[名词]**中b一遍检索和查询。除了文档已存在时是更新，它很像SQL中的<code>INSERT</code>语句。</p>
+</blockquote>
+</li>
+<li>类型（type）<br>  暂时没有找到官方的定义。个人理解，类型和关系型数据库中的表（table）很像，用来存储一类文档。</li>
+<li>文档（document）<br>  暂时没有找到官方的定义。个人理解，文档和关系型数据库中的一条记录类似，不同的是文档没有严格的列定义，而是采用json格式储存。</li>
+</ul>
+<h2 id="试一试"><a href="#试一试" class="headerlink" title="试一试"></a>试一试</h2><p>我跟着官网上<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/_indexing_employee_documents.html">Elasticsearch: The Definitive Guide [2.x]</a>中的示例练习了一遍，使用curl调用RESTful接口。现在我再用Python客户端<code>pyelasticsearch</code>试试。</p>
+<h3 id="安装pyelasticsearch"><a href="#安装pyelasticsearch" class="headerlink" title="安装pyelasticsearch"></a>安装<code>pyelasticsearch</code></h3><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip <span class="keyword">install</span> pyelasticsearch</span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化pyelasticsearch实例"><a href="#初始化pyelasticsearch实例" class="headerlink" title="初始化pyelasticsearch实例"></a>初始化pyelasticsearch实例</h3><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyelasticsearch <span class="keyword">import</span> ElasticSearch</span><br><span class="line"></span><br><span class="line">es = ElasticSearch(<span class="string">&#x27;http://localhost:9200&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>更多参数和详细介绍可以看<a target="_blank" rel="noopener" href="http://pyelasticsearch.readthedocs.io/en/latest/api/">pyelasticsearch的文档</a>。</p>
+<h3 id="Example-1：Indexing-Employee-Documents"><a href="#Example-1：Indexing-Employee-Documents" class="headerlink" title="Example 1：Indexing Employee Documents"></a>Example 1：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/_indexing_employee_documents.html">Indexing Employee Documents</a></h3><p>任务：索引一条雇员信息到文档中，每个文档都是<code>employee</code>类型,该类型位于索引<code>megacorp</code>中。<br>使用<code>curl</code>这么做：</p>
+<figure class="highlight sml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -<span class="type">XPUT</span> <span class="symbol">&#x27;localhost</span>:<span class="number">9200</span>/megacorp/employee/<span class="number">1</span>?pretty&#x27; -<span class="type">H</span> <span class="symbol">&#x27;Content</span>-<span class="type">Type</span>: application/json&#x27; -d&#x27;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;first_name&quot;</span> : <span class="string">&quot;John&quot;</span>,</span><br><span class="line">    <span class="string">&quot;last_name&quot;</span> :  <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">    <span class="string">&quot;age&quot;</span> :        <span class="number">25</span>,</span><br><span class="line">    <span class="string">&quot;about&quot;</span> :      <span class="string">&quot;I love to go rock climbing&quot;</span>,</span><br><span class="line">    <span class="string">&quot;interests&quot;</span>: [ <span class="string">&quot;sports&quot;</span>, <span class="string">&quot;music&quot;</span> ]</span><br><span class="line">&#125;</span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">employee = &#123;</span><br><span class="line">    <span class="string">&quot;first_name&quot;</span> : <span class="string">&quot;John&quot;</span>,</span><br><span class="line">    <span class="string">&quot;last_name&quot;</span> :  <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">    <span class="string">&quot;age&quot;</span> :        <span class="number">25</span>,</span><br><span class="line">    <span class="string">&quot;about&quot;</span> :      <span class="string">&quot;I love to go rock climbing&quot;</span>,</span><br><span class="line">    <span class="string">&quot;interests&quot;</span>: <span class="selector-attr">[ <span class="string">&quot;sports&quot;</span>, <span class="string">&quot;music&quot;</span> ]</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">es<span class="selector-class">.index</span>(<span class="string">&#x27;megacorp&#x27;</span>, <span class="string">&#x27;employee&#x27;</span>, employee, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>再加入两条文档，可以使用同上面一样的方法，也可以试试<code>pyelasticsearch</code>中的批量操作：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">es.bulk(</span><br><span class="line">    [</span><br><span class="line">        es.index_op(</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;first_name&quot;</span> :  <span class="string">&quot;Jane&quot;</span>,</span><br><span class="line">                <span class="string">&quot;last_name&quot;</span> :   <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">                <span class="string">&quot;age&quot;</span> :         32,</span><br><span class="line">                <span class="string">&quot;about&quot;</span> :       <span class="string">&quot;I like to collect rock albums&quot;</span>,</span><br><span class="line">                <span class="string">&quot;interests&quot;</span>:  [ <span class="string">&quot;music&quot;</span> ]</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attribute">id</span>=2</span><br><span class="line">        ),</span><br><span class="line">        es.index_op(</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;first_name&quot;</span> :  <span class="string">&quot;Douglas&quot;</span>,</span><br><span class="line">                <span class="string">&quot;last_name&quot;</span> :   <span class="string">&quot;Fir&quot;</span>,</span><br><span class="line">                <span class="string">&quot;age&quot;</span> :         35,</span><br><span class="line">                <span class="string">&quot;about&quot;</span>:        <span class="string">&quot;I like to build cabinets&quot;</span>,</span><br><span class="line">                <span class="string">&quot;interests&quot;</span>:  [ <span class="string">&quot;forestry&quot;</span> ]</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attribute">id</span>=3</span><br><span class="line">        )</span><br><span class="line">    ],</span><br><span class="line">    <span class="attribute">doc_type</span>=<span class="string">&#x27;employee&#x27;</span>,</span><br><span class="line">    <span class="attribute">index</span>=<span class="string">&#x27;megacorp&#x27;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Example-2：Retrieving-a-Document"><a href="#Example-2：Retrieving-a-Document" class="headerlink" title="Example 2：Retrieving a Document"></a>Example 2：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/_retrieving_a_document.html">Retrieving a Document</a></h3><p>任务：检索单个雇员的数据。<br>使用<code>curl</code>这么做：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="punctuation">-</span>XGET &#x27;localhost:<span class="number">9200</span>/megacorp/employee/1?pretty&#x27;</span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">es.<span class="built_in">get</span>(<span class="string">&#x27;megacorp&#x27;</span>, <span class="string">&#x27;employee&#x27;</span>, 1)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Example-3：Search-Lite"><a href="#Example-3：Search-Lite" class="headerlink" title="Example 3：Search Lite"></a>Example 3：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/_search_lite.html">Search Lite</a></h3><p>任务：搜索所有雇员<br>使用<code>curl</code>这么做：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="punctuation">-</span>XGET &#x27;localhost:<span class="number">9200</span>/megacorp/employee/_search?pretty&#x27;</span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">es.search(&#123;&#125;, <span class="attribute">index</span>=<span class="string">&#x27;megacorp&#x27;</span>, <span class="attribute">doc_type</span>=<span class="string">&#x27;employee&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>任务：搜索姓氏为Smith的雇员<br>使用<code>curl</code>这么做：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="punctuation">-</span>XGET &#x27;localhost:<span class="number">9200</span>/megacorp/employee/_search?q=last_name:Smith&amp;pretty&#x27;</span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">es.search(<span class="string">&#x27;last_name:Smith&#x27;</span>, <span class="attribute">index</span>=<span class="string">&#x27;megacorp&#x27;</span>, <span class="attribute">doc_type</span>=<span class="string">&#x27;employee&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Example-4：Search-with-Query-DSL"><a href="#Example-4：Search-with-Query-DSL" class="headerlink" title="Example 4：Search with Query DSL"></a>Example 4：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/_search_with_query_dsl.html#_search_with_query_dsl">Search with Query DSL</a></h3><p>任务：使用查询表达式搜索姓氏为Smith的雇员<br>使用<code>curl</code>这么做：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -XGET <span class="symbol">&#x27;localhost</span>:<span class="number">9200</span>/megacorp/employee/_search?pretty&#x27; -H <span class="symbol">&#x27;Content</span>-<span class="keyword">Type</span>: application/json&#x27; -d&#x27;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;match&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;last_name&quot;</span> : &quot;<span class="type">Smith</span><span class="string">&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">es.search(&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;match&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;last_name&quot;</span> : <span class="string">&quot;Smith&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="attribute">index</span>=<span class="string">&#x27;megacorp&#x27;</span>, <span class="attribute">doc_type</span>=<span class="string">&#x27;employee&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Example-5：More-Complicated-Searches"><a href="#Example-5：More-Complicated-Searches" class="headerlink" title="Example 5：More-Complicated Searches"></a>Example 5：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/_more_complicated_searches.html#_more_complicated_searches">More-Complicated Searches</a></h3><p>任务：搜索年龄大于30岁并且姓氏为Smith的雇员<br>使用<code>curl</code>这么做：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">curl -XGET <span class="symbol">&#x27;localhost</span>:<span class="number">9200</span>/megacorp/employee/_search?pretty&#x27; -H <span class="symbol">&#x27;Content</span>-<span class="keyword">Type</span>: application/json&#x27; -d&#x27;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;bool&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;must&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;match&quot;</span> : &#123;</span><br><span class="line">                    <span class="string">&quot;last_name&quot;</span> : &quot;<span class="type">smith</span><span class="string">&quot; </span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">            &#125;,</span></span><br><span class="line"><span class="string">            &quot;</span>filter<span class="string">&quot;: &#123;</span></span><br><span class="line"><span class="string">                &quot;</span><span class="keyword">range</span><span class="string">&quot; : &#123;</span></span><br><span class="line"><span class="string">                    &quot;</span>age<span class="string">&quot; : &#123; &quot;</span>gt<span class="string">&quot; : 30 &#125; </span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">es.search(&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;bool&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;must&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;match&quot;</span> : &#123;</span><br><span class="line">                    <span class="string">&quot;last_name&quot;</span> : <span class="string">&quot;smith&quot;</span> </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&quot;filter&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;range&quot;</span> : &#123;</span><br><span class="line">                    <span class="string">&quot;age&quot;</span> : &#123; <span class="string">&quot;gt&quot;</span> : 30 &#125; </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="attribute">index</span>=<span class="string">&#x27;megacorp&#x27;</span>, <span class="attribute">doc_type</span>=<span class="string">&#x27;employee&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Example-6：Full-Text-Search"><a href="#Example-6：Full-Text-Search" class="headerlink" title="Example 6：Full-Text Search"></a>Example 6：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/_full_text_search.html#_full_text_search">Full-Text Search</a></h3><p>任务：搜索所有喜欢攀岩（rock climbing）的雇员<br>使用<code>curl</code>这么做：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -XGET <span class="symbol">&#x27;localhost</span>:<span class="number">9200</span>/megacorp/employee/_search?pretty&#x27; -H <span class="symbol">&#x27;Content</span>-<span class="keyword">Type</span>: application/json&#x27; -d&#x27;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;match&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;about&quot;</span> : &quot;<span class="type">rock</span> climbing<span class="string">&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">es.search(&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;match&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;about&quot;</span> : <span class="string">&quot;rock climbing&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="attribute">index</span>=<span class="string">&#x27;megacorp&#x27;</span>, <span class="attribute">doc_type</span>=<span class="string">&#x27;employee&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>这里的查询结果很有意思：</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;took&quot;</span>: <span class="number">5</span>,</span><br><span class="line">    <span class="string">&quot;timed_out&quot;</span>: false,</span><br><span class="line">    <span class="string">&quot;_shards&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;total&quot;</span>: <span class="number">5</span>,</span><br><span class="line">        <span class="string">&quot;successful&quot;</span>: <span class="number">5</span>,</span><br><span class="line">        <span class="string">&quot;failed&quot;</span>: <span class="number">0</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;hits&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;total&quot;</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="string">&quot;max_score&quot;</span>: <span class="number">0.53484553</span>,</span><br><span class="line">        <span class="string">&quot;hits&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;_index&quot;</span>: <span class="string">&quot;megacorp&quot;</span>,</span><br><span class="line">                <span class="string">&quot;_type&quot;</span>: <span class="string">&quot;employee&quot;</span>,</span><br><span class="line">                <span class="string">&quot;_id&quot;</span>: <span class="string">&quot;1&quot;</span>,</span><br><span class="line">                <span class="string">&quot;_score&quot;</span>: <span class="number">0.53484553</span>,</span><br><span class="line">                <span class="string">&quot;_source&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;interests&quot;</span>: [</span><br><span class="line">                        <span class="string">&quot;sports&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;music&quot;</span></span><br><span class="line">                    ],</span><br><span class="line">                    <span class="string">&quot;about&quot;</span>: <span class="string">&quot;I love to go rock climbing&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;first_name&quot;</span>: <span class="string">&quot;John&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;last_name&quot;</span>: <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;age&quot;</span>: <span class="number">25</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;_index&quot;</span>: <span class="string">&quot;megacorp&quot;</span>,</span><br><span class="line">                <span class="string">&quot;_type&quot;</span>: <span class="string">&quot;employee&quot;</span>,</span><br><span class="line">                <span class="string">&quot;_id&quot;</span>: <span class="string">&quot;2&quot;</span>,</span><br><span class="line">                <span class="string">&quot;_score&quot;</span>: <span class="number">0.26742277</span>,</span><br><span class="line">                <span class="string">&quot;_source&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;interests&quot;</span>: [</span><br><span class="line">                        <span class="string">&quot;music&quot;</span></span><br><span class="line">                    ],</span><br><span class="line">                    <span class="string">&quot;about&quot;</span>: <span class="string">&quot;I like to collect rock albums&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;first_name&quot;</span>: <span class="string">&quot;Jane&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;last_name&quot;</span>: <span class="string">&quot;Smith&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;age&quot;</span>: <span class="number">32</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回的结果中包含两项文档, 因为 Jane Smith 的 about 中包含了 rock，但因为没有 climbing，所以相关性得分低于 John Smith。</p>
+<blockquote>
+<p>This is a good example of how Elasticsearch can search within full-text fields and return the most relevant results first. This concept of relevance is important to Elasticsearch, and is a concept that is completely foreign to traditional relational databases, in which a record either matches or it doesn’t.</p>
+</blockquote>
+<p><em>Elasticsearch: The Definitive Guide</em> 中指出，在Elasticsearch中相关性是一个重要的概念，特别是区别于传统的关系型数据库中要么匹配要么不匹配的概念。</p>
+<h3 id="Example-6：Phrase-Search"><a href="#Example-6：Phrase-Search" class="headerlink" title="Example 6：Phrase Search"></a>Example 6：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/_phrase_search.html#_phrase_search">Phrase Search</a></h3><p>任务：对上面的搜索改进，精确的匹配短语<code>rock climbing</code><br>使用<code>curl</code>这么做：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -XGET <span class="symbol">&#x27;localhost</span>:<span class="number">9200</span>/megacorp/employee/_search?pretty&#x27; -H <span class="symbol">&#x27;Content</span>-<span class="keyword">Type</span>: application/json&#x27; -d&#x27;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;match_phrase&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;about&quot;</span> : &quot;<span class="type">rock</span> climbing<span class="string">&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">es.search(&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;match_phrase&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;about&quot;</span> : <span class="string">&quot;rock climbing&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="attribute">index</span>=<span class="string">&#x27;megacorp&#x27;</span>, <span class="attribute">doc_type</span>=<span class="string">&#x27;employee&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Example-7：Highlighting-Our-Searches"><a href="#Example-7：Highlighting-Our-Searches" class="headerlink" title="Example 7：Highlighting Our Searches"></a>Example 7：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/highlighting-intro.html#highlighting-intro">Highlighting Our Searches</a></h3><p>任务：高亮搜索结果<br>只要再加一个参数就可以了。<br>使用<code>curl</code>这么做：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">curl -XGET <span class="symbol">&#x27;localhost</span>:<span class="number">9200</span>/megacorp/employee/_search?pretty&#x27; -H <span class="symbol">&#x27;Content</span>-<span class="keyword">Type</span>: application/json&#x27; -d&#x27;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;match_phrase&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;about&quot;</span> : &quot;<span class="type">rock</span> climbing<span class="string">&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;,</span></span><br><span class="line"><span class="string">    &quot;</span>highlight<span class="string">&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;</span>fields<span class="string">&quot; : &#123;</span></span><br><span class="line"><span class="string">            &quot;</span>about<span class="string">&quot; : &#123;&#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">es.search(&#123;</span><br><span class="line">    <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;match_phrase&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;about&quot;</span> : <span class="string">&quot;rock climbing&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;highlight&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;fields&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;about&quot;</span> : &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="attribute">index</span>=<span class="string">&#x27;megacorp&#x27;</span>, <span class="attribute">doc_type</span>=<span class="string">&#x27;employee&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Example-8：Analytics"><a href="#Example-8：Analytics" class="headerlink" title="Example 8：Analytics"></a>Example 8：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/_analytics.html#_analytics">Analytics</a></h3><p>任务：统计雇员的喜好<br>这里要用到Elasticsearch中的聚合(aggregations)功能。<br>使用<code>curl</code>这么做：</p>
+<figure class="highlight sml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -<span class="type">XGET</span> <span class="symbol">&#x27;localhost</span>:<span class="number">9200</span>/megacorp/employee/_search?pretty&#x27; -<span class="type">H</span> <span class="symbol">&#x27;Content</span>-<span class="type">Type</span>: application/json&#x27; -d&#x27;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;aggs&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;all_interests&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;terms&quot;</span>: &#123; <span class="string">&quot;field&quot;</span>: <span class="string">&quot;interests.keyword&quot;</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>pyelasticsearch</code>：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">es.search(&#123;</span><br><span class="line">  <span class="string">&quot;aggs&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;all_interests&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;terms&quot;</span>: &#123; <span class="string">&quot;field&quot;</span>: <span class="string">&quot;interests.keyword&quot;</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;, <span class="attribute">index</span>=<span class="string">&#x27;megacorp&#x27;</span>, <span class="attribute">doc_type</span>=<span class="string">&#x27;employee&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>查询结果如下：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;took&quot;</span> : 17,</span><br><span class="line">  <span class="string">&quot;timed_out&quot;</span> : <span class="type">false</span>,</span><br><span class="line">  <span class="string">&quot;_shards&quot;</span> : &#123;</span><br><span class="line">    <span class="string">&quot;total&quot;</span> : 5,</span><br><span class="line">    <span class="string">&quot;successful&quot;</span> : 5,</span><br><span class="line">    <span class="string">&quot;failed&quot;</span> : 0</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;hits&quot;</span> : &#123;...&#125;,</span><br><span class="line">  <span class="string">&quot;aggregations&quot;</span> : &#123;</span><br><span class="line">    <span class="string">&quot;all_interests&quot;</span> : &#123;</span><br><span class="line">      <span class="string">&quot;doc_count_error_upper_bound&quot;</span> : 0,</span><br><span class="line">      <span class="string">&quot;sum_other_doc_count&quot;</span> : 0,</span><br><span class="line">      <span class="string">&quot;buckets&quot;</span> : [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="string">&quot;key&quot;</span> : &quot;<span class="type">music</span><span class="string">&quot;,</span></span><br><span class="line"><span class="string">          &quot;</span>doc_count<span class="string">&quot; : 2</span></span><br><span class="line"><span class="string">        &#125;,</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">          &quot;</span>key<span class="string">&quot; : &quot;</span>forestry<span class="string">&quot;,</span></span><br><span class="line"><span class="string">          &quot;</span>doc_count<span class="string">&quot; : 1</span></span><br><span class="line"><span class="string">        &#125;,</span></span><br><span class="line"><span class="string">        &#123;</span></span><br><span class="line"><span class="string">          &quot;</span>key<span class="string">&quot; : &quot;</span>sports<span class="string">&quot;,</span></span><br><span class="line"><span class="string">          &quot;</span>doc_count<span class="string">&quot; : 1</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong> 在这一步中<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/index.html">Elasticsearch: The Definitive Guide [2.x]</a>中给出的查询表达式为：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;aggs&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;all_interests&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;terms&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;field&quot;</span><span class="punctuation">:</span> <span class="string">&quot;interests&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>运行结果报错：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fielddata <span class="keyword">is</span> disabled <span class="keyword">on</span> <span class="type">text</span> fields <span class="keyword">by</span> <span class="keyword">default</span>. <span class="keyword">Set</span> fielddata=<span class="keyword">true</span> <span class="keyword">on</span> [interests] <span class="keyword">in</span> <span class="keyword">order</span> <span class="keyword">to</span> <span class="keyword">load</span> fielddata <span class="keyword">in</span> memory <span class="keyword">by</span> uninverting the inverted <span class="keyword">index</span>. Note that this can however use significant memory.</span><br></pre></td></tr></table></figure>
+<p>可能与我使用Elasticsearch版本为5.3.0有关，根据错误信息查询到的<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/5.1/fielddata.html">资料</a>，具体原因待学习后补充。</p>
+<p>TODO：学习Fielddata相关知识。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>整个学习过程我先了解到了Elasticsearch是一个实时的分布式的全文搜索引擎，它具有高性能，易扩展，易使用等特点。它可以以文档的形式存储数据，并且可以索引，搜索，分析数据。<br>接下来我尝试在自己的Linux虚拟机上安装了Elasticsearch。只要有Java环境，下载解压即可运行。<br>最后，我通过调用RESTful接口和使用<code>pyelasticsearch</code>客户端两种方式完成了<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/index.html">Elasticsearch: The Definitive Guide [2.x]</a>的入门练习。学习并实际使用到了索引（index）[名词]，类型（type），文档（document），索引（index）[动词]几个概念。<br>目前为止我对Elasticsearch有了一个简单直观的认识，学习新的知识，很开心！</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//hello-elasticsearch/" target="_blank" title="Hello Elasticsearch">https://chowyi.com//hello-elasticsearch/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Elasticsearch" >
+    <span class="tag-code">Elasticsearch</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/hello-electron/">
+        <span class="nav-arrow">← </span>
+        
+          Hello Electron
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85Python3%E5%8F%8A%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/">
+        
+          源码编译安装Python3及问题解决
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#What-is-Elasticsearch"><span class="toc-nav-text">What is Elasticsearch?</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-nav-text">安装</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E6%A6%82%E5%BF%B5"><span class="toc-nav-text">几个重要概念</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%AF%95%E4%B8%80%E8%AF%95"><span class="toc-nav-text">试一试</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%89%E8%A3%85pyelasticsearch"><span class="toc-nav-text">安装pyelasticsearch</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96pyelasticsearch%E5%AE%9E%E4%BE%8B"><span class="toc-nav-text">初始化pyelasticsearch实例</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example-1%EF%BC%9AIndexing-Employee-Documents"><span class="toc-nav-text">Example 1：Indexing Employee Documents</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example-2%EF%BC%9ARetrieving-a-Document"><span class="toc-nav-text">Example 2：Retrieving a Document</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example-3%EF%BC%9ASearch-Lite"><span class="toc-nav-text">Example 3：Search Lite</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example-4%EF%BC%9ASearch-with-Query-DSL"><span class="toc-nav-text">Example 4：Search with Query DSL</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example-5%EF%BC%9AMore-Complicated-Searches"><span class="toc-nav-text">Example 5：More-Complicated Searches</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example-6%EF%BC%9AFull-Text-Search"><span class="toc-nav-text">Example 6：Full-Text Search</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example-6%EF%BC%9APhrase-Search"><span class="toc-nav-text">Example 6：Phrase Search</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example-7%EF%BC%9AHighlighting-Our-Searches"><span class="toc-nav-text">Example 7：Highlighting Our Searches</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Example-8%EF%BC%9AAnalytics"><span class="toc-nav-text">Example 8：Analytics</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//hello-elasticsearch/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

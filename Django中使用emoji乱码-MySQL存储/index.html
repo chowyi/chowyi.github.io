@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Django中使用emoji乱码 MySQL存储 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Django中使用emoji乱码 MySQL存储</h2>
+  <p class="post-date">2016-02-04</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/Django中使用emoji乱码-MySQL存储/" target="_blank" title="Django中使用emoji乱码 MySQL存储">https://chowyi.com/Django中使用emoji乱码-MySQL存储/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>严格来说，emoji的乱码跟django并没有什么关系。这个最后再说吧。<br>我在尝试使用django来创建一个自己个人博客，在评论功能中，我使用emoji-picker插件给web页面上的输入框加入了输入emoji表情的功能。而然在MySQL中储存emoji时发生了乱码，在网络上查资料后解决了问题，记录一下。</p>
+<span id="more"></span>
+
+<h2 id="为什么会出现乱码？"><a href="#为什么会出现乱码？" class="headerlink" title="为什么会出现乱码？"></a>为什么会出现乱码？</h2><p>utf-8是我们常用的字符编码，特别是在开发工作中，我们常常把程序源代码，html页面，数据库字符集等设置为utf-8。utf-8是一种变长编码,英文字母和数字编码为一个字节，汉字大部分编码为3个字节, 少量汉字编码为的2个字节。emoji表情被编码为4个字节。而Mysql的utf8编码最多3个字节，因此保存emoji表情是就会出现乱码问题。</p>
+<h2 id="如何解决？"><a href="#如何解决？" class="headerlink" title="如何解决？"></a>如何解决？</h2><p><strong>将 MySQL 的编码从 utf8 转换成 utf8mb4 。</strong><br><em>注意：mysql-5.5.3之前的版本都不支持4个byte的utf8，之后的版本才有utf8mb4支持4个byte的utf8字符</em></p>
+<h3 id="如何修改MySQL的编码："><a href="#如何修改MySQL的编码：" class="headerlink" title="如何修改MySQL的编码："></a>如何修改MySQL的编码：</h3><p>我从网上找到的解决办法是这样的：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://blog.csdn.net/likendsl/article/details/7530979">原文 CSDN博客</a><br>1.修改my.cnf</p>
+<p>[mysqld]<br>character-set-server&#x3D;utf8mb4<br>[mysql]<br>default-character-set&#x3D;utf8mb4<br>修改后重启Mysql</p>
+<p>2.以root身份登录Mysql，修改环境变量，将character_set_client,character_set_connection,character_set_database,character_set_results,character_set_server 都修改成utf8mb4</p>
+<p>3.将已经建好的表也转换成utf8mb4<br>命令：alter table TABLE_NAME convert to character set utf8mb4 collate utf8mb4_bin; （将TABLE_NAME替换成你的表名）</p>
+</blockquote>
+<p>实际过程中我做完第一步就已经ok了！<br>P.S 如何查看MySQL环境变量：<br><code>show variables</code></p>
+<p>至此，MySQL已经可以正确的存取emoji表情了。</p>
+<h3 id="在Django中的设置："><a href="#在Django中的设置：" class="headerlink" title="在Django中的设置："></a>在Django中的设置：</h3><p>除了以上对MySQL的设置，如果使用django的ORM来操作数据库，还需要在 project&#x2F;settings.py 中为数据库连接设置添加一项OPTIONS：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">DATABASES <span class="punctuation">=</span> &#123;</span><br><span class="line">    &#x27;default&#x27;<span class="punctuation">:</span> &#123;</span><br><span class="line">        &#x27;ENGINE&#x27;<span class="punctuation">:</span> &#x27;django.db.backends.mysql&#x27;<span class="punctuation">,</span></span><br><span class="line">        &#x27;NAME&#x27;<span class="punctuation">:</span> &#x27;blog&#x27;<span class="punctuation">,</span></span><br><span class="line">        &#x27;USER&#x27;<span class="punctuation">:</span> &#x27;root&#x27;<span class="punctuation">,</span></span><br><span class="line">        &#x27;PASSWORD&#x27;<span class="punctuation">:</span> &#x27;root&#x27;<span class="punctuation">,</span></span><br><span class="line">        &#x27;HOST&#x27;<span class="punctuation">:</span> &#x27;127.0.0.1&#x27;<span class="punctuation">,</span></span><br><span class="line">        &#x27;PORT&#x27;<span class="punctuation">:</span> &#x27;<span class="number">3306</span>&#x27;<span class="punctuation">,</span></span><br><span class="line">        &#x27;OPTIONS&#x27;<span class="punctuation">:</span> &#123;&#x27;charset&#x27;<span class="punctuation">:</span>&#x27;utf8mb4&#x27;&#125;<span class="punctuation">,</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在已经可以正常的通过django的在MySQL中存取emoji表情了！</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/Django中使用emoji乱码-MySQL存储/" target="_blank" title="Django中使用emoji乱码 MySQL存储">https://chowyi.com/Django中使用emoji乱码-MySQL存储/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Django" >
+    <span class="tag-code">Django</span>
+  </a>
+
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#emoji" >
+    <span class="tag-code">emoji</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/add-emoji-selector-in-blog/">
+        <span class="nav-arrow">← </span>
+        
+          在博客中使用emoji表情
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/display-emoji-in-django-template/">
+        
+          在Django模板中显示emoji表情
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%87%BA%E7%8E%B0%E4%B9%B1%E7%A0%81%EF%BC%9F"><span class="toc-nav-text">为什么会出现乱码？</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-nav-text">如何解决？</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9MySQL%E7%9A%84%E7%BC%96%E7%A0%81%EF%BC%9A"><span class="toc-nav-text">如何修改MySQL的编码：</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%9C%A8Django%E4%B8%AD%E7%9A%84%E8%AE%BE%E7%BD%AE%EF%BC%9A"><span class="toc-nav-text">在Django中的设置：</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com/Django中使用emoji乱码-MySQL存储/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

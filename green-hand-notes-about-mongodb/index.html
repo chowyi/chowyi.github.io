@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      MongoDB 新手笔记 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>MongoDB 新手笔记</h2>
+  <p class="post-date">2021-04-06</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//green-hand-notes-about-mongodb/" target="_blank" title="MongoDB 新手笔记">https://chowyi.com//green-hand-notes-about-mongodb/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>说来惭愧，这么多年也没真正去学习过 MongoDB，最近工作中用到了，边用边学。  </p>
+<p>文章标题写的是<strong>新手笔记</strong>，但这不是一篇入门教程，而是记录我作为一个新手在使用 MongoDB 过程中遇到的一些疑惑与问题。以下内容基于 MongoDB Server 4.0 测试编写（比如 <code>$convert</code> 方法是在 MongoDB Server 4.0 才加入的），参考时需注意版本。</p>
+<span id="more"></span>
+
+<h2 id="ObjectId"><a href="#ObjectId" class="headerlink" title="ObjectId"></a>ObjectId</h2><h3 id="什么是-ObjectId？"><a href="#什么是-ObjectId？" class="headerlink" title="什么是 ObjectId？"></a>什么是 ObjectId？</h3><p>ObjectId 是一个 12 字节的对象，其中：  </p>
+<ul>
+<li>4 字节用来表示以秒为单位的 Unix 时间戳</li>
+<li>5 字节随机值</li>
+<li>3 字节自增计数器，初始值随机</li>
+</ul>
+<p>在 mongo Shell 中可以使用 <code>ObjectId.valueOf()</code> 方法获取它的十六进制字符串表示，字符串长度为 24。</p>
+<h3 id="在-Mongo-Shell-中使用-ObjectId"><a href="#在-Mongo-Shell-中使用-ObjectId" class="headerlink" title="在 Mongo Shell 中使用 ObjectId"></a>在 Mongo Shell 中使用 ObjectId</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.<span class="property">app</span>.<span class="title function_">insert</span>(&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;app_A&quot;</span>&#125;)</span><br><span class="line"><span class="title class_">WriteResult</span>(&#123; <span class="string">&quot;nInserted&quot;</span> : <span class="number">1</span> &#125;)</span><br><span class="line">&gt; db.<span class="property">app</span>.<span class="title function_">find</span>(<span class="params"></span>)</span><br><span class="line">&#123; <span class="string">&quot;_id&quot;</span> : <span class="title class_">ObjectId</span>(<span class="string">&quot;606c4ae91c1866a586e387d4&quot;</span>), <span class="string">&quot;name&quot;</span> : <span class="string">&quot;app_A&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 因为类型不匹配，所以查询无结果</span></span><br><span class="line">&gt; db.<span class="property">app</span>.<span class="title function_">find</span>(&#123;<span class="string">&quot;_id&quot;</span>: <span class="string">&quot;606c4ae91c1866a586e387d4&quot;</span>&#125;)</span><br><span class="line"><span class="comment">// 将字符串转换为 ObjectId</span></span><br><span class="line">&gt; db.<span class="property">app</span>.<span class="title function_">find</span>(<span class="params">&#123;<span class="string">&quot;_id&quot;</span>: ObjectId(<span class="string">&quot;606c4ae91c1866a586e387d4&quot;</span>)&#125;</span>)</span><br><span class="line">&#123; <span class="string">&quot;_id&quot;</span> : <span class="title class_">ObjectId</span>(<span class="string">&quot;606c4ae91c1866a586e387d4&quot;</span>), <span class="string">&quot;name&quot;</span> : <span class="string">&quot;app_A&quot;</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="外键存-string-还是-ObjectId？"><a href="#外键存-string-还是-ObjectId？" class="headerlink" title="外键存 string 还是 ObjectId？"></a>外键存 string 还是 ObjectId？</h3><p>没有特别的理由时，应该优先选择 ObjectId。<br>ObjectId 的优点：</p>
+<ul>
+<li>占用空间更少。ObjectId 占空间12字节，ObjectId 的字符串表示占24字节。</li>
+<li>包含信息更多。ObjectId 包含时间戳信息。</li>
+</ul>
+<p>刚上手 MongoDB 时，不了解 ObjectId 的意义，外键都存成了 string 类型，导致做关联查询时遇到了字段类型不匹配的问题。</p>
+<h3 id="在-MongoDB-Go-Driver-中使用-ObjectId"><a href="#在-MongoDB-Go-Driver-中使用-ObjectId" class="headerlink" title="在 MongoDB Go Driver 中使用 ObjectId"></a>在 MongoDB Go Driver 中使用 ObjectId</h3><p>在 MongoDB Go Driver 中，ObjectId 与 string 类型互相转换：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ObjectId 转 string</span></span><br><span class="line">doc.Id.Hex()</span><br><span class="line"><span class="comment">// string 转 ObjectId</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;go.mongodb.org/mongo-driver/bson/primitive&quot;</span></span><br><span class="line">primitive.ObjectIDFromHex(id)</span><br></pre></td></tr></table></figure>
+
+<h2 id="elemMatch"><a href="#elemMatch" class="headerlink" title="$elemMatch"></a>$elemMatch</h2><p>与大部分编程语言中的 dict&#x2F;map 不同，在 MongoDB 中 document 的 fields 是有序的。在查询document 是要注意 fields 的顺序。下面举个例子。  </p>
+<p>一个常见的场景是，我们在资源上添加标签，然后通过标签查询。现有如下数据：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.<span class="property">resource</span>.<span class="title function_">find</span>().<span class="title function_">pretty</span>(<span class="params"></span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">&quot;_id&quot;</span> : <span class="title class_">ObjectId</span>(<span class="string">&quot;606d66b42a998f22cc841dcf&quot;</span>),</span><br><span class="line">	<span class="string">&quot;name&quot;</span> : <span class="string">&quot;Resource_A&quot;</span>,</span><br><span class="line">	<span class="string">&quot;tags&quot;</span> : [</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="string">&quot;TagKey&quot;</span> : <span class="string">&quot;app&quot;</span>,</span><br><span class="line">			<span class="string">&quot;TagValue&quot;</span> : <span class="string">&quot;app_A&quot;</span></span><br><span class="line">		&#125;,</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="string">&quot;TagKey&quot;</span> : <span class="string">&quot;module&quot;</span>,</span><br><span class="line">			<span class="string">&quot;TagValue&quot;</span> : <span class="string">&quot;module_A&quot;</span></span><br><span class="line">		&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在通过标签查询资源：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.<span class="property">resource</span>.<span class="title function_">count</span>(&#123;</span><br><span class="line">...     <span class="string">&quot;tags&quot;</span>: &#123;</span><br><span class="line">...         <span class="attr">$all</span>: [</span><br><span class="line">...             &#123;<span class="string">&quot;TagKey&quot;</span>: <span class="string">&quot;module&quot;</span>, <span class="string">&quot;TagValue&quot;</span>: <span class="string">&quot;module_A&quot;</span>&#125;,</span><br><span class="line">...             &#123;<span class="string">&quot;TagKey&quot;</span>: <span class="string">&quot;app&quot;</span>, <span class="string">&quot;TagValue&quot;</span>: <span class="string">&quot;app_A&quot;</span>&#125;,</span><br><span class="line">...         ]</span><br><span class="line">...     &#125;</span><br><span class="line">... &#125;)</span><br><span class="line"><span class="comment">// 找到一条记录，正确</span></span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>下面改变一下 document 中 fields 的顺序：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.<span class="property">resource</span>.<span class="title function_">count</span>(&#123;</span><br><span class="line">...     <span class="string">&quot;tags&quot;</span>: &#123;</span><br><span class="line">...         <span class="attr">$all</span>: [</span><br><span class="line">...             &#123;<span class="string">&quot;TagValue&quot;</span>: <span class="string">&quot;module_A&quot;</span>, <span class="string">&quot;TagKey&quot;</span>: <span class="string">&quot;module&quot;</span>&#125;,</span><br><span class="line">...             &#123;<span class="string">&quot;TagKey&quot;</span>: <span class="string">&quot;app&quot;</span>, <span class="string">&quot;TagValue&quot;</span>: <span class="string">&quot;app_A&quot;</span>&#125;,</span><br><span class="line">...         ]</span><br><span class="line">...     &#125;</span><br><span class="line">... &#125;)</span><br><span class="line"><span class="comment">// 找不到记录</span></span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>要处理这种情况，可以使用 <a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/operator/query/elemMatch/">$elemMatch(query)</a>。</p>
+<blockquote>
+<p>官方文档说明：<br>The $elemMatch operator matches documents that contain an array field with at least one element that matches all the specified query criteria.</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.<span class="property">resource</span>.<span class="title function_">count</span>(&#123;</span><br><span class="line">...     <span class="string">&quot;tags&quot;</span>: &#123;</span><br><span class="line">...         <span class="attr">$all</span>: [</span><br><span class="line">...             &#123;<span class="attr">$elemMatch</span>: &#123;<span class="string">&quot;TagValue&quot;</span>: <span class="string">&quot;module_A&quot;</span>, <span class="string">&quot;TagKey&quot;</span>: <span class="string">&quot;module&quot;</span>&#125;&#125;,</span><br><span class="line">...             &#123;<span class="attr">$elemMatch</span>: &#123;<span class="string">&quot;TagKey&quot;</span>: <span class="string">&quot;app&quot;</span>, <span class="string">&quot;TagValue&quot;</span>: <span class="string">&quot;app_A&quot;</span>&#125;&#125;,</span><br><span class="line">...         ]</span><br><span class="line">...     &#125;</span><br><span class="line">... &#125;)</span><br><span class="line"><span class="comment">// 找到一条记录，正确</span></span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="aggregate"><a href="#aggregate" class="headerlink" title="$aggregate"></a>$aggregate</h2><p>常见的场景是通过外键进行关联查询。下面举例。</p>
+<p>app 与 set 为一对多关系，set 与 module 为一对多关系。数据如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.<span class="property">app</span>.<span class="title function_">find</span>(<span class="params"></span>)</span><br><span class="line">&#123; <span class="string">&quot;_id&quot;</span> : <span class="title class_">ObjectId</span>(<span class="string">&quot;606c4ae91c1866a586e387d4&quot;</span>), <span class="string">&quot;name&quot;</span> : <span class="string">&quot;app_A&quot;</span> &#125;</span><br><span class="line">db.<span class="property">set</span>.<span class="title function_">find</span>(<span class="params"></span>)</span><br><span class="line">&#123; <span class="string">&quot;_id&quot;</span> : <span class="title class_">ObjectId</span>(<span class="string">&quot;606d82753b659cdfed5ed935&quot;</span>), <span class="string">&quot;name&quot;</span> : <span class="string">&quot;set_A&quot;</span>, <span class="string">&quot;appId&quot;</span> : <span class="title class_">ObjectId</span>(<span class="string">&quot;606c4ae91c1866a586e387d4&quot;</span>) &#125;</span><br><span class="line">db.<span class="property">module</span>.<span class="title function_">find</span>(<span class="params"></span>)</span><br><span class="line">&#123; <span class="string">&quot;_id&quot;</span> : <span class="title class_">ObjectId</span>(<span class="string">&quot;606d665c2a998f22cc841dca&quot;</span>), <span class="string">&quot;name&quot;</span> : <span class="string">&quot;module_A&quot;</span>, <span class="string">&quot;setId&quot;</span> : <span class="string">&quot;606d82753b659cdfed5ed935&quot;</span> &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：<br>每一条 set 记录包含一个 appId 字段，类型为 ObjectId<br>每一条 module 记录包含一个 setId 字段，类型为 string<br>这里把 module 记录的 setId 字段设置为 string 类型是为了再次说明两者之间的差异。  </p>
+<p>需求，已知 moduleId，查询出与之关联的 set 和 app 的 name。<br>查询如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">db.<span class="property">module</span>.<span class="title function_">aggregate</span>([</span><br><span class="line">    <span class="comment">// 先在 module Collection 中按指定的 moduleId 过滤</span></span><br><span class="line">    &#123;<span class="attr">$match</span>: &#123;<span class="string">&quot;_id&quot;</span>: <span class="title class_">ObjectId</span>(<span class="string">&quot;606d665c2a998f22cc841dca&quot;</span>)&#125;&#125;,</span><br><span class="line">    <span class="comment">// 将 module 记录的 string 类型 setId 转换为 ObjectId 作为 setOid 字段</span></span><br><span class="line">    <span class="comment">// 以便下一步关联查询中将 setOid 与 set._id 判断相等</span></span><br><span class="line">    &#123;<span class="attr">$addFields</span>: &#123;<span class="string">&quot;setOid&quot;</span>: &#123;<span class="attr">$convert</span>: &#123;<span class="attr">input</span>: <span class="string">&quot;$setId&quot;</span>, <span class="attr">to</span>: <span class="string">&quot;objectId&quot;</span>&#125;&#125;&#125;&#125;,</span><br><span class="line">    <span class="comment">// 关联查询 set Collection</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">$lookup</span>: &#123;</span><br><span class="line">            <span class="attr">from</span>: <span class="string">&quot;set&quot;</span>,</span><br><span class="line">            <span class="attr">localField</span>: <span class="string">&quot;setOid&quot;</span>,</span><br><span class="line">            <span class="attr">foreignField</span>: <span class="string">&quot;_id&quot;</span>,</span><br><span class="line">            <span class="attr">as</span>: <span class="string">&quot;module_set&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// 在关联的结果中抽取出新的字段 setName, appId</span></span><br><span class="line">    <span class="comment">// $arrayElemAt 用于获取 array 字段中指定索引的元素</span></span><br><span class="line">    <span class="comment">// 这里也可以用 $first 代替（MongoDB 4.4 可用）</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">$project</span>: &#123;</span><br><span class="line">            <span class="string">&quot;_id&quot;</span>: <span class="number">1</span>,</span><br><span class="line">            <span class="string">&quot;name&quot;</span>: <span class="number">1</span>,</span><br><span class="line">            <span class="string">&quot;setName&quot;</span>: &#123;<span class="string">&quot;$arrayElemAt&quot;</span>: [<span class="string">&quot;$module_set.name&quot;</span>, <span class="number">0</span>]&#125;,</span><br><span class="line">            <span class="string">&quot;appId&quot;</span>: &#123;<span class="string">&quot;$arrayElemAt&quot;</span>: [<span class="string">&quot;$module_set.appId&quot;</span>, <span class="number">0</span>]&#125;,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// 此处 localField: appId 类型为 ObjectId，可直接与 app._id 比较无需转换</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">$lookup</span>: &#123;</span><br><span class="line">            <span class="attr">from</span>: <span class="string">&quot;app&quot;</span>,</span><br><span class="line">            <span class="attr">localField</span>: <span class="string">&quot;appId&quot;</span>,</span><br><span class="line">            <span class="attr">foreignField</span>: <span class="string">&quot;_id&quot;</span>,</span><br><span class="line">            <span class="attr">as</span>: <span class="string">&quot;set_app&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">$project</span>: &#123;</span><br><span class="line">            <span class="string">&quot;_id&quot;</span>: <span class="number">1</span>,</span><br><span class="line">            <span class="string">&quot;name&quot;</span>: <span class="number">1</span>,</span><br><span class="line">            <span class="string">&quot;setName&quot;</span>: <span class="number">1</span>,</span><br><span class="line">            <span class="string">&quot;appName&quot;</span>: &#123;<span class="string">&quot;$arrayElemAt&quot;</span>: [<span class="string">&quot;$set_app.name&quot;</span>, <span class="number">0</span>]&#125;,</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+
+<h3 id="关键知识点"><a href="#关键知识点" class="headerlink" title="关键知识点"></a>关键知识点</h3><ol>
+<li>$lookup</li>
+<li>$addFields</li>
+<li>$convert</li>
+<li>$arrayElemAt</li>
+</ol>
+<p>具体的用法和说明已体现在上面代码的注释中，不再赘述。</p>
+<h2 id="在-lookup-的-from-字段中使用表达式"><a href="#在-lookup-的-from-字段中使用表达式" class="headerlink" title="在 $lookup 的 from 字段中使用表达式"></a>在 $lookup 的 from 字段中使用表达式</h2><p>目前（2021.04） $lookup 的 from 字段仅支持传入 string，不支持动态变量。可关注 <a target="_blank" rel="noopener" href="https://jira.mongodb.org/browse/SERVER-22497">ISSUE SERVER-22497</a>。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//green-hand-notes-about-mongodb/" target="_blank" title="MongoDB 新手笔记">https://chowyi.com//green-hand-notes-about-mongodb/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#MongoDB" >
+    <span class="tag-code">MongoDB</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/try-aliyun-cdn-edgescript/">
+        <span class="nav-arrow">← </span>
+        
+          试用阿里云CDN边缘脚本EdgeScript
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/how-to-use-http-status-code-400-correctly/">
+        
+          如何正确地使用 HTTP Status Code 400
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#ObjectId"><span class="toc-nav-text">ObjectId</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-ObjectId%EF%BC%9F"><span class="toc-nav-text">什么是 ObjectId？</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%9C%A8-Mongo-Shell-%E4%B8%AD%E4%BD%BF%E7%94%A8-ObjectId"><span class="toc-nav-text">在 Mongo Shell 中使用 ObjectId</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%A4%96%E9%94%AE%E5%AD%98-string-%E8%BF%98%E6%98%AF-ObjectId%EF%BC%9F"><span class="toc-nav-text">外键存 string 还是 ObjectId？</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%9C%A8-MongoDB-Go-Driver-%E4%B8%AD%E4%BD%BF%E7%94%A8-ObjectId"><span class="toc-nav-text">在 MongoDB Go Driver 中使用 ObjectId</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#elemMatch"><span class="toc-nav-text">$elemMatch</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#aggregate"><span class="toc-nav-text">$aggregate</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%85%B3%E9%94%AE%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="toc-nav-text">关键知识点</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%9C%A8-lookup-%E7%9A%84-from-%E5%AD%97%E6%AE%B5%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-nav-text">在 $lookup 的 from 字段中使用表达式</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//green-hand-notes-about-mongodb/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

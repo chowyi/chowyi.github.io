@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      试用阿里云CDN边缘脚本EdgeScript | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>试用阿里云CDN边缘脚本EdgeScript</h2>
+  <p class="post-date">2020-12-06</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//try-aliyun-cdn-edgescript/" target="_blank" title="试用阿里云CDN边缘脚本EdgeScript">https://chowyi.com//try-aliyun-cdn-edgescript/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>最初了解函数计算这个概念是从 AWS Lambda 开始的，后来又知道了 Lambda@Edge，我当时学习之后直呼 Amazing，简直强大又灵活，后来我们的很多业务都用 Lambda@Edge 做了架构演进。遗憾的是 Lambda@Edge 这个好东西只有 AWS Global 才能用，国内特供版的 AWS 是没有这个功能的，那就只能寄希望于阿里云国货当自强了。当时的大概是2018年底，跟阿里云也有过沟通，他们有计划要上线一个类似的功能。到了2019年底，阿里云 EdgeScript 上线了，鉴于刚上线的产品通常都不太稳定，我也没有怎关注。转眼时间已经来到了2020年底，我来试用一下阿里云的 EdgeScript，看看功能如何。</p>
+<span id="more"></span>
+
+<p>阿里云作为国内一流的云服务应该是毋庸置疑的，我不知道把它跟世界一流的 AWS 放在一起比是否公平，但我用的最多的也就是这两家了。无意捧一踩一，仅从技术角度做功能对比。</p>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><h3 id="Lambda-Edge"><a href="#Lambda-Edge" class="headerlink" title="Lambda@Edge"></a>Lambda@Edge</h3><p>AWS Lambda@Edge 支持 Python, Ruby, Node.js, Go, Java, .Net 几种常用编程语言的多个版本，我可以根据我的技能栈，第三方库，或是性能要求选择我喜欢的语言来实现需求。学习成本几乎为零，更可以借助这些编程语言本身的强大特性。  </p>
+<p>比如我擅长 Python 和 JavaScript，在编写 Lambda@Edge 函数时，我喜欢选择 Node.js 的环境，因为 Node.js 自带的 <code>url</code>, <code>path</code>, <code>https</code> 等package可以很方便的处理 url 和 request 相关功能。</p>
+<h3 id="EdgeScript"><a href="#EdgeScript" class="headerlink" title="EdgeScript"></a>EdgeScript</h3><p>EdgeScript 是一套自定义语法规则，详见文档<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/126566.html">EdgeScript语法</a>。我并不介意去学习一套新的语法规则，但 EdgeScript 的语法似乎过于简陋了。比如：</p>
+<ol>
+<li>只有 <code>if...else...</code> 语句，不支持 <code>else if</code>, 要通过嵌套方式实现。</li>
+<li>没有 <code>for</code>, <code>while</code> 等循环语句，通过用于处理字典类型的内置函数<code>foreach(d, f, user_data)</code>实现，灵活性较差。</li>
+<li>运算符仅有<code>=</code>赋值运算符和<code>-</code>负号运算符，其他运算均需使用内置函数。</li>
+<li>我最不能接受的一点：<strong>EdgeScript全文不允许出现任何双引号。</strong></li>
+</ol>
+<p>通过与阿里云技术支持沟通，我了解到在需要用到双引号的地方要用<code>tochar()</code>来代替，<code>tochar(39)</code>是单引号 ，双引号是<code>tochar(34)</code>。再加上连接字符串没有<code>+</code>加号运算符，要用<code>concat</code>函数，处理起字符串就特别复杂甚至无法手工编写，我需要另写一个 Python 脚本来生成在 EdgeScript 中拼接字符串的代码。比如：之前我们使用 Lambda@Edge 对很多简单的静态页面做了 Serverless 改造，直接通过 Lambda@Edge 生成响应体（一个场景是生成一个简单的包含公司主体信息的备案页）。在 AWS Lambda@Edge 中我可以直接把整段 HTML 作为字符串放在响应体中返回，甚至还可以利用 Javascript 的模板字符串功能在其中替换变量。而这个简单的需求在 EdgeScript 中就成了灾难：以一个 HTML 中的 a 标签为例，<code>&lt;a href=&quot;http://example.com/&quot;&gt;EXAMPLE&lt;/a&gt;</code>，这个标签在 EdgeScript 中需要写成这样：<code>concat(&#39;&lt;a href=&#39;, tochar(34), &#39;http://example.com/&#39;, tochar(34), &#39;&gt;EXAMPLE&lt;/a&gt;&#39;)</code>。如果要生成一个完成的 HTML 页面，手写几乎无法实现。</p>
+<h2 id="依赖库"><a href="#依赖库" class="headerlink" title="依赖库"></a>依赖库</h2><p>在 EdgeScript 中只能使用自定义函数或内置的函数，并且由于它简陋的语法，很难实现复杂的功能。而在 AWS Lambda@Edge 中，你可以引入第三方库，比如 Python 的 requests 或是其他任何语言的任何 SDK。</p>
+<h2 id="脚本管理"><a href="#脚本管理" class="headerlink" title="脚本管理"></a>脚本管理</h2><h3 id="EdgeScript-1"><a href="#EdgeScript-1" class="headerlink" title="EdgeScript"></a>EdgeScript</h3><ul>
+<li>EdgeScript 为单个脚本文件，仅能通过 Web IDE 编写保存。</li>
+<li>无版本控制。</li>
+</ul>
+<h3 id="Lambda-Edge-1"><a href="#Lambda-Edge-1" class="headerlink" title="Lambda@Edge"></a>Lambda@Edge</h3><ul>
+<li>AWS Lambda@Edge 可以通过 Web IDE 编写或上传 Zip 文件。</li>
+<li>支持以目录形式组织的多个文件，可以分模块编写代码或引入第三方库。</li>
+<li>每次部署代码都会保存为一个版本。</li>
+<li>有 Layer 的概念，可以多个函数共享一些通用的组件。</li>
+</ul>
+<h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><h3 id="EdgeScript-2"><a href="#EdgeScript-2" class="headerlink" title="EdgeScript"></a>EdgeScript</h3><p>EdgeScript 可以发布至模拟环境，本地绑定 Hosts 后可以较好的模拟生产环境进行测试。</p>
+<h3 id="Lambda-Edge-2"><a href="#Lambda-Edge-2" class="headerlink" title="Lambda@Edge"></a>Lambda@Edge</h3><p>Lambda@Edge 可以配置测试事件，在线运行函数，可以在控制台上看到运行结果，程序输出和报错信息。</p>
+<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><h3 id="EdgeScript-3"><a href="#EdgeScript-3" class="headerlink" title="EdgeScript"></a>EdgeScript</h3><p>暂时没看到如何记录和查看日志。</p>
+<h3 id="Lambda-Edge-3"><a href="#Lambda-Edge-3" class="headerlink" title="Lambda@Edge"></a>Lambda@Edge</h3><p>函数的调用及函数中的输出会记录在 CloudWatch 日志组中。</p>
+<h2 id="Web-IDE"><a href="#Web-IDE" class="headerlink" title="Web IDE"></a>Web IDE</h2><p>EdgeScript WebIDE 具有简单的代码高亮和代码提示功能。  </p>
+<p>Lambda@Edge WebIDE 支持多种编程语言，功能较为完备。</p>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>Lambda@Edge 基于版本管理函数，同一个函数可以部署在多个 CloudFront Distribution 上，函数易复用。  </p>
+<p>EdgeScript 每个 CDN 对应单独的 EdgeScript。</p>
+<h2 id="执行位置"><a href="#执行位置" class="headerlink" title="执行位置"></a>执行位置</h2><p>Lambda@Edge 可以部署在一次请求的四个阶段：<code>Viewer request</code>, <code>Origin request</code>, <code>Origin response</code>, <code>Viewer response</code>。</p>
+<p><img src="https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/images/cloudfront-events-that-trigger-lambda-functions.png" alt="Lambda@Edge的四个阶段"></p>
+<p>EdgeScript 执行位置为请求处理开始和请求处理结尾。（我理解对应Lambda@Edge为 Viewer Request 和 Origin request。）</p>
+<p><img src="http://static-aliyun-doc.oss-cn-hangzhou.aliyuncs.com/assets/img/7064139651/p62071.png" alt="EdgeScript的执行位置"></p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>目前阿里云推出了很多服务，但这些服务之间整合的还不够好。比如除了 EdgeScript，还有 EdgeRoutine, 边缘节点服务ENS，函数计算。其他的几项服务我还不太了解，去使用这些服务还是有比较高的学习成本。AWS 整合的比较好，Lambda 是基本款的函数计算服务，部署在 CloudFront 上就是 Lambda@Edge，在理解和使用上有一个比较统一的体验。类似的问题还有阿里云的 CDN、全站加速、WAF 和 SCDN（其实都是一回事，应该整合为一个产品）。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Aliyun CDN EdgeScript 目前来看还不够成熟，与其说是 Script，不如说是一个功能更强的 config。在某些简单的场景下用起来应该还不错，比如修改 Http Headers 或是处理简单的重定向。想要完全用 EdgeScript 实现 Serverless 还是比较困难的。不知道阿里云处于什么考虑，EdgeScript 使用了一套自定义的语法规则。未来如果要实现更强大的功能，还是需要支持至少一门主流编程语言。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//try-aliyun-cdn-edgescript/" target="_blank" title="试用阿里云CDN边缘脚本EdgeScript">https://chowyi.com//try-aliyun-cdn-edgescript/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+  <a href="/tags#CDN" >
+    <span class="tag-code">CDN</span>
+  </a>
+
+  <a href="/tags#EdgeScript" >
+    <span class="tag-code">EdgeScript</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/build-p2p-connection-by-python-socket/">
+        <span class="nav-arrow">← </span>
+        
+          Python socket 建立P2P连接测试与总结
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/green-hand-notes-about-mongodb/">
+        
+          MongoDB 新手笔记
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-nav-text">语法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Lambda-Edge"><span class="toc-nav-text">Lambda@Edge</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#EdgeScript"><span class="toc-nav-text">EdgeScript</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BE%9D%E8%B5%96%E5%BA%93"><span class="toc-nav-text">依赖库</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%84%9A%E6%9C%AC%E7%AE%A1%E7%90%86"><span class="toc-nav-text">脚本管理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#EdgeScript-1"><span class="toc-nav-text">EdgeScript</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Lambda-Edge-1"><span class="toc-nav-text">Lambda@Edge</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%B0%83%E8%AF%95"><span class="toc-nav-text">调试</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#EdgeScript-2"><span class="toc-nav-text">EdgeScript</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Lambda-Edge-2"><span class="toc-nav-text">Lambda@Edge</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%97%A5%E5%BF%97"><span class="toc-nav-text">日志</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#EdgeScript-3"><span class="toc-nav-text">EdgeScript</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Lambda-Edge-3"><span class="toc-nav-text">Lambda@Edge</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Web-IDE"><span class="toc-nav-text">Web IDE</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%83%A8%E7%BD%B2"><span class="toc-nav-text">部署</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%89%A7%E8%A1%8C%E4%BD%8D%E7%BD%AE"><span class="toc-nav-text">执行位置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-nav-text">其他</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//try-aliyun-cdn-edgescript/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

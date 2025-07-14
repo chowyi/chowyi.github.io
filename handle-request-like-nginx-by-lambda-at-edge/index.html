@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      AWS Lambda@Edge小试牛刀——代替Nginx处理请求 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>AWS Lambda@Edge小试牛刀——代替Nginx处理请求</h2>
+  <p class="post-date">2019-01-24</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//handle-request-like-nginx-by-lambda-at-edge/" target="_blank" title="AWS Lambda@Edge小试牛刀——代替Nginx处理请求">https://chowyi.com//handle-request-like-nginx-by-lambda-at-edge/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>前一段时间，我在工作中用 Lambda 实现了很多功能，比如，对云上资源进行定时巡检，CloudWatch警报转发等等。现在我对 AWS Lambda 类似的传统用法已经非常熟悉了，除此之外，AWS Lambda还有一个强大的功能 —— Lambda@Edge。之前通过学习文档了解了一些，今天正好有实际需求可以拿来练练手。</p>
+<span id="more"></span>
+
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们有一些保护性注册的域名需要跳转到网站的首页，比如需要将 <code>www.example.com.au</code> 跳转到官网首页 <code>www.example.com</code> ，之前我们使用 Nginx 做重定向，配置如下：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> www.example.com.au;</span><br><span class="line">    <span class="attribute">access_log</span> /var/log/nginx/access_example_com_au.log;</span><br><span class="line">    <span class="attribute">error_log</span>  /var/log/nginx/error_example_com_au.log <span class="literal">warn</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^</span> http://www.example.com<span class="variable">$request_uri</span>? <span class="literal">permanent</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到配置非常简单， Nginx 收到来自 <code>www.example.com.au</code> 请求后直接 permanent 301 重定向到 <code>www.example.com</code> 。那为这么简单的一个小功能开一台服务器部署 Nginx 显然有些浪费，并且还有服务器宕机的风险和维护成本。</p>
+<p>有同学可能会问：为什么不用 DNS 解析直接把 <code>www.example.com.au</code> CNAME 到 <code>www.example.com</code> 呢？<br>这是因为当使用 https 协议访问网站时，CNAME 跳转会有 SSL 证书的问题。</p>
+<p>我们现在的解决方式就是使用 AWS Lambda@Edge。</p>
+<h2 id="什么是-Lambda-Edge"><a href="#什么是-Lambda-Edge" class="headerlink" title="什么是 Lambda@Edge"></a>什么是 Lambda@Edge</h2><p>Edge 在这里指的是 CloudFront 的边缘节点，Lambda@Edge 即运行在 CloudFront 边缘节点上的 Lambda 函数。因此，Lambda@Edge 必须配合 CloudFront 一起使用。</p>
+<p>在<strong>请求</strong>或<strong>响应</strong>进出 CloudFront 的前后，都可以使用 Lambda@Edge 来拦截<strong>请求</strong>或<strong>响应</strong>，并对<strong>请求</strong>或<strong>响应</strong>做出修改。</p>
+<p><img src="https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/images/cloudfront-events-that-trigger-lambda-functions.png" alt="Lambda@Edge示意图"></p>
+<p>如图所示，在 Client——CloudFront——Origin 的整个链路中，Lambda@Edge 一共有四处位置可以拦截并修改<strong>请求</strong>或<strong>响应</strong>，依次是：</p>
+<ol>
+<li>Viewer request(查看器请求)，在 CloudFront 收到用户请求之后，查找 CloudFront cache 之前。</li>
+<li>Origin request(源请求)，在 CloudFront cache 未命中之后，转发请求到源之前。</li>
+<li>Origin response(源响应)，在 CloudFront 收到来自源的响应之后，缓存 CloudFront cache 之前。</li>
+<li>Viewer response(查看器响应)，在 CloudFront 缓存 cache 之后，返回响应到用户之前。</li>
+</ol>
+<p>在 Lambda@Edge 中，我们可以检查或修改 Headers，重写 URL 的路径，甚至直接在 Lambda 中生成新的 request 或 response。基于这些能力，我们可以做到：</p>
+<ul>
+<li>检查 Cookie，从而重写站点不同版本的 URL 以进行 A&#x2F;B 测试。</li>
+<li>根据 User-Agent 标头将不同的对象发送给您的用户，该标头包含有关提交请求的设备的信息。例如，您可以根据用户的设备向用户发送分辨率不同的图像。</li>
+<li>检查标头或授权令牌，在将请求转发到源之前插入一个相应的标头并允许访问控制。</li>
+<li>添加、删除和修改标头，然后重写 URL 路径，将用户定向到缓存中的不同对象。</li>
+<li>生成新的 HTTP 响应，将未经身份验证的用户重定向到登录页面，直接从边缘创建和交付静态网页，或执行其他操作。有关更多信息，请参阅 Amazon CloudFront 开发人员指南 中的使用 Lambda 函数生成对查看器和源请求的 HTTP 响应。</li>
+</ul>
+<p>在 AWS 的官方文档中，给出了很多<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AmazonCloudFront/latest/DeveloperGuide/lambda-examples.html">Lambda@Edge函数示例</a>。</p>
+<h2 id="从-Nginx-迁移到-Lambda-Edge"><a href="#从-Nginx-迁移到-Lambda-Edge" class="headerlink" title="从 Nginx 迁移到 Lambda@Edge"></a>从 Nginx 迁移到 Lambda@Edge</h2><h3 id="配置-CloudFront"><a href="#配置-CloudFront" class="headerlink" title="配置 CloudFront"></a>配置 CloudFront</h3><p>Lambda@Edge 函数是运行在 CloudFront 边上节点上的，因此我们必须先创建 CloudFront Distribution(分配)。</p>
+<p>对于我的本次需求来说，源站的配置无所谓，所有的请求都通过 Lambda@Edge 直接重定向，不存在回源的情况。我就简单的配置 <code>*.example.com.au</code> 回源到 <code>www.example.com</code> 就好。唯一要注意的就是需要在 CloudFront 上配置好 <code>*.example.com.au</code> 的 SSL 证书。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/handle-request-like-nginx-by-lambda-at-edge/create-cloudfront-distribution.png" alt="配置CLoudFront Distribution"></p>
+<h3 id="创建-Lambda-函数"><a href="#创建-Lambda-函数" class="headerlink" title="创建 Lambda 函数"></a>创建 Lambda 函数</h3><p>我以 AWS Lambda 提供的蓝图（blueprint）为模板开始创建，在蓝图（blueprint）中搜索关键词<strong>cloudfront</strong>，选择<strong>cloudfront-modify-response-header</strong>。给函数起个名字，然后选择一个运行函数的角色。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/handle-request-like-nginx-by-lambda-at-edge/create-lambda-at-edge-by-blueprint.png" alt="创建Lambda@Edge函数"></p>
+<p>运行函数的角色需要有如下权限用来在 CloudWatch 中记录日志：</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;Version&quot;</span>: <span class="string">&quot;2012-10-17&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Statement&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;Effect&quot;</span>: <span class="string">&quot;Allow&quot;</span>,</span><br><span class="line">            <span class="string">&quot;Action&quot;</span>: [</span><br><span class="line">                <span class="string">&quot;logs:CreateLogGroup&quot;</span>,</span><br><span class="line">                <span class="string">&quot;logs:CreateLogStream&quot;</span>,</span><br><span class="line">                <span class="string">&quot;logs:PutLogEvents&quot;</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&quot;Resource&quot;</span>: [</span><br><span class="line">                <span class="string">&quot;arn:aws:logs:*:*:*&quot;</span></span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后根据实际需求修改函数的代码。我这里只需要将收到的请求全部301重定向即可。代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&#x27;use strict&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exports</span>.<span class="property">handler</span> = <span class="function">(<span class="params">event, context, callback</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> request = event.<span class="property">Records</span>[<span class="number">0</span>].<span class="property">cf</span>.<span class="property">request</span>;</span><br><span class="line">    <span class="keyword">const</span> oldURI = request.<span class="property">uri</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> response = &#123;</span><br><span class="line">            <span class="attr">status</span>: <span class="string">&#x27;301&#x27;</span>,</span><br><span class="line">            <span class="attr">statusDescription</span>: <span class="string">&#x27;Moved Permanently&#x27;</span>,</span><br><span class="line">            <span class="attr">headers</span>: &#123;</span><br><span class="line">                <span class="attr">location</span>: [&#123;</span><br><span class="line">                    <span class="attr">key</span>: <span class="string">&#x27;Location&#x27;</span>,</span><br><span class="line">                    <span class="attr">value</span>: <span class="string">`https://www.example.com<span class="subst">$&#123;oldURI&#125;</span>`</span> + (request.<span class="property">querystring</span>?(<span class="string">&#x27;?&#x27;</span>+request.<span class="property">querystring</span>):<span class="string">&#x27;&#x27;</span>),</span><br><span class="line">                &#125;]</span><br><span class="line">            &#125;,</span><br><span class="line">            </span><br><span class="line">        &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="title function_">callback</span>(<span class="literal">null</span>, response);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>保存函数，接下来就可以部署到 Lambda@Edge 了。</p>
+<h3 id="部署到-Lambda-Edge"><a href="#部署到-Lambda-Edge" class="headerlink" title="部署到 Lambda@Edge"></a>部署到 Lambda@Edge</h3><p>完成 Lambda 函数的编写并保存后，选择【操作】-【部署到Lambda@Edge】。</p>
+<p>在这里选择前面创建的CloudFront<strong>分配</strong>（Distribution）。CloudFront 事件选择<strong>查看器请求</strong>（Viewer Request），因为我的需求只要重定向，不需要回源，也用不到 CloudFront cache。点击部署，这样 Lambda 函数就会被部署在 CloudFront 边缘节点上。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/handle-request-like-nginx-by-lambda-at-edge/deploy-lambda-at-edge.png" alt="部署到Lambda@Edge"></p>
+<p>这样，当有来自 <code>*.example.com.au</code> 的请求，都会在 CloudFront 上触发 ViewerRequest 事件，按照 Lambda 函数中的逻辑被 301 重定向到 <code>www.example.com</code>。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>在这个场景下：使用 AWS Lambda@Edge 有如下优势：</p>
+<ol>
+<li>无服务器部署<br> 1.1 节省成本，不需要购买服务器。Lambda 函数只在被触发时按秒计费。<br> 1.2 无需维护，永不宕机。<br> 1.3 弹性扩容，可从容应对大流量。</li>
+<li>计算更靠近用户端，响应迅速。</li>
+</ol>
+<p>这次遇到的需求比较简单，而且我之前有使用 AWS Lambda 的相关经验，整个过程还算顺利。接下来我会继续研究 Lambda@Edge 的其他用法，工作中也会有实际的场景。在更深入的学习之后，我会再详细记录 Lambda@Edge 函数的写法和调试方法。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//handle-request-like-nginx-by-lambda-at-edge/" target="_blank" title="AWS Lambda@Edge小试牛刀——代替Nginx处理请求">https://chowyi.com//handle-request-like-nginx-by-lambda-at-edge/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/my-2018-review/">
+        <span class="nav-arrow">← </span>
+        
+          我的2018流水账
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/two-ways-to-redirect-domain-zone-apex/">
+        
+          使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Lambda-Edge"><span class="toc-nav-text">什么是 Lambda@Edge</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BB%8E-Nginx-%E8%BF%81%E7%A7%BB%E5%88%B0-Lambda-Edge"><span class="toc-nav-text">从 Nginx 迁移到 Lambda@Edge</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%85%8D%E7%BD%AE-CloudFront"><span class="toc-nav-text">配置 CloudFront</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%88%9B%E5%BB%BA-Lambda-%E5%87%BD%E6%95%B0"><span class="toc-nav-text">创建 Lambda 函数</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%83%A8%E7%BD%B2%E5%88%B0-Lambda-Edge"><span class="toc-nav-text">部署到 Lambda@Edge</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-nav-text">小结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//handle-request-like-nginx-by-lambda-at-edge/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

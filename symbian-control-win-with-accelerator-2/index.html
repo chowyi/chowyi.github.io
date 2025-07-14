@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      手机重力感应控制电脑（二） | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>手机重力感应控制电脑（二）</h2>
+  <p class="post-date">2013-06-02</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//symbian-control-win-with-accelerator-2/" target="_blank" title="手机重力感应控制电脑（二）">https://chowyi.com//symbian-control-win-with-accelerator-2/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>WinIo:WinIo是一个可以完成读写端口操作的驱动程序组件。作者是这样介绍的：</p>
+<blockquote>
+<p>The WinIo library allows 32-bit and 64-bit Windows applications to directly access I&#x2F;O ports and physical memory</p>
+</blockquote>
+<span id="more"></span>
+
+<p>我们可以非常方便的在<a target="_blank" rel="noopener" href="http://www.internals.com/%E5%85%8D%E8%B4%B9%E4%B8%8B%E8%BD%BD%E3%80%82">http://www.internals.com/免费下载。</a></p>
+<p>作者很贴心的在帮助手册中给出了详细的说明。其中包含的10个函数原型如下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bool</span> _<span class="function">stdcall <span class="title">InitializeWinIo</span>()</span>;  </span><br><span class="line"><span class="keyword">void</span> _<span class="function">stdcall <span class="title">ShutdownWinIo</span>()</span>;  </span><br><span class="line"><span class="built_in">bool</span> _<span class="function">stdcall <span class="title">InstallWinIoDriver</span>(<span class="params">PSTR pszWinIoDriverPath,<span class="built_in">bool</span> IsDemandLoaded</span>)</span>;  </span><br><span class="line"><span class="built_in">bool</span> _<span class="function">stdcall <span class="title">RemoveWinIoDriver</span>()</span>;  </span><br><span class="line"><span class="built_in">bool</span> _<span class="function">stdcall <span class="title">GetPortVal</span>(<span class="params">WORD wPortAddr,PDWORD pdwPortVal,BYTE bSize</span>)</span>;  </span><br><span class="line"><span class="built_in">bool</span> _<span class="function">stdcall <span class="title">SetPortVal</span>(<span class="params">WORD wPortAddr, DWORD dwPortVal,BYTE bSize</span>)</span>;   </span><br><span class="line"><span class="built_in">bool</span> _<span class="function">stdcall <span class="title">GetPhysLong</span>(<span class="params">PBYTE pbPhysAddr,PDWORD pdwPhysVal</span>)</span>;   </span><br><span class="line"><span class="built_in">bool</span> _<span class="function">stdcall <span class="title">SetPhysLong</span>(<span class="params">PBYTE pbPhysAddr,DWORD dwPhysVal</span>)</span>;  </span><br><span class="line">PBYTE _<span class="function">stdcall <span class="title">MapPhysToLin</span>(<span class="params">tagPhysStruct &amp;PhysStruct</span>)</span>;  </span><br><span class="line"><span class="built_in">bool</span> _<span class="function">stdcall <span class="title">UnmapPhysicalMemory</span>(<span class="params">tagPhysStruct &amp;PhysStruct </span>)</span>;  </span><br></pre></td></tr></table></figure>
+
+<p>具体的用法帮助中写的很清楚了，虽然是英文版，相信我们程序员都不难看懂吧。<a target="_blank" rel="noopener" href="http://baike.baidu.com/view/1620586.htm">百度百科</a>有中文介绍，不过版本比较老。这里我们只需要用到其中的四个函数：</p>
+<ul>
+<li>InitializeWinIo;</li>
+<li>ShutdownWinIo;</li>
+<li>GetPortVal;</li>
+<li>SetPortVal;</li>
+</ul>
+<p>作者在Binaries文件夹中提供了 WinIo32.dll、WinIo32.sys、WinIo64.dll、WinIo64.sys 四个文件。我们只要把需要用到的文件放在项目目录下就可以了。<br>我使用显示调用的方式加载了WinIo32.dll 。<br>定义了下面三个函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Receiver::KBCWait4IBE</span><span class="params">()</span> <span class="comment">//等待键盘缓冲区为空  </span></span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    DWORD dwRegVal=<span class="number">0</span>;  </span><br><span class="line">    <span class="keyword">do</span>  </span><br><span class="line">    &#123;  </span><br><span class="line">        <span class="built_in">GetPortVal</span>(<span class="number">0x64</span>,&amp;dwRegVal,<span class="number">1</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">while</span>(dwRegVal &amp; <span class="number">0x2</span>);  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Receiver::MyKeyUp</span><span class="params">(DWORD KCode)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">        <span class="built_in">KBCWait4IBE</span>(); <span class="comment">//等待键盘缓冲区为空  </span></span><br><span class="line">        <span class="built_in">SetPortVal</span>(<span class="number">0X64</span>, <span class="number">0xD2</span>, <span class="number">1</span> ); <span class="comment">//发送键盘写入命令  </span></span><br><span class="line">        <span class="built_in">KBCWait4IBE</span>();  </span><br><span class="line">        <span class="built_in">SetPortVal</span>(<span class="number">0X60</span>, (<span class="built_in">MapVirtualKey</span>(KCode, <span class="number">0</span>) | <span class="number">0x80</span>), <span class="number">1</span>); <span class="comment">//写入按键信息，释放键  </span></span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">Receiver::MyKeyDown</span><span class="params">(DWORD KCode)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">        <span class="built_in">KBCWait4IBE</span>(); <span class="comment">//等待键盘缓冲区为空  </span></span><br><span class="line">        <span class="built_in">SetPortVal</span>( <span class="number">0X64</span>, <span class="number">0xD2</span>, <span class="number">1</span> ); <span class="comment">//发送键盘写入命令  </span></span><br><span class="line">        <span class="built_in">KBCWait4IBE</span>();  </span><br><span class="line">        <span class="built_in">SetPortVal</span>( <span class="number">0X60</span>, <span class="built_in">MapVirtualKey</span>(KCode, <span class="number">0</span>), <span class="number">1</span> ); <span class="comment">//写入按键信息,按下键  </span></span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>这步完成之后，剩下的工作就简单多了，只要编写合适的逻辑调用这三个函数就OK了！</p>
+<p>程序完成之后，我又遇到了大麻烦。InitializeWinIo总是失败。上网搜搜，检查了文件目录的位置，一切正常。这可让我郁闷了。又把作者的帮助看了一遍，原来解决办法在这里啊！</p>
+<blockquote>
+<p>64-bit versions of Windows only load device drivers that are signed by a code signing certificate issued by a public CA such as Verisign, Thawte, etc. WinIo64.sys must not be deployed on production machines unless a code signing certificate is obtained and used to sign this file. The bundled copy of WinIo64.sys is signed with a self-signed certificate and can only be used on development&#x2F;test machines with Windows running in a special “test” mode.</p>
+</blockquote>
+<p>在win7 64bit环境下，实际用到的是WinIo32.dll、WinIo64.sys这两个文件。WinIo64.sys没有证书，只能运行在windows的测试模式下。好了，现在以管理员权限打开命令提示符，输入<code>bcdedit /set testsigning on</code>,重启系统就可以进入测试模式了。然后，右键WinIo64.sys属性，选择数字签名选项卡：</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/symbian-control-win-with-accelerator-2/winio-property.png" alt="winIO属性"></p>
+<p>依次点击：详细信息–&gt;查看证书–&gt;安装证书–&gt;下一步–&gt;将所有的证书放入下列存储：受信任的根证书颁发机构–&gt;下一步 安装证书。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/symbian-control-win-with-accelerator-2/install-winio-certification.png" alt="winIO安装证书"></p>
+<p>这样，以管理员权限在运行你的程序，WinIo就可以成功初始化了！</p>
+<p>最后，这是我的测试视频：</p>
+<p><video src="https://blog-1252856176.file.myqcloud.com/post/symbian-control-win-with-accelerator-2/symbian-control-win-with-accelerator.mp4" type="video/mp4" codecs="avc1.42E01E, mp4a.40.2" controls="controls" width="100%" height="100%"></video></p>
+<p>最后还有一个小问题：游戏里我都是模拟WSAD四个键控制的。 方向键模拟还不行，因为方向键的上下左右的硬件扫描码和小键盘的8、2、4、6是一样的，模拟方向键，游戏中实际响应的是小键盘。大家有什么好的解决办法吗？</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>这次制作在网上查了很多资料，学习了很多！非常感谢前辈们的分享！</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//symbian-control-win-with-accelerator-2/" target="_blank" title="手机重力感应控制电脑（二）">https://chowyi.com//symbian-control-win-with-accelerator-2/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Qt" >
+    <span class="tag-code">Qt</span>
+  </a>
+
+  <a href="/tags#Symbian" >
+    <span class="tag-code">Symbian</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/symbian-control-win-with-accelerator-1/">
+        <span class="nav-arrow">← </span>
+        
+          手机重力感应控制电脑（一）
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/malloc-2-dimensional-array-in-cpp/">
+        
+          动态申请二维数组及参数传递
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-nav-text">后记</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//symbian-control-win-with-accelerator-2/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

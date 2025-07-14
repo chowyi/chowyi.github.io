@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      SQLAlchemy初体验 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>SQLAlchemy初体验</h2>
+  <p class="post-date">2016-04-16</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/SQLAlchemy初体验/" target="_blank" title="SQLAlchemy初体验">https://chowyi.com/SQLAlchemy初体验/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>使用Django已经有一段时间了，对Django的ORM印象深刻，它简单易用，也足够灵活。但是在自己做一些小实验小例子时，仅为了ORM而使用Django这么一个web框架显然不太合适。于是我找到了SQLAlchemy。从<a target="_blank" rel="noopener" href="http://www.sqlalchemy.org/">官方</a>介绍来看，SQLAlchemy是Python下的一款强大且灵活的ORM框架及SQL工具集。那么我就从<a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/rel_1_0/orm/tutorial.html">官方教程</a>入手，一边学习，一边感受一下吧。</p>
+<span id="more"></span>
+
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>使用pip或easy_install即可安装最新版本的SQLAlchemy。我安装的是当前的最新版本1.0.12。</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip <span class="keyword">install</span> sqlalchemy</span><br><span class="line">或者</span><br><span class="line">easy_install sqlalchemy</span><br></pre></td></tr></table></figure>
+
+<h2 id="版本检查-Install"><a href="#版本检查-Install" class="headerlink" title="版本检查 Install"></a>版本检查 Install</h2><figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">import</span> sqlalchemy</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">sqlalchemy.__version__</span></span><br><span class="line">&#x27;1.0.12&#x27;</span><br></pre></td></tr></table></figure>
+
+<h2 id="连接数据库-Connecting"><a href="#连接数据库-Connecting" class="headerlink" title="连接数据库 Connecting"></a>连接数据库 Connecting</h2><p>教程中使用了仅在内存中的SQLite数据库(in-memory-only SQLite database)。使用<code>create_engine()</code>来连接：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">engine = create_engine(<span class="string">&#x27;sqlite:///:memory:&#x27;</span>, echo=<span class="literal">True</span>)</span></span><br></pre></td></tr></table></figure>
+<p><code>echo</code>参数用来设置是否开启SQLAlchemy日志，此功能基于标准的Python<code>logging</code>模块。开启日志，我们可以看到SQLAlchemy生成的SQL语句。如果你不想看到那么多输出，把它设置为<code>False</code>就好了。</p>
+<p><code>create_engine()</code>的返回值是<code>Engine</code>的一个实例，它代表了到数据库的核心接口，适配不同的数据库和<a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/rel_1_0/glossary.html#term-dbapi">DBAPI</a>。</p>
+<p><strong>懒连接 (Lazy Connecting)</strong><br>需要注意，使用<code>create_engine()</code>创建出<code>Engine</code>时，并没有真正的连接数据库，直到调用<code>Engine.execute()</code>或<code>Engine.connect()</code>等方法时，<code>Engine</code>才会真正建立一个连接到数据库，然后发送SQL脚本。</p>
+<h3 id="数据库连接字符串"><a href="#数据库连接字符串" class="headerlink" title="数据库连接字符串"></a>数据库连接字符串</h3><p><code>create_engine()</code>方法基于一个URL来创建<code>Engine</code>对象。URL遵循<a target="_blank" rel="noopener" href="http://rfc.net/rfc1738.html">RFC-1738</a>，通常包含username,password,hostname,database name等可选参数。典型的URL是这样的：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dialect+<span class="symbol">driver:</span>//<span class="symbol">username:</span>password<span class="variable">@host</span><span class="symbol">:port/database</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>create_engine()</code>连接几种不同数据库的例子：</p>
+<p><strong>Postgresql</strong><br>Postgresql dialect使用psycopg2作为默认DBAPI，也可以用纯python的pg8000作为替代：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># default</span></span><br><span class="line"><span class="attr">engine</span> = create_engine(<span class="string">&#x27;postgresql://scott:tiger@localhost/mydatabase&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># psycopg2</span></span><br><span class="line"><span class="attr">engine</span> = create_engine(<span class="string">&#x27;postgresql+psycopg2://scott:tiger@localhost/mydatabase&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># pg8000</span></span><br><span class="line"><span class="attr">engine</span> = create_engine(<span class="string">&#x27;postgresql+pg8000://scott:tiger@localhost/mydatabase&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>MySQL</strong><br>MySQL dialect使用mysql-python作为默认DBAPI。MySQL有许多可用的DBAPI，包括MySQL-connector-python和OurSQL：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># default</span></span><br><span class="line"><span class="attr">engine</span> = create_engine(<span class="string">&#x27;mysql://scott:tiger@localhost/foo&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># mysql-python</span></span><br><span class="line"><span class="attr">engine</span> = create_engine(<span class="string">&#x27;mysql+mysqldb://scott:tiger@localhost/foo&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># MySQL-connector-python</span></span><br><span class="line"><span class="attr">engine</span> = create_engine(<span class="string">&#x27;mysql+mysqlconnector://scott:tiger@localhost/foo&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># OurSQL</span></span><br><span class="line"><span class="attr">engine</span> = create_engine(<span class="string">&#x27;mysql+oursql://scott:tiger@localhost/foo&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Oracle</strong><br>Oracle dialect使用cx_oracle作为默认的DBAPI：</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">engine = create_engine(&#x27;oracle<span class="symbol">://scott</span><span class="symbol">:tiger</span>@<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">1521</span>/sidname&#x27;)</span><br><span class="line"></span><br><span class="line">engine = create_engine(&#x27;oracle+cx_oracle<span class="symbol">://scott</span><span class="symbol">:tiger</span>@tnsname&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>Microsoft SQL Server</strong><br>SQL Server dialect使用pyodbc作为默认的DBAPI，pymssql也是可用的：</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># pyodbc</span><br><span class="line">engine = create_engine(&#x27;mssql+pyodbc<span class="symbol">://scott</span><span class="symbol">:tiger</span>@mydsn&#x27;)</span><br><span class="line"></span><br><span class="line"># pymssql</span><br><span class="line">engine = create_engine(&#x27;mssql+pymssql<span class="symbol">://scott</span><span class="symbol">:tiger</span>@hostname<span class="symbol">:port/dbname</span>&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>SQLite</strong><br>SQLite连接文件数据，默认使用Python内建的<code>sqlite3</code>。<br>由于SQLite连接本地文件，所以URL格式略有不同。<br>相对路径：</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># sqlite:<span class="comment">//&lt;nohostname&gt;/&lt;path&gt;</span></span><br><span class="line"># <span class="keyword">where</span> &lt;path&gt; is relative:</span><br><span class="line">engine = create_engine(<span class="string">&#x27;sqlite:///foo.db&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>绝对路径：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#Unix/Mac - 4 initial slashes in total</span></span><br><span class="line">engine = create_engine(<span class="string">&#x27;sqlite:////absolute/path/to/foo.db&#x27;</span>)</span><br><span class="line"><span class="comment">#Windows</span></span><br><span class="line">engine = create_engine(<span class="string">&#x27;sqlite:///C:\\path\\to\\foo.db&#x27;</span>)</span><br><span class="line"><span class="comment">#Windows alternative using raw string</span></span><br><span class="line">engine = create_engine(<span class="string">r&#x27;sqlite:///C:\path\to\foo.db&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>使用SQLite内存数据库：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">engine</span> = create_engine(<span class="string">&#x27;sqlite://&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="声明映射-Declare-a-Mapping"><a href="#声明映射-Declare-a-Mapping" class="headerlink" title="声明映射 Declare a Mapping"></a>声明映射 Declare a Mapping</h2><p>使用ORM时，配置过程从描述数据表开始，然后定义我们将要映射到这些表的类。在现代的SQLAlchemy中，这两个任务通常被放在一起。使用<a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/rel_1_0/orm/extensions/declarative/index.html">Declarative</a>系统，可以让我们创建包含了表描述的类。<br>使用Declarative System的类映射被定义在<em>declarative base class</em>中，它包含了类和表的关系。我们的项目中通常只需要一个该类的实例。我们通过<code>declarative_base()</code>来创建base类，像下面这样：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</span></span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Base = declarative_base()</span></span><br></pre></td></tr></table></figure>
+<p>有了”base”，我们就可以基于它定义其他需要映射的类了。<br>下面的示例展示了把<code>User</code>类映射到<code>users</code>数据表，类的定义包含了表明，列名及数据类型：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, Integer, String</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">class</span> <span class="title class_">User</span>(<span class="title class_ inherited__">Base</span>):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    __tablename__ = <span class="string">&#x27;users&#x27;</span></span></span><br><span class="line"><span class="meta prompt_">...</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">id</span> = Column(Integer, primary_key=<span class="literal">True</span>)</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    name = Column(String)</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    fullname = Column(String)</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    password = Column(String)</span></span><br><span class="line"><span class="meta prompt_">...</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">       <span class="keyword">return</span> <span class="string">&quot;&lt;User(name=&#x27;%s&#x27;, fullname=&#x27;%s&#x27;, password=&#x27;%s&#x27;)&gt;&quot;</span> % (</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">                            <span class="variable language_">self</span>.name, <span class="variable language_">self</span>.fullname, <span class="variable language_">self</span>.password)</span></span><br></pre></td></tr></table></figure>
+<p><em>Tip</em><br><code>__repr__()</code>方法的定义是可选的，我们实现它仅仅是为了以友好的格式展示<code>User</code>对象。&#96;</p>
+<h2 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h2><p><code>Session</code>用来处理ORM与数据库之间的交流。当我们第一次建立起项目时，我们需要定义一个<code>Session</code>类用来创建新的<code>Session</code>对象：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Session = sessionmaker(bind=engine)</span></span><br></pre></td></tr></table></figure>
+<p>如果你还没有<code>Engine</code>对象，你也可以在创建<code>Engine</code>对象后把它连接到<code>Session</code>：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Session = sessionmaker()</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Session.configure(bind=engine)  <span class="comment"># once engine is available</span></span></span><br></pre></td></tr></table></figure>
+<p>通过<code>Session</code>类可以创建出绑定到我们数据库的<code>Session</code>对象。</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="variable">session</span> = <span class="function"><span class="title">Session</span>()</span></span><br></pre></td></tr></table></figure>
+<p>这个<code>session</code>对象关联了我们的<code>engine</code>，但它还没有打开任何连接。当它第一次被使用的时候，它会从<code>engine</code>维护的连接池中获取一个连接，它保持连接直到我们提交了(commit)所有的更改或者关闭了session对象。</p>
+<h2 id="添加和更新对象"><a href="#添加和更新对象" class="headerlink" title="添加和更新对象"></a>添加和更新对象</h2><p>为了持久化我们的<code>User</code>对象，我们使用<code>add()</code>方法把它加入到<code>Session</code>中：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; ed_user = User(<span class="attribute">name</span>=<span class="string">&#x27;ed&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;edspassword&#x27;</span>)</span><br><span class="line">&gt;&gt;&gt; session.<span class="built_in">add</span>(ed_user)</span><br></pre></td></tr></table></figure>
+<p>这时，我们称这个对象为<strong>pending</strong>状态。现在还没有SQL脚本被发送到数据库，这个对象也没有被存到数据库中。<code>Session</code>会在需要的时候发出SQL把对象保存到数据库中，这一过程叫做<strong>flush</strong>。当我们在数据库中查询<code>Ed Jones</code>时，所有pending状态的信息会首先flushed，然后立刻执行查询。<br>举个例子，我们创建一个查询，查到的结果与我们添加的对象是相等的：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; our_user = session.query(User).filter_by(<span class="attribute">name</span>=<span class="string">&#x27;ed&#x27;</span>).first() # doctest:+NORMALIZE_WHITESPACE</span><br><span class="line">&gt;&gt;&gt; our_user</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;ed&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;edspassword&#x27;</span>)&gt;</span><br><span class="line">&gt;&gt;&gt; ed_user is our_user</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<p>我们还可以使用<code>add_all()</code>方法一次添加多个<code>User</code>对象：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; session.add_all([</span><br><span class="line"><span class="built_in">..</span>.     User(<span class="attribute">name</span>=<span class="string">&#x27;wendy&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Wendy Williams&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;foobar&#x27;</span>),</span><br><span class="line"><span class="built_in">..</span>.     User(<span class="attribute">name</span>=<span class="string">&#x27;mary&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Mary Contrary&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;xxg527&#x27;</span>),</span><br><span class="line"><span class="built_in">..</span>.     User(<span class="attribute">name</span>=<span class="string">&#x27;fred&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Fred Flinstone&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;blah&#x27;</span>)])</span><br></pre></td></tr></table></figure>
+<p>现在我们觉得Ed的密码不够安全，我们来改一下：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">ed_user.password = <span class="string">&#x27;f8s7ccs&#x27;</span></span></span><br></pre></td></tr></table></figure>
+<p>当你做出了修改，<code>Session</code>是知道的：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; session.dirty</span><br><span class="line">IdentitySet([&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;ed&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;f8s7ccs&#x27;</span>)&gt;])</span><br></pre></td></tr></table></figure>
+<p>还有三个新的<code>User</code>对象处于pending状态：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; session.new  # doctest: +SKIP</span><br><span class="line">IdentitySet([&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;wendy&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Wendy Williams&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;foobar&#x27;</span>)&gt;,</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;mary&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Mary Contrary&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;xxg527&#x27;</span>)&gt;,</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;fred&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Fred Flinstone&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;blah&#x27;</span>)&gt;])</span><br></pre></td></tr></table></figure>
+<p>通过<code>commit()</code>方法告知<code>Session</code>我们想要保存修改并提交此次transaction。<code>Session</code>会使用<code>UPDATE</code>语句更改”ed”的密码，并用<code>INSERT</code>语句添加我们新创建的三个<code>User</code>对象：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.<span class="keyword">commit</span>()</span><br></pre></td></tr></table></figure>
+<p><code>commit()</code>会flush所有的改变保存到数据库并提交此次transaction。现在session所引用的连接资源重新回到了连接池中。这个session接下来的操作会维持在一个新的transaction中，在需要的时候会重新获取连接资源。</p>
+<p>我们查看一下Ed的<code>id</code>属性，之前还是<code>None</code>,现在已经有值了：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">ed_user.<span class="built_in">id</span></span></span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<h2 id="回滚-Rolling-Back"><a href="#回滚-Rolling-Back" class="headerlink" title="回滚 Rolling Back"></a>回滚 Rolling Back</h2><p>因为<code>Session</code>的工作使用了transaction，所以我们可以回滚所做的改变。<br>现在我们改变<code>ed_user</code>的name，然后再添加一个错误的user对象：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; ed_user.name = <span class="string">&#x27;Edwardo&#x27;</span></span><br><span class="line">&gt;&gt;&gt; fake_user = User(<span class="attribute">name</span>=<span class="string">&#x27;fakeuser&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Invalid&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;12345&#x27;</span>)</span><br><span class="line">&gt;&gt;&gt; session.<span class="built_in">add</span>(fake_user)</span><br></pre></td></tr></table></figure>
+<p>查询session，我们可以看到刚才的改变已经被flushed到当前的transaction中了：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.query(<span class="keyword">User</span>).<span class="keyword">filter</span>(<span class="keyword">User</span>.name.in_([<span class="string">&#x27;Edwardo&#x27;</span>, <span class="string">&#x27;fakeuser&#x27;</span>])).<span class="keyword">all</span>()</span><br><span class="line">[&lt;<span class="keyword">User</span>(<span class="type">name</span>=<span class="string">&#x27;Edwardo&#x27;</span>, fullname=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="keyword">password</span>=<span class="string">&#x27;f8s7ccs&#x27;</span>)&gt;, &lt;<span class="keyword">User</span>(<span class="type">name</span>=<span class="string">&#x27;fakeuser&#x27;</span>, fullname=<span class="string">&#x27;Invalid&#x27;</span>, <span class="keyword">password</span>=<span class="string">&#x27;12345&#x27;</span>)&gt;]</span><br></pre></td></tr></table></figure>
+<p>现在回滚，我们可以看到<code>ed_user</code>的name已经改回了<code>ed</code>，<code>fake_user</code>也从session中剔除了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>session.rollback()</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ed_user.name</span><br><span class="line"><span class="string">u&#x27;ed&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>fake_user <span class="keyword">in</span> session</span><br><span class="line"><span class="literal">False</span></span><br></pre></td></tr></table></figure>
+<p>使用SELECT来看看我们到底对数据库做了哪些改变：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.query(<span class="keyword">User</span>).<span class="keyword">filter</span>(<span class="keyword">User</span>.name.in_([<span class="string">&#x27;ed&#x27;</span>, <span class="string">&#x27;fakeuser&#x27;</span>])).<span class="keyword">all</span>()</span><br><span class="line">[&lt;<span class="keyword">User</span>(<span class="type">name</span>=<span class="string">&#x27;ed&#x27;</span>, fullname=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="keyword">password</span>=<span class="string">&#x27;f8s7ccs&#x27;</span>)&gt;]</span><br></pre></td></tr></table></figure>
+
+<h2 id="查询-Querying"><a href="#查询-Querying" class="headerlink" title="查询 Querying"></a>查询 Querying</h2><p>使用<code>Session</code>的<code>query()</code>方法可以创建一个<code>Query</code>的对象。这个方法可以接受多个参数，可以是classes和class的描述符。下面我们指定一个加载了<code>User</code>实例的<code>Query</code>对象。查询结果会返回<code>User</code>列表：</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; for<span class="built_in"> instance </span>in session.query(User).order_by(User.id):</span><br><span class="line"><span class="keyword">.</span>..     print instance.name, instance.fullname</span><br><span class="line">ed Ed Jones</span><br><span class="line">wendy Wendy Williams</span><br><span class="line">mary Mary Contrary</span><br><span class="line">fred Fred Flinstone</span><br></pre></td></tr></table></figure>
+<p><code>query()</code>还可以接受基于列的实体作为参数，返回值是tuples的列表：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">for</span> name, fullname <span class="keyword">in</span> session.query(User.name, User.fullname):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">print</span> name, fullname</span></span><br><span class="line">ed Ed Jones</span><br><span class="line">wendy Wendy Williams</span><br><span class="line">mary Mary Contrary</span><br><span class="line">fred Fred Flinstone</span><br></pre></td></tr></table></figure>
+<p>还可以这样：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">for</span> row <span class="keyword">in</span> session.query(User, User.name).all():</span><br><span class="line"><span class="built_in">..</span>.    <span class="built_in">print</span> row.User, row.name</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;ed&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;f8s7ccs&#x27;</span>)&gt; ed</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;wendy&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Wendy Williams&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;foobar&#x27;</span>)&gt; wendy</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;mary&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Mary Contrary&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;xxg527&#x27;</span>)&gt; mary</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;fred&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Fred Flinstone&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;blah&#x27;</span>)&gt; fred</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/rel_1_0/orm/tutorial.html#querying">官方教程</a>这么介绍：</p>
+<blockquote>
+<p>The tuples returned by <code>Query</code> are named tuples, supplied by the <code>KeyedTuple</code> class, and can be treated much like an ordinary Python object. The names are the same as the attribute’s name for an attribute, and the class name for a class</p>
+</blockquote>
+<p><strong>我的疑问</strong><br>上面列子中的<code>row</code>用法的确同官方教程中介绍的<code>KeyedTuple</code>一样，但我在试验中得出的是下面的结果：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy.util._collections <span class="keyword">import</span> KeyedTuple</span><br><span class="line"><span class="keyword">for</span> <span class="keyword">row</span> <span class="keyword">in</span> <span class="keyword">session</span>.query(<span class="keyword">User</span>, <span class="keyword">User</span>.name).<span class="keyword">all</span>():</span><br><span class="line">    print <span class="keyword">type</span>(<span class="keyword">row</span>), isinstance(<span class="keyword">row</span>, KeyedTuple)</span><br><span class="line"></span><br><span class="line"># 输出</span><br><span class="line">&lt;<span class="keyword">class</span> <span class="string">&#x27;sqlalchemy.util._collections.result&#x27;</span>&gt; <span class="keyword">False</span></span><br><span class="line">&lt;<span class="keyword">class</span> <span class="string">&#x27;sqlalchemy.util._collections.result&#x27;</span>&gt; <span class="keyword">False</span></span><br><span class="line">&lt;<span class="keyword">class</span> <span class="string">&#x27;sqlalchemy.util._collections.result&#x27;</span>&gt; <span class="keyword">False</span></span><br><span class="line">&lt;<span class="keyword">class</span> <span class="string">&#x27;sqlalchemy.util._collections.result&#x27;</span>&gt; <span class="keyword">False</span></span><br></pre></td></tr></table></figure>
+<p>而且我在源码中并没有找到result这个类，对此表示疑惑。希望知道原因的朋友能指点一下！</p>
+<p>你还可以使用<code>label()</code>来控制查询结果每一列的名字：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">for</span> row <span class="keyword">in</span> session.query(User.name.label(<span class="string">&#x27;name_label&#x27;</span>)).<span class="built_in">all</span>():</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">   <span class="built_in">print</span>(row.name_label)</span></span><br><span class="line">ed</span><br><span class="line">wendy</span><br><span class="line">mary</span><br><span class="line">fred</span><br></pre></td></tr></table></figure>
+<p>看了SQL就会发现其实就是AS语句：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#SQL</span></span><br><span class="line"><span class="keyword">SELECT</span> users.name <span class="keyword">AS</span> name_label</span><br><span class="line"><span class="keyword">FROM</span> users</span><br><span class="line">()</span><br></pre></td></tr></table></figure>
+
+<p>还可以给整个实体例如<code>User</code>起别名，使用<code>aliased()</code> :</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">from</span> sqlalchemy.orm import aliased</span><br><span class="line">&gt;&gt;&gt; user_alias = aliased(User, <span class="attribute">name</span>=<span class="string">&#x27;user_alias&#x27;</span>)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; <span class="keyword">for</span> row <span class="keyword">in</span> session.query(user_alias, user_alias.name).all():</span><br><span class="line"><span class="built_in">..</span>.    <span class="built_in">print</span>(row.user_alias)</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;ed&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;f8s7ccs&#x27;</span>)&gt;</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;wendy&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Wendy Williams&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;foobar&#x27;</span>)&gt;</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;mary&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Mary Contrary&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;xxg527&#x27;</span>)&gt;</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;fred&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Fred Flinstone&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;blah&#x27;</span>)&gt;</span><br></pre></td></tr></table></figure>
+
+<p><code>Query</code>的基本操作包含了LIMIT和OFFSET，但更简单的方法是使用python的切片slices：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">session</span>.query(<span class="keyword">User</span>.name).<span class="keyword">offset</span>(<span class="number">1</span>).<span class="keyword">limit</span>(<span class="number">2</span>)</span><br><span class="line"><span class="keyword">session</span>.query(<span class="keyword">User</span>.name)[<span class="number">1</span>:<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">print <span class="keyword">type</span>(<span class="keyword">session</span>.query(<span class="keyword">User</span>.name).<span class="keyword">offset</span>(<span class="number">1</span>).<span class="keyword">limit</span>(<span class="number">2</span>)) # &lt;<span class="keyword">class</span> <span class="string">&#x27;sqlalchemy.orm.query.Query&#x27;</span>&gt;</span><br><span class="line">print <span class="keyword">type</span>(<span class="keyword">session</span>.query(<span class="keyword">User</span>.name)[<span class="number">1</span>:<span class="number">3</span>]) # &lt;<span class="keyword">type</span> <span class="string">&#x27;list&#x27;</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>这两种语句的查询结果是一样的，不同的是前者返回的是一个<code>Query</code>对象，后者是一个list。<br>毫无疑问，前者使用了SQL中的LIMIT和OFFSET语句。那么后者是从数据库中取出全部结果后再做切片的吗？这还有待考证。</p>
+<p>过滤有两种方法，使用<code>filter_by()</code>或者<code>filter()</code>。<br><code>filter_by()</code>使用关键字参数：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">for</span> name, <span class="keyword">in</span> session.query(User.name).filter_by(fullname=<span class="string">&#x27;Ed Jones&#x27;</span>):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">   <span class="built_in">print</span>(name)</span></span><br><span class="line">ed</span><br></pre></td></tr></table></figure>
+<p><code>filter()</code>使用Python表达式：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">for</span> name, <span class="keyword">in</span> session.query(User.name).<span class="built_in">filter</span>(User.fullname==<span class="string">&#x27;Ed Jones&#x27;</span>):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">   <span class="built_in">print</span>(name)</span></span><br><span class="line">ed</span><br></pre></td></tr></table></figure>
+
+<p><code>Query</code>对象上的大部分方法调用返回的仍是<code>Query</code>对象，这样你可以添加更多条件，比如过滤两次或更多，它们使用<code>AND</code>关系连接：</p>
+<figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; for <span class="literal">user</span> in session.query(<span class="literal">User</span>).filter(<span class="literal">User</span>.<span class="keyword">name</span>==<span class="string">&#x27;ed&#x27;</span>).filter(<span class="literal">User</span>.fullname==<span class="string">&#x27;Ed Jones&#x27;</span>):</span><br><span class="line">...    <span class="literal">print</span>(<span class="literal">user</span>)</span><br><span class="line">&lt;<span class="literal">User</span>(<span class="keyword">name</span>=<span class="string">&#x27;ed&#x27;</span>, fullname=<span class="string">&#x27;Ed Jones&#x27;</span>, password=<span class="string">&#x27;f8s7ccs&#x27;</span>)&gt;</span><br></pre></td></tr></table></figure>
+<p>但是如果你在<code>offset()</code>和<code>limit()</code>之后调用<code>filter()</code>,会引发错误：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">session</span>.query(<span class="keyword">User</span>.name).<span class="keyword">offset</span>(<span class="number">1</span>).<span class="keyword">limit</span>(<span class="number">2</span>).<span class="keyword">filter</span>(<span class="keyword">User</span>.name==&quot;wendy&quot;)</span><br><span class="line"></span><br><span class="line"># output</span><br><span class="line">sqlalchemy.exc.InvalidRequestError: Query.<span class="keyword">filter</span>() being <span class="keyword">called</span> <span class="keyword">on</span> a Query which already has <span class="keyword">LIMIT</span> <span class="keyword">or</span> <span class="keyword">OFFSET</span> applied. <span class="keyword">To</span> modify the <span class="keyword">row</span>-limited results <span class="keyword">of</span> a  Query, <span class="keyword">call</span> from_self() first.  Otherwise, <span class="keyword">call</span> <span class="keyword">filter</span>() <span class="keyword">before</span> <span class="keyword">limit</span>() <span class="keyword">or</span> <span class="keyword">offset</span>() are applied.</span><br></pre></td></tr></table></figure>
+<p>错误信息解释的也很明白了，你只需要先使用<code>from_self()</code>方法，像这样：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">session</span>.query(<span class="keyword">User</span>.name).<span class="keyword">offset</span>(<span class="number">1</span>).<span class="keyword">limit</span>(<span class="number">2</span>).from_self().<span class="keyword">filter</span>(<span class="keyword">User</span>.name==&quot;wendy&quot;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见过滤操作符"><a href="#常见过滤操作符" class="headerlink" title="常见过滤操作符"></a>常见过滤操作符</h3><p>下面是用在<code>filter()</code>中的一些常见操作符：</p>
+<ul>
+<li>equals  <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name == <span class="string">&#x27;ed&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+<li>not equals  <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name != <span class="string">&#x27;ed&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+<li>LIKE  <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name.<span class="keyword">like</span>(<span class="string">&#x27;%ed%&#x27;</span>))</span><br></pre></td></tr></table></figure></li>
+<li>IN  <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">query<span class="selector-class">.filter</span>(User<span class="selector-class">.name</span><span class="selector-class">.in_</span>(<span class="selector-attr">[<span class="string">&#x27;ed&#x27;</span>, <span class="string">&#x27;wendy&#x27;</span>, <span class="string">&#x27;jack&#x27;</span>]</span>))</span><br><span class="line"></span><br><span class="line"># works with query objects too:</span><br><span class="line">query.<span class="built_in">filter</span>(User.name.<span class="built_in">in_</span>(</span><br><span class="line">        session.<span class="built_in">query</span>(User.name).<span class="built_in">filter</span>(User.name.<span class="built_in">like</span>(<span class="string">&#x27;%ed%&#x27;</span>))</span><br><span class="line">))</span><br></pre></td></tr></table></figure></li>
+<li>NOT IN  <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query<span class="selector-class">.filter</span>(~User<span class="selector-class">.name</span><span class="selector-class">.in_</span>(<span class="selector-attr">[<span class="string">&#x27;ed&#x27;</span>, <span class="string">&#x27;wendy&#x27;</span>, <span class="string">&#x27;jack&#x27;</span>]</span>))</span><br></pre></td></tr></table></figure></li>
+<li>IS NULL  <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name == <span class="keyword">None</span>)</span><br><span class="line"></span><br><span class="line"># alternatively, <span class="keyword">if</span> pep8/linters are a concern</span><br><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name.is_(<span class="keyword">None</span>))</span><br></pre></td></tr></table></figure></li>
+<li>IS NOT NULL  <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name != <span class="keyword">None</span>)</span><br><span class="line"></span><br><span class="line"># alternatively, <span class="keyword">if</span> pep8/linters are a concern</span><br><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name.isnot(<span class="keyword">None</span>))</span><br></pre></td></tr></table></figure></li>
+<li>AND  <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># use and_()</span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> and_</span><br><span class="line">query.<span class="keyword">filter</span>(and_(<span class="keyword">User</span>.name == <span class="string">&#x27;ed&#x27;</span>, <span class="keyword">User</span>.fullname == <span class="string">&#x27;Ed Jones&#x27;</span>))</span><br><span class="line"></span><br><span class="line"># <span class="keyword">or</span> send multiple expressions <span class="keyword">to</span> .<span class="keyword">filter</span>()</span><br><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name == <span class="string">&#x27;ed&#x27;</span>, <span class="keyword">User</span>.fullname == <span class="string">&#x27;Ed Jones&#x27;</span>)</span><br><span class="line"></span><br><span class="line"># <span class="keyword">or</span> chain multiple <span class="keyword">filter</span>()/filter_by() calls</span><br><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name == <span class="string">&#x27;ed&#x27;</span>).<span class="keyword">filter</span>(<span class="keyword">User</span>.fullname == <span class="string">&#x27;Ed Jones&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+<li>OR  <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> or_</span><br><span class="line">query.<span class="keyword">filter</span>(or_(<span class="keyword">User</span>.name == <span class="string">&#x27;ed&#x27;</span>, <span class="keyword">User</span>.name == <span class="string">&#x27;wendy&#x27;</span>))</span><br></pre></td></tr></table></figure></li>
+<li>MATCH  <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.<span class="keyword">filter</span>(<span class="keyword">User</span>.name.match(<span class="string">&#x27;wendy&#x27;</span>))</span><br></pre></td></tr></table></figure>
+  <strong>注意</strong><br>  <code>match()</code>使用数据库指定的<code>MATCH</code>或<code>CONTAINS</code>函数。它的行为因数据库后端不同而不同。在某些数据库中是不能用的，比如SQLite。</li>
+</ul>
+<h3 id="返回Lists和Scalars"><a href="#返回Lists和Scalars" class="headerlink" title="返回Lists和Scalars"></a>返回Lists和Scalars</h3><p><code>Query</code>对象上有一些方法会立刻执行SQL并返回结果。</p>
+<ul>
+<li><code>all()</code> returns a list:  <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; query = <span class="keyword">session</span>.query(<span class="keyword">User</span>).<span class="keyword">filter</span>(<span class="keyword">User</span>.name.<span class="keyword">like</span>(<span class="string">&#x27;%ed&#x27;</span>)).order_by(<span class="keyword">User</span>.id)</span><br><span class="line">&gt;&gt;&gt; query.<span class="keyword">all</span>()</span><br><span class="line">[&lt;<span class="keyword">User</span>(<span class="type">name</span>=<span class="string">&#x27;ed&#x27;</span>, fullname=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="keyword">password</span>=<span class="string">&#x27;f8s7ccs&#x27;</span>)&gt;,</span><br><span class="line">      &lt;<span class="keyword">User</span>(<span class="type">name</span>=<span class="string">&#x27;fred&#x27;</span>, fullname=<span class="string">&#x27;Fred Flinstone&#x27;</span>, <span class="keyword">password</span>=<span class="string">&#x27;blah&#x27;</span>)&gt;]</span><br></pre></td></tr></table></figure></li>
+<li><code>first()</code> 返回查询结果中的第一项：  <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; query.first()</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;ed&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;f8s7ccs&#x27;</span>)&gt;</span><br></pre></td></tr></table></figure></li>
+<li><code>one()</code> 取所有的行(rows)，如果结果不止一个，会报错<code>MultipleResultsFound</code>。如果结果一个也没有，会报错<code>NoResultFound</code>。</li>
+<li><code>one_or_none()</code> 同<code>one()</code>相似，只是没有结果是返回<code>None</code>而不报错。</li>
+<li><code>scalar()</code> 会先调用<code>one()</code>，如果没有报错，会返回行的第一列：  <figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">query = session.query(User.<span class="built_in">id</span>).<span class="built_in">filter</span>(User.name == <span class="string">&#x27;ed&#x27;</span>).order_by(User.<span class="built_in">id</span>)</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">query.scalar()</span></span><br><span class="line">1</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="使用SQL字符串"><a href="#使用SQL字符串" class="headerlink" title="使用SQL字符串"></a>使用SQL字符串</h3><p><code>Query</code>的大多数方法还可以通过使用<code>text()</code>来接受字符串作为参数。例如<code>filter()</code>和<code>order_by()</code>：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> text</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">for</span> user <span class="keyword">in</span> session.query(User).<span class="built_in">filter</span>(text(<span class="string">&quot;id&lt;224&quot;</span>)).order_by(text(<span class="string">&quot;id&quot;</span>)).<span class="built_in">all</span>():</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">print</span>(user.name)</span></span><br><span class="line">ed</span><br><span class="line">wendy</span><br><span class="line">mary</span><br><span class="line">fred</span><br></pre></td></tr></table></figure>
+<p>SQL字符串还可以通过<code>params()</code>方法指定参数：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; session.query(User).filter(text(<span class="string">&quot;id&lt;:value and name=:name&quot;</span>)).params(<span class="attribute">value</span>=224, <span class="attribute">name</span>=<span class="string">&#x27;fred&#x27;</span>).order_by(User.id).one()</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;fred&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Fred Flinstone&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;blah&#x27;</span>)&gt;</span><br></pre></td></tr></table></figure>
+<p>要使用完整的SQL字符串表达式，使用<code>from_statement()</code>方法：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; session.query(User).from_statement(</span><br><span class="line"><span class="built_in">..</span>.                     text(<span class="string">&quot;SELECT * FROM users where name=:name&quot;</span>)).params(<span class="attribute">name</span>=<span class="string">&#x27;ed&#x27;</span>).all()</span><br><span class="line">[&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;ed&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Ed Jones&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;f8s7ccs&#x27;</span>)&gt;]</span><br></pre></td></tr></table></figure>
+
+<h3 id="计数-Counting"><a href="#计数-Counting" class="headerlink" title="计数 Counting"></a>计数 Counting</h3><p><code>Query</code>有个便捷的计数方法<code>count()</code>：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.query(<span class="keyword">User</span>).<span class="keyword">filter</span>(<span class="keyword">User</span>.name.<span class="keyword">like</span>(<span class="string">&#x27;%ed&#x27;</span>)).count()</span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>来看看这行代码产生的SQL:</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> count(*) <span class="keyword">AS</span> count_1</span><br><span class="line"><span class="keyword">FROM</span> (<span class="keyword">SELECT</span> users.id <span class="keyword">AS</span> users_id,</span><br><span class="line">                users.name <span class="keyword">AS</span> users_name,</span><br><span class="line">                users.fullname <span class="keyword">AS</span> users_fullname,</span><br><span class="line">                users.<span class="keyword">password</span> <span class="keyword">AS</span> users_password</span><br><span class="line"><span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">WHERE</span> users.name <span class="keyword">LIKE</span> ?) <span class="keyword">AS</span> anon_1</span><br><span class="line">(<span class="string">&#x27;%ed&#x27;</span>,)</span><br></pre></td></tr></table></figure>
+<p>在某些情况下，使用<code>SELECT count(*) FROM table</code>会更简单。但现在新版本的SQLAlchemy总是用更加精确的SQL来表达更加准确的含义。</p>
+<p>有时我们需要指定对哪些项来计数，可以使用<code>func.count()</code>表达式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> func</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>session.query(func.count(User.name), User.name).group_by(User.name).<span class="built_in">all</span>()</span><br><span class="line">[(<span class="number">1</span>, <span class="string">u&#x27;ed&#x27;</span>), (<span class="number">1</span>, <span class="string">u&#x27;fred&#x27;</span>), (<span class="number">1</span>, <span class="string">u&#x27;mary&#x27;</span>), (<span class="number">1</span>, <span class="string">u&#x27;wendy&#x27;</span>)]</span><br></pre></td></tr></table></figure>
+
+<p>要产生<code>SELECT count(*) FROM table</code>这样简单的SQL，我们可以这样做：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; session<span class="selector-class">.query</span>(func<span class="selector-class">.count</span>(<span class="string">&#x27;*&#x27;</span>))<span class="selector-class">.select_from</span>(User)<span class="selector-class">.scalar</span>()</span><br><span class="line"><span class="number">4</span></span><br></pre></td></tr></table></figure>
+<p>更简单的做法，可以不使用<code>select_from()</code>:</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.query(func.count(<span class="keyword">User</span>.id)).scalar()</span><br><span class="line"><span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="建立关系-Building-a-Relationship"><a href="#建立关系-Building-a-Relationship" class="headerlink" title="建立关系 Building a Relationship"></a>建立关系 Building a Relationship</h2><p>现在来想想我们的第二张表(table)吧，它与<code>User</code>关联，可以被映射和查询。假设在我们的系统中用户可以保存多个email地址，那么，我们要将<code>users</code>表通过一对多的关系关联到一个叫做<code>addresses</code>的新表上。我们通过定义<code>Address</code>类来映射出这张表：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> ForeignKey</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> relationship</span></span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">class</span> <span class="title class_">Address</span>(<span class="title class_ inherited__">Base</span>):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    __tablename__ = <span class="string">&#x27;addresses&#x27;</span></span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">id</span> = Column(Integer, primary_key=<span class="literal">True</span>)</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    email_address = Column(String, nullable=<span class="literal">False</span>)</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    user_id = Column(Integer, ForeignKey(<span class="string">&#x27;users.id&#x27;</span>))</span></span><br><span class="line"><span class="meta prompt_">...</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    user = relationship(<span class="string">&quot;User&quot;</span>, back_populates=<span class="string">&quot;addresses&quot;</span>)</span></span><br><span class="line"><span class="meta prompt_">...</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">        <span class="keyword">return</span> <span class="string">&quot;&lt;Address(email_address=&#x27;%s&#x27;)&gt;&quot;</span> % <span class="variable language_">self</span>.email_address</span></span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">User.addresses = relationship(</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="string">&quot;Address&quot;</span>, order_by=Address.<span class="built_in">id</span>, back_populates=<span class="string">&quot;user&quot;</span>)</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong><br><code>relationship.back_populates</code>参数是SQLAlchemy中<code>relationship.backref</code>的更新版本。<code>relationship.backref</code>仍然可以使用。<code>relationship.back_populates</code>除了一点冗长和更易操作，其实是一样的。</p>
+</blockquote>
+<p>与Django的模型定义相比，SQLAlchemy中的写法似乎稍微麻烦了一些，我想应该有它的道理吧，再深入学习也许能体会到。用过Django的同学应该不难看懂。这里<a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/rel_1_0/orm/tutorial.html#building-a-relationship">官方教程</a>介绍的很详细，我觉得是有点啰嗦了，有兴趣的同学可以仔细看看。</p>
+<p>现在我们需要在数据库中创建出<code>addresses</code>表，因此我们会从metadata中发起一个新的CREATE语句。不必担心，已经创建的表将会被跳过：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Base.metadata.create_all(engine)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用关联对象-Working-with-Related-Objects"><a href="#使用关联对象-Working-with-Related-Objects" class="headerlink" title="使用关联对象 Working with Related Objects"></a>使用关联对象 Working with Related Objects</h2><p>现在当我们创建一个<code>User</code>对象，它会有一个空的<code>addresses</code>容器(collection)。collection可以有多种类型，比如集合set或是字典dictionary，默认情况下是Python的列表list。</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; jack = User(<span class="attribute">name</span>=<span class="string">&#x27;jack&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Jack Bean&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;gjffdd&#x27;</span>)</span><br><span class="line">&gt;&gt;&gt; jack.addresses</span><br><span class="line">[]</span><br></pre></td></tr></table></figure>
+<p>我们可以自由的对<code>User</code>对象添加<code>Address</code>对象。</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">jack.addresses = [</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">                Address(email_address=<span class="string">&#x27;jack@google.com&#x27;</span>),</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">                Address(email_address=<span class="string">&#x27;j25@yahoo.com&#x27;</span>)]</span></span><br></pre></td></tr></table></figure>
+
+<p>添加了关系的元素可以向下面这样双向引用，这种行为通过Python实现而不需要任何SQL：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; jack.addresses[1]</span><br><span class="line">&lt;Address(<span class="attribute">email_address</span>=<span class="string">&#x27;j25@yahoo.com&#x27;</span>)&gt;</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; jack.addresses[1].user</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;jack&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Jack Bean&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;gjffdd&#x27;</span>)&gt;</span><br></pre></td></tr></table></figure>
+<p>我们把<code>User</code>对象<code>Jack Bean</code>commit到数据库，通过叫做级联(cascading)的过程，两个<code>Address</code>对象也会被保存到数据库中。</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.<span class="keyword">add</span>(jack)</span><br><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.<span class="keyword">commit</span>()</span><br></pre></td></tr></table></figure>
+<p>现在查询Jack，我们仅仅取回了Jack，没有任何有关Jack的addresses的SQL：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; jack = <span class="keyword">session</span>.query(<span class="keyword">User</span>).filter_by(<span class="type">name</span>=<span class="string">&#x27;jack&#x27;</span>).one()</span><br><span class="line">&gt;&gt;&gt; jack</span><br><span class="line">&lt;<span class="keyword">User</span>(<span class="type">name</span>=<span class="string">&#x27;jack&#x27;</span>, fullname=<span class="string">&#x27;Jack Bean&#x27;</span>, <span class="keyword">password</span>=<span class="string">&#x27;gjffdd&#x27;</span>)&gt;</span><br><span class="line"></span><br><span class="line"># <span class="keyword">SQL</span></span><br><span class="line"><span class="keyword">BEGIN</span> (implicit)</span><br><span class="line"><span class="keyword">SELECT</span> users.id <span class="keyword">AS</span> users_id,</span><br><span class="line">        users.name <span class="keyword">AS</span> users_name,</span><br><span class="line">        users.fullname <span class="keyword">AS</span> users_fullname,</span><br><span class="line">        users.<span class="keyword">password</span> <span class="keyword">AS</span> users_password</span><br><span class="line"><span class="keyword">FROM</span> users</span><br><span class="line"><span class="keyword">WHERE</span> users.name = ?</span><br><span class="line">(<span class="string">&#x27;jack&#x27;</span>,)</span><br></pre></td></tr></table></figure>
+<p>查看<code>addresses</code>容器时，才会发出查询<code>addresses</code>的SQL：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">jack.addresses</span></span><br><span class="line"><span class="keyword"></span>[&lt;<span class="keyword">Address(email_address=&#x27;jack@google.com&#x27;)&gt;, </span>&lt;<span class="keyword">Address(email_address=&#x27;j25@yahoo.com&#x27;)&gt;]</span></span><br><span class="line"><span class="keyword"></span></span><br><span class="line"><span class="comment"># SQL</span></span><br><span class="line">SELECT <span class="keyword">addresses.id </span>AS <span class="keyword">addresses_id,</span></span><br><span class="line"><span class="keyword"></span>        <span class="keyword">addresses.email_address </span>AS</span><br><span class="line">        <span class="keyword">addresses_email_address,</span></span><br><span class="line"><span class="keyword"></span>        <span class="keyword">addresses.user_id </span>AS <span class="keyword">addresses_user_id</span></span><br><span class="line"><span class="keyword"></span>FROM <span class="keyword">addresses</span></span><br><span class="line"><span class="keyword"></span>WHERE ? = <span class="keyword">addresses.user_id </span><span class="keyword">ORDER </span><span class="keyword">BY </span><span class="keyword">addresses.id</span></span><br><span class="line"><span class="keyword"></span>(<span class="number">5</span>,)</span><br></pre></td></tr></table></figure>
+<p>这是关系懒加载(lazy loading relationship)的一个例子。</p>
+<h2 id="关联查询-Querying-with-Joins"><a href="#关联查询-Querying-with-Joins" class="headerlink" title="关联查询 Querying with Joins"></a>关联查询 Querying with Joins</h2><p>现在我们有两张表了，可以演示<code>Query</code>更多的特性了。<br>下面我们同时加载<code>User</code>和<code>Address</code>，使用<code>Query.filter()</code>时可以看作它们的列已经关联在一起了：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">for</span> u, a <span class="keyword">in</span> session.query(User, Address).\</span><br><span class="line"><span class="built_in">..</span>.                     filter(User.<span class="attribute">id</span>==Address.user_id).\</span><br><span class="line"><span class="built_in">..</span>.                     filter(Address.<span class="attribute">email_address</span>==&#x27;jack@google.com&#x27;).\</span><br><span class="line"><span class="built_in">..</span>.                     all():</span><br><span class="line"><span class="built_in">..</span>.     <span class="built_in">print</span>(u)</span><br><span class="line"><span class="built_in">..</span>.     <span class="built_in">print</span>(a)</span><br><span class="line">&lt;User(<span class="attribute">name</span>=<span class="string">&#x27;jack&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Jack Bean&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;gjffdd&#x27;</span>)&gt;</span><br><span class="line">&lt;Address(<span class="attribute">email_address</span>=<span class="string">&#x27;jack@google.com&#x27;</span>)&gt;</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>Query.join()</code>时最简单的办法来达到标准的SQL JOIN语法：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.query(<span class="keyword">User</span>).<span class="keyword">join</span>(Address).<span class="keyword">filter</span>(Address.email_address==<span class="string">&#x27;jack@google.com&#x27;</span>).<span class="keyword">all</span>()</span><br><span class="line">[&lt;<span class="keyword">User</span>(<span class="type">name</span>=<span class="string">&#x27;jack&#x27;</span>, fullname=<span class="string">&#x27;Jack Bean&#x27;</span>, <span class="keyword">password</span>=<span class="string">&#x27;gjffdd&#x27;</span>)&gt;]</span><br><span class="line"></span><br><span class="line"># <span class="keyword">SQL</span></span><br><span class="line"><span class="keyword">SELECT</span> users.id <span class="keyword">AS</span> users_id,</span><br><span class="line">        users.name <span class="keyword">AS</span> users_name,</span><br><span class="line">        users.fullname <span class="keyword">AS</span> users_fullname,</span><br><span class="line">        users.<span class="keyword">password</span> <span class="keyword">AS</span> users_password</span><br><span class="line"><span class="keyword">FROM</span> users <span class="keyword">JOIN</span> addresses <span class="keyword">ON</span> users.id = addresses.user_id</span><br><span class="line"><span class="keyword">WHERE</span> addresses.email_address = ?</span><br><span class="line">(<span class="string">&#x27;jack@google.com&#x27;</span>,)</span><br></pre></td></tr></table></figure>
+
+<p><code>Query.join()</code>知道该如何连接<code>User</code>和<code>Address</code>因为它们之间有且仅有一个外键关系。如果没有外键或是有多个，用下面的几种形式之一，<code>Query.join()</code>会更好的工作：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">query.<span class="keyword">join</span>(Address, <span class="keyword">User</span>.id==Address.user_id)    # explicit condition</span><br><span class="line">query.<span class="keyword">join</span>(<span class="keyword">User</span>.addresses)                       # specify relationship <span class="keyword">from</span> left <span class="keyword">to</span> right</span><br><span class="line">query.<span class="keyword">join</span>(Address, <span class="keyword">User</span>.addresses)              # same, <span class="keyword">with</span> explicit target</span><br><span class="line">query.<span class="keyword">join</span>(<span class="string">&#x27;addresses&#x27;</span>)                          # same, <span class="keyword">using</span> a string</span><br></pre></td></tr></table></figure>
+
+<p>正如你所期望的，使用<code>outerjoin()</code>可以达到外关联(outer join)：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.outerjoin(User.addresses)   # <span class="keyword">LEFT</span> <span class="keyword">OUTER</span> <span class="keyword">JOIN</span></span><br></pre></td></tr></table></figure>
+<p>对数据库的各种关联关系我了解的很少，也是需要加强的地方。更详细的文档可以看<a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/rel_1_0/orm/query.html#sqlalchemy.orm.query.Query.join">这里</a>。</p>
+<h3 id="使用别名-Using-Aliases"><a href="#使用别名-Using-Aliases" class="headerlink" title="使用别名 Using Aliases"></a>使用别名 Using Aliases</h3><p>多表查询时，有时同一张表会被引用不止一次，这时就需要使用别名(Aliases)。下面我们把<code>Address</code>关联了两次，来查询两个email地址不一样的用户：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> aliased</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">adalias1 = aliased(Address)</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">adalias2 = aliased(Address)</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">for</span> username, email1, email2 <span class="keyword">in</span> \</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    session.query(User.name, adalias1.email_address, adalias2.email_address).\</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    join(adalias1, User.addresses).\</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    join(adalias2, User.addresses).\</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">filter</span>(adalias1.email_address==<span class="string">&#x27;jack@google.com&#x27;</span>).\</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">filter</span>(adalias2.email_address==<span class="string">&#x27;j25@yahoo.com&#x27;</span>):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">print</span> username, email1, email2</span></span><br><span class="line">jack jack@google.com j25@yahoo.com</span><br></pre></td></tr></table></figure>
+
+<h3 id="Using-EXISTS"><a href="#Using-EXISTS" class="headerlink" title="Using EXISTS"></a>Using EXISTS</h3><p>在SQL中EXISTS关键字是一个布尔运算符，当给定的表达式包含任何行时，就会返回True。在许多情况下它可以用来代替joins。<br>下面是EXISTS的一个使用实例：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> sqlalchemy.sql <span class="keyword">import</span> exists</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">stmt = exists().where(Address.user_id==User.<span class="built_in">id</span>)</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">for</span> name, <span class="keyword">in</span> session.query(User.name).<span class="built_in">filter</span>(stmt):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">print</span>(name)</span></span><br><span class="line">jack</span><br></pre></td></tr></table></figure>
+
+<p><code>Query</code>的几个操作符也会自动的调用EXISTS。上面的例子也可以用下面的方式表达：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">for</span> name, <span class="keyword">in</span> session.query(User.name).\</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">        <span class="built_in">filter</span>(User.addresses.<span class="built_in">any</span>()):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">print</span>(name)</span></span><br><span class="line">jack</span><br></pre></td></tr></table></figure>
+
+<p><code>any()</code>也可以用条件来做限制：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">for</span> name, <span class="keyword">in</span> session.query(User.name).\</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">filter</span>(User.addresses.<span class="built_in">any</span>(Address.email_address.like(<span class="string">&#x27;%google%&#x27;</span>))):</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    <span class="built_in">print</span>(name)</span></span><br><span class="line">jack</span><br></pre></td></tr></table></figure>
+
+<p><code>has()</code>和<code>any()</code>类似，它是多对一关系的操作符（注意<code>~</code>代表NOT）：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">session.query(Address).\</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">        <span class="built_in">filter</span>(~Address.user.has(User.name==<span class="string">&#x27;jack&#x27;</span>)).<span class="built_in">all</span>()</span></span><br><span class="line">[]</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用关系运算符-Common-Relationship-Operators"><a href="#常用关系运算符-Common-Relationship-Operators" class="headerlink" title="常用关系运算符 Common Relationship Operators"></a>常用关系运算符 Common Relationship Operators</h3><ul>
+<li><p><strong>eq</strong>() (many-to-one “equals” comparison):</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.filter(Address.<span class="keyword">user</span> <span class="title">== someuser</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>ne</strong>() (many-to-one “not equals” comparison):</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.filter(Address.<span class="keyword">user</span> <span class="title">!= someuser</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>IS NULL (many-to-one comparison, also uses <strong>eq</strong>()):</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.filter(Address.<span class="keyword">user</span> <span class="title">== None</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>contains() (used for one-to-many collections):</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query<span class="selector-class">.filter</span>(User<span class="selector-class">.addresses</span><span class="selector-class">.contains</span>(someaddress))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>any() (used for collections):</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">query.<span class="built_in">filter</span>(User.addresses.<span class="keyword">any</span>(Address.email_address == <span class="string">&#x27;bar&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># also takes keyword arguments:</span></span><br><span class="line">query.<span class="built_in">filter</span>(User.addresses.<span class="keyword">any</span>(email_address=<span class="string">&#x27;bar&#x27;</span>))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>has() (used for scalar references):</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">query.<span class="keyword">filter</span>(Address.<span class="keyword">user</span>.has(<span class="type">name</span>=<span class="string">&#x27;ed&#x27;</span>))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Query.with_parent() (used for any relationship):</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">session<span class="selector-class">.query</span>(Address)<span class="selector-class">.with_parent</span>(someuser, <span class="string">&#x27;addresses&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="删除-Deleting"><a href="#删除-Deleting" class="headerlink" title="删除 Deleting"></a>删除 Deleting</h2><p>我们来试着删除<code>jack</code>看看会发生什么。</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.<span class="keyword">delete</span>(jack)</span><br><span class="line">&gt;&gt;&gt; <span class="keyword">session</span>.query(<span class="keyword">User</span>).filter_by(<span class="type">name</span>=<span class="string">&#x27;jack&#x27;</span>).count()</span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>目前为止，一切正常。那Jack的那些<code>Address</code>对象呢？</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">session.query(Address).<span class="built_in">filter</span>(</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">    Address.email_address.in_([<span class="string">&#x27;jack@google.com&#x27;</span>, <span class="string">&#x27;j25@yahoo.com&#x27;</span>])</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python"> ).count()</span></span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+<p>看，它们还在！分析SQL我们可以看到每个address的<code>user_id</code>列被设置为NULL，而此address行并没有删除。除非你明确的指定，SQLAlchemy不会做级联删除。</p>
+<h3 id="配置级联删除-Configuring-delete-delete-orphan-Cascade"><a href="#配置级联删除-Configuring-delete-delete-orphan-Cascade" class="headerlink" title="配置级联删除 Configuring delete&#x2F;delete-orphan Cascade"></a>配置级联删除 Configuring delete&#x2F;delete-orphan Cascade</h3><p>我们可以配置<code>User.addresses</code>关系上的<strong>cascade</strong>选项来改变这种行为。虽然SQLAlchemy允许你在任何时候添加新的属性或是关系，但是这样需要删除已经存在的关系。所以我们需要推翻之前的关系映射重来。现在关闭<code>Session</code>：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">session</span>.<span class="keyword">close</span>()</span><br></pre></td></tr></table></figure>
+<p>现在我们重新声明<code>User</code>和<code>Address</code>类：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="keyword">User</span>(Base):</span><br><span class="line">    __tablename__ = <span class="string">&#x27;users&#x27;</span></span><br><span class="line"></span><br><span class="line">    id = <span class="keyword">Column</span>(<span class="type">Integer</span>, primary_key=<span class="keyword">True</span>)</span><br><span class="line">    <span class="type">name</span> = <span class="keyword">Column</span>(String)</span><br><span class="line">    fullname = <span class="keyword">Column</span>(String)</span><br><span class="line">    <span class="keyword">password</span> = <span class="keyword">Column</span>(String)</span><br><span class="line"></span><br><span class="line">    addresses = relationship(&quot;Address&quot;, back_populates=<span class="string">&#x27;user&#x27;</span>, <span class="keyword">cascade</span>=&quot;all, delete, delete-orphan&quot;)</span><br><span class="line"></span><br><span class="line">    def __repr__(self):</span><br><span class="line">       <span class="keyword">return</span> &quot;&lt;User(name=&#x27;%s&#x27;, fullname=&#x27;%s&#x27;, password=&#x27;%s&#x27;)&gt;&quot; % (</span><br><span class="line">                            self.name, self.fullname, self.<span class="keyword">password</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> Address(Base):</span><br><span class="line">    __tablename__ = <span class="string">&#x27;addresses&#x27;</span></span><br><span class="line">    id = <span class="keyword">Column</span>(<span class="type">Integer</span>, primary_key=<span class="keyword">True</span>)</span><br><span class="line">    email_address = <span class="keyword">Column</span>(String, nullable=<span class="keyword">False</span>)</span><br><span class="line">    user_id = <span class="keyword">Column</span>(<span class="type">Integer</span>, ForeignKey(<span class="string">&#x27;users.id&#x27;</span>))</span><br><span class="line">    <span class="keyword">user</span> = relationship(&quot;User&quot;, back_populates=&quot;addresses&quot;)</span><br><span class="line">    def __repr__(self):</span><br><span class="line">        <span class="keyword">return</span> &quot;&lt;Address(email_address=&#x27;%s&#x27;)&gt;&quot; % self.email_address     </span><br></pre></td></tr></table></figure>
+<p>注意，这次我们把关系定义在<code>User</code>类中。<br>现在，删除Jack的同时也会删除与这个user关联的<code>Address</code>对象：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">session.delete(jack)</span></span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">session.query(User).filter_by(name=<span class="string">&#x27;jack&#x27;</span>).count()</span></span><br><span class="line">0</span><br><span class="line"></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">session.query(Address).<span class="built_in">filter</span>(</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">   Address.email_address.in_([<span class="string">&#x27;jack@google.com&#x27;</span>, <span class="string">&#x27;j25@yahoo.com&#x27;</span>])</span></span><br><span class="line"><span class="meta prompt_">...</span> <span class="language-python">).count()</span></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建多对多的关系-Building-a-Many-To-Many-Relationship"><a href="#创建多对多的关系-Building-a-Many-To-Many-Relationship" class="headerlink" title="创建多对多的关系 Building a Many To Many Relationship"></a>创建多对多的关系 Building a Many To Many Relationship</h2><p>现在来建立一个多对多的关系。假设我们有一个博客应用，文章<code>BlogPost</code>和关键词<code>Keyword</code>就是多对多关系。</p>
+<p>我们需要创建一个没有映射的<code>Table</code>作为中间表。</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> <span class="keyword">Table</span>, <span class="type">Text</span></span><br><span class="line"># association <span class="keyword">table</span></span><br><span class="line">post_keywords = <span class="keyword">Table</span>(<span class="string">&#x27;post_keywords&#x27;</span>, Base.metadata,</span><br><span class="line">    <span class="keyword">Column</span>(<span class="string">&#x27;post_id&#x27;</span>, ForeignKey(<span class="string">&#x27;posts.id&#x27;</span>), primary_key=<span class="keyword">True</span>),</span><br><span class="line">    <span class="keyword">Column</span>(<span class="string">&#x27;keyword_id&#x27;</span>, ForeignKey(<span class="string">&#x27;keywords.id&#x27;</span>), primary_key=<span class="keyword">True</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>然后我们定义<code>BlogPost</code>和<code>Keyword</code>：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">BlogPost</span>(<span class="type">Base</span>):</span></span><br><span class="line"><span class="class">    __tablename__ = &#x27;posts&#x27;</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    id = <span class="type">Column</span>(<span class="type">Integer</span>, <span class="title">primary_key</span>=<span class="type">True</span>)</span></span><br><span class="line"><span class="class">    user_id = <span class="type">Column</span>(<span class="type">Integer</span>, <span class="type">ForeignKey</span>(&#x27;<span class="title">users</span>.<span class="title">id&#x27;</span>))</span></span><br><span class="line"><span class="class">    headline = <span class="type">Column</span>(<span class="type">String(255)</span>, <span class="title">nullable</span>=<span class="type">False</span>)</span></span><br><span class="line"><span class="class">    body = <span class="type">Column</span>(<span class="type">Text</span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    # many to many <span class="type">BlogPost</span>&lt;-&gt;<span class="type">Keyword</span></span></span><br><span class="line"><span class="class">    keywords = relationship(&#x27;<span class="type">Keyword</span>&#x27;,</span></span><br><span class="line"><span class="class">                            <span class="title">secondary</span>=<span class="title">post_keywords</span>,</span></span><br><span class="line"><span class="class">                            <span class="title">back_populates</span>=&#x27;<span class="title">posts&#x27;</span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    def __init__(<span class="title">self</span>, <span class="title">headline</span>, <span class="title">body</span>, <span class="title">author</span>):</span></span><br><span class="line"><span class="class">        self.author = author</span></span><br><span class="line"><span class="class">        self.headline = headline</span></span><br><span class="line"><span class="class">        self.body = body</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    def __repr__(<span class="title">self</span>):</span></span><br><span class="line"><span class="class">        return &quot;<span class="type">BlogPost</span>(%<span class="title">r</span>, %<span class="title">r</span>, %<span class="title">r</span>)&quot; % (<span class="title">self</span>.<span class="title">headline</span>, <span class="title">self</span>.<span class="title">body</span>, <span class="title">self</span>.<span class="title">author</span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Keyword</span>(<span class="type">Base</span>):</span></span><br><span class="line"><span class="class">    __tablename__ = &#x27;keywords&#x27;</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    id = <span class="type">Column</span>(<span class="type">Integer</span>, <span class="title">primary_key</span>=<span class="type">True</span>)</span></span><br><span class="line"><span class="class">    keyword = <span class="type">Column</span>(<span class="type">String(50)</span>, <span class="title">nullable</span>=<span class="type">False</span>, <span class="title">unique</span>=<span class="type">True</span>)</span></span><br><span class="line"><span class="class">    posts = relationship(&#x27;<span class="type">BlogPost</span>&#x27;,</span></span><br><span class="line"><span class="class">                         <span class="title">secondary</span>=<span class="title">post_keywords</span>,</span></span><br><span class="line"><span class="class">                         <span class="title">back_populates</span>=&#x27;<span class="title">keywords&#x27;</span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    def __init__(<span class="title">self</span>, <span class="title">keyword</span>):</span></span><br><span class="line"><span class="class">        self.keyword = keyword</span></span><br></pre></td></tr></table></figure>
+<p>现在我们还希望<code>BlogPost</code>类能有一个<code>author</code>字段：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BlogPost.author = relationship(User, <span class="attribute">back_populates</span>=<span class="string">&quot;posts&quot;</span>)</span><br><span class="line">User.posts = relationship(BlogPost, <span class="attribute">back_populates</span>=<span class="string">&quot;author&quot;</span>, <span class="attribute">lazy</span>=<span class="string">&quot;dynamic&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>创建新表：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Base<span class="selector-class">.metadata</span><span class="selector-class">.create_all</span>(engine)</span><br></pre></td></tr></table></figure>
+
+<p>添加一些数据：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wendy = session<span class="selector-class">.query</span>(User)<span class="selector-class">.filter_by</span>(name=<span class="string">&#x27;wendy&#x27;</span>)<span class="selector-class">.one</span>()</span><br><span class="line">post = <span class="built_in">BlogPost</span>(<span class="string">&quot;Wendy&#x27;s Blog Post&quot;</span>, <span class="string">&quot;This is a test&quot;</span>, wendy)</span><br><span class="line">session<span class="selector-class">.add</span>(post)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">post<span class="selector-class">.keywords</span><span class="selector-class">.append</span>(<span class="built_in">Keyword</span>(<span class="string">&#x27;wendy&#x27;</span>))</span><br><span class="line">post<span class="selector-class">.keywords</span><span class="selector-class">.append</span>(<span class="built_in">Keyword</span>(<span class="string">&#x27;firstpost&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<p>下面是几种不同的查询示例：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; session.query(BlogPost).filter(BlogPost.keywords.any(<span class="attribute">keyword</span>=<span class="string">&#x27;firstpost&#x27;</span>)).all()</span><br><span class="line">[BlogPost(<span class="string">&quot;Wendy&#x27;s Blog Post&quot;</span>, <span class="string">&#x27;This is a test&#x27;</span>, &lt;User(<span class="attribute">name</span>=<span class="string">&#x27;wendy&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Wendy Williams&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;foobar&#x27;</span>)&gt;)]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; session.query(BlogPost).\</span><br><span class="line"><span class="built_in">..</span>.             filter(BlogPost.<span class="attribute">author</span>==wendy).\</span><br><span class="line"><span class="built_in">..</span>.             filter(BlogPost.keywords.any(<span class="attribute">keyword</span>=<span class="string">&#x27;firstpost&#x27;</span>)).\</span><br><span class="line"><span class="built_in">..</span>.             all()</span><br><span class="line">[BlogPost(<span class="string">&quot;Wendy&#x27;s Blog Post&quot;</span>, <span class="string">&#x27;This is a test&#x27;</span>, &lt;User(<span class="attribute">name</span>=<span class="string">&#x27;wendy&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Wendy Williams&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;foobar&#x27;</span>)&gt;)]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; wendy.posts.filter(BlogPost.keywords.any(<span class="attribute">keyword</span>=<span class="string">&#x27;firstpost&#x27;</span>)).all()</span><br><span class="line">[BlogPost(<span class="string">&quot;Wendy&#x27;s Blog Post&quot;</span>, <span class="string">&#x27;This is a test&#x27;</span>, &lt;User(<span class="attribute">name</span>=<span class="string">&#x27;wendy&#x27;</span>, <span class="attribute">fullname</span>=<span class="string">&#x27;Wendy Williams&#x27;</span>, <span class="attribute">password</span>=<span class="string">&#x27;foobar&#x27;</span>)&gt;)]</span><br></pre></td></tr></table></figure>
+
+<h2 id="更多参考-Further-Reference"><a href="#更多参考-Further-Reference" class="headerlink" title="更多参考 Further Reference"></a>更多参考 Further Reference</h2><p><a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/rel_1_0/index.html">SQLAlchemy 1.0 Documentation</a></p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>这是我第一次接触SQLAlchemy，文章是我一边学习一边记录下来的。文章中的代码大部分来自SQLAlchemy的官方文档，我都亲自做了实验并运行成功。我尽力保证文章的准确性，既是对自己的要求，也不希望因我的错误而误导读者。但因个人技术水平有限，文章中难免会有不准确的地方，希望发现错误的朋友能慷慨向我指出。学习SQLAlchemy还是请以官方文档为准。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/SQLAlchemy初体验/" target="_blank" title="SQLAlchemy初体验">https://chowyi.com/SQLAlchemy初体验/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#SQLAlchemy" >
+    <span class="tag-code">SQLAlchemy</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/shenzhen-100km-2016/">
+        <span class="nav-arrow">← </span>
+        
+          新的体验！我的深圳百公里
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E2%80%94%E2%80%94%E6%83%B3%E8%B1%A1%E5%8F%A6%E4%B8%80%E7%A7%8D%E5%8F%AF%E8%83%BD/">
+        
+          读书笔记——想象另一种可能
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-nav-text">安装</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%89%88%E6%9C%AC%E6%A3%80%E6%9F%A5-Install"><span class="toc-nav-text">版本检查 Install</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93-Connecting"><span class="toc-nav-text">连接数据库 Connecting</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-nav-text">数据库连接字符串</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%A3%B0%E6%98%8E%E6%98%A0%E5%B0%84-Declare-a-Mapping"><span class="toc-nav-text">声明映射 Declare a Mapping</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Session"><span class="toc-nav-text">Session</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%92%8C%E6%9B%B4%E6%96%B0%E5%AF%B9%E8%B1%A1"><span class="toc-nav-text">添加和更新对象</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%9B%9E%E6%BB%9A-Rolling-Back"><span class="toc-nav-text">回滚 Rolling Back</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%9F%A5%E8%AF%A2-Querying"><span class="toc-nav-text">查询 Querying</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%B8%B8%E8%A7%81%E8%BF%87%E6%BB%A4%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="toc-nav-text">常见过滤操作符</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%BF%94%E5%9B%9ELists%E5%92%8CScalars"><span class="toc-nav-text">返回Lists和Scalars</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BD%BF%E7%94%A8SQL%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-nav-text">使用SQL字符串</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%AE%A1%E6%95%B0-Counting"><span class="toc-nav-text">计数 Counting</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%BB%BA%E7%AB%8B%E5%85%B3%E7%B3%BB-Building-a-Relationship"><span class="toc-nav-text">建立关系 Building a Relationship</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BD%BF%E7%94%A8%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1-Working-with-Related-Objects"><span class="toc-nav-text">使用关联对象 Working with Related Objects</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%85%B3%E8%81%94%E6%9F%A5%E8%AF%A2-Querying-with-Joins"><span class="toc-nav-text">关联查询 Querying with Joins</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BD%BF%E7%94%A8%E5%88%AB%E5%90%8D-Using-Aliases"><span class="toc-nav-text">使用别名 Using Aliases</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Using-EXISTS"><span class="toc-nav-text">Using EXISTS</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%B8%B8%E7%94%A8%E5%85%B3%E7%B3%BB%E8%BF%90%E7%AE%97%E7%AC%A6-Common-Relationship-Operators"><span class="toc-nav-text">常用关系运算符 Common Relationship Operators</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%88%A0%E9%99%A4-Deleting"><span class="toc-nav-text">删除 Deleting</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E9%85%8D%E7%BD%AE%E7%BA%A7%E8%81%94%E5%88%A0%E9%99%A4-Configuring-delete-delete-orphan-Cascade"><span class="toc-nav-text">配置级联删除 Configuring delete&#x2F;delete-orphan Cascade</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%88%9B%E5%BB%BA%E5%A4%9A%E5%AF%B9%E5%A4%9A%E7%9A%84%E5%85%B3%E7%B3%BB-Building-a-Many-To-Many-Relationship"><span class="toc-nav-text">创建多对多的关系 Building a Many To Many Relationship</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%9B%B4%E5%A4%9A%E5%8F%82%E8%80%83-Further-Reference"><span class="toc-nav-text">更多参考 Further Reference</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-nav-text">后记</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com/SQLAlchemy初体验/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

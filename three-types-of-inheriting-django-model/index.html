@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Django Model的三种继承方式 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Django Model的三种继承方式</h2>
+  <p class="post-date">2017-09-05</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//three-types-of-inheriting-django-model/" target="_blank" title="Django Model的三种继承方式">https://chowyi.com//three-types-of-inheriting-django-model/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>使用 Django 的时间也不短了，这两天发现了一个之前没有注意到的有关 Django Model 继承方面的细节。<a target="_blank" rel="noopener" href="https://docs.djangoproject.com/en/1.11/topics/db/models/">Django 的官方文档</a>中有很详细的解释，查阅之后，在此记录分享。</p>
+<span id="more"></span>
+
+<h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>在 Django 项目中我建立了三个模型：Server(服务器)，PMServer(物理机)，VMServer(虚拟机)。PMServer 和 VMServer 都继承自 Server。Server作为一个抽象的概念，我把它定义为抽象类。简化的代码如下：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Server</span>(<span class="title">models</span>.<span class="type">Model</span>):</span></span><br><span class="line"><span class="class">    <span class="keyword">class</span> <span class="type">Meta</span>:</span></span><br><span class="line"><span class="class">        abstract = <span class="type">True</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    hostname = models.<span class="type">CharField</span>(&#x27;主机名&#x27;, <span class="title">max_length</span>=50)</span></span><br><span class="line"><span class="class">    ...</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">PMServer</span>(<span class="type">Server</span>):</span></span><br><span class="line"><span class="class">    frame = models.<span class="type">CharField</span>(&#x27;机架号&#x27;, <span class="title">max_length</span>=50)</span></span><br><span class="line"><span class="class">    ...</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">VMServer</span>(<span class="type">Server</span>):</span></span><br><span class="line"><span class="class">    image_id = models.<span class="type">CharField</span>(&#x27;镜像<span class="type">ID</span>&#x27;, <span class="title">max_length</span>=50)</span></span><br></pre></td></tr></table></figure>
+
+<p>这样做可以实现 PMServer 和 VMServer 均拥有 Server 下定义的字段，还可以分别定义它们所特有的字段。执行 Django 命令<code>makemigrations</code>和<code>migrate</code>会在数据库中分别创建两张表，两张表相对独立，都完整的包含了自己本身及父类的字段。</p>
+<h2 id="问题提出"><a href="#问题提出" class="headerlink" title="问题提出"></a>问题提出</h2><p>上面的代码看起来没什么问题，但在实际开发过程中，如果需要查询某服务器，而不区分是 PMServer 还是 VMServer，使用如下语句查询：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Server</span>.objects.<span class="keyword">all</span>()</span><br></pre></td></tr></table></figure>
+
+<p>就会报错：<code>AttributeError: type object &#39;Server&#39; has no attribute &#39;objects&#39;</code></p>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>因为在 Server 的 Meta 下定义<code>abstract = True</code>,所以 Django ORM 并没有在数据库中为 Server 建立数据表，Server 类仅在代码层面起到包含公共字段的作用。从数据库层面来看，和直接定义完整的 PMServer 和 VMServer 而不使用父类没有什么区别。</p>
+<h2 id="尝试解决"><a href="#尝试解决" class="headerlink" title="尝试解决"></a>尝试解决</h2><p>删除父类 Server 中定义的<code>abstract = True</code>，重做<code>makemigrations</code>和<code>migrate</code>。<br>查看一下 Django 生成的 migration 文件中创建 VMServer的这一部分：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">migrations.CreateModel(</span><br><span class="line">            <span class="attribute">name</span>=<span class="string">&#x27;VMServer&#x27;</span>,</span><br><span class="line">            fields=[</span><br><span class="line">                (<span class="string">&#x27;server_ptr&#x27;</span>, models.OneToOneField(<span class="attribute">auto_created</span>=<span class="literal">True</span>, <span class="attribute">on_delete</span>=django.db.models.deletion.CASCADE, <span class="attribute">parent_link</span>=<span class="literal">True</span>, <span class="attribute">primary_key</span>=<span class="literal">True</span>, <span class="attribute">serialize</span>=<span class="literal">False</span>, <span class="attribute">to</span>=<span class="string">&#x27;resourcedb.Server&#x27;</span>)),</span><br><span class="line">                (<span class="string">&#x27;instance_name&#x27;</span>, models.CharField(<span class="attribute">max_length</span>=50, <span class="attribute">verbose_name</span>=<span class="string">&#x27;\u5b9e\u4f8b\u540d\u79f0&#x27;</span>)),</span><br><span class="line">                (<span class="string">&#x27;instance_id&#x27;</span>, models.CharField(<span class="attribute">max_length</span>=50, <span class="attribute">verbose_name</span>=<span class="string">&#x27;\u5b9e\u4f8bid&#x27;</span>)),</span><br><span class="line">                (<span class="string">&#x27;image_id&#x27;</span>, models.CharField(<span class="attribute">max_length</span>=50, <span class="attribute">verbose_name</span>=<span class="string">&#x27;\u955c\u50cfid&#x27;</span>)),</span><br><span class="line">                (<span class="string">&#x27;instance_charge_type&#x27;</span>, models.CharField(<span class="attribute">max_length</span>=50, <span class="attribute">verbose_name</span>=<span class="string">&#x27;\u5b9e\u4f8b\u4ed8\u8d39\u65b9\u5f0f&#x27;</span>)),</span><br><span class="line">                (<span class="string">&#x27;internet_charge_type&#x27;</span>, models.CharField(<span class="attribute">max_length</span>=50, <span class="attribute">verbose_name</span>=<span class="string">&#x27;\u7f51\u7edc\u8ba1\u8d39\u7c7b\u578b&#x27;</span>)),</span><br><span class="line">                (<span class="string">&#x27;created_time&#x27;</span>, models.DateTimeField(<span class="attribute">blank</span>=<span class="literal">True</span>, <span class="attribute">null</span>=<span class="literal">True</span>, <span class="attribute">verbose_name</span>=<span class="string">&#x27;\u521b\u5efa\u65f6\u95f4&#x27;</span>)),</span><br><span class="line">                (<span class="string">&#x27;expired_time&#x27;</span>, models.DateTimeField(<span class="attribute">blank</span>=<span class="literal">True</span>, <span class="attribute">null</span>=<span class="literal">True</span>, <span class="attribute">verbose_name</span>=<span class="string">&#x27;\u8fc7\u671f\u65f6\u95f4&#x27;</span>)),</span><br><span class="line">                (<span class="string">&#x27;status&#x27;</span>, models.CharField(<span class="attribute">max_length</span>=50, <span class="attribute">verbose_name</span>=<span class="string">&#x27;\u5b9e\u4f8b\u72b6\u6001&#x27;</span>)),</span><br><span class="line">            ],</span><br><span class="line">            options=&#123;</span><br><span class="line">                <span class="string">&#x27;verbose_name&#x27;</span>: <span class="string">&#x27;\u865a\u62df\u673a&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;verbose_name_plural&#x27;</span>: <span class="string">&#x27;\u865a\u62df\u673a&#x27;</span>,</span><br><span class="line">            &#125;,</span><br><span class="line">            bases=(<span class="string">&#x27;resourcedb.server&#x27;</span>,),</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+
+<p>在 fields 中第一行，Django 为 VMServer 添加了一个类型为 OneToOneField 的 server_ptr字段与 Server 做一对一关联。</p>
+<p>现在数据库中会有三张表<code>resourcedb_server</code>,<code>resourcedb_pmserver</code>,<code>resourcedb_vmserver</code>。<br>查看一下表结构：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; desc resourcedb_vmserver;</span><br><span class="line">+----------------------+-------------+------+-----+---------+-------+</span><br><span class="line">|<span class="string"> Field                </span>|<span class="string"> Type        </span>|<span class="string"> Null </span>|<span class="string"> Key </span>|<span class="string"> Default </span>|<span class="string"> Extra </span>|</span><br><span class="line">+----------------------+-------------+------+-----+---------+-------+</span><br><span class="line">|<span class="string"> server_ptr_id        </span>|<span class="string"> int(11)     </span>|<span class="string"> NO   </span>|<span class="string"> PRI </span>|<span class="string"> NULL    </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string"> instance_name        </span>|<span class="string"> varchar(50) </span>|<span class="string"> NO   </span>|<span class="string">     </span>|<span class="string"> NULL    </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string"> instance_id          </span>|<span class="string"> varchar(50) </span>|<span class="string"> NO   </span>|<span class="string">     </span>|<span class="string"> NULL    </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string"> image_id             </span>|<span class="string"> varchar(50) </span>|<span class="string"> NO   </span>|<span class="string">     </span>|<span class="string"> NULL    </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string"> instance_charge_type </span>|<span class="string"> varchar(50) </span>|<span class="string"> NO   </span>|<span class="string">     </span>|<span class="string"> NULL    </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string"> internet_charge_type </span>|<span class="string"> varchar(50) </span>|<span class="string"> NO   </span>|<span class="string">     </span>|<span class="string"> NULL    </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string"> created_time         </span>|<span class="string"> datetime    </span>|<span class="string"> YES  </span>|<span class="string">     </span>|<span class="string"> NULL    </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string"> expired_time         </span>|<span class="string"> datetime    </span>|<span class="string"> YES  </span>|<span class="string">     </span>|<span class="string"> NULL    </span>|<span class="string">       </span>|</span><br><span class="line">|<span class="string"> status               </span>|<span class="string"> varchar(50) </span>|<span class="string"> NO   </span>|<span class="string">     </span>|<span class="string"> NULL    </span>|<span class="string">       </span>|</span><br><span class="line">+----------------------+-------------+------+-----+---------+-------+</span><br></pre></td></tr></table></figure>
+
+<p>可以看到在 pmserver 和 vmserver 表中都包含一个<code>server_ptr_id</code>字段指向 server 表中的一条记录。PMServer 和 VMServer 的公共字段都保存在 server 表中，它们特有的字段分别保存在其相对应的表中。</p>
+<p>此时就可以使用如下代码进行查询了：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Server.objects.all()</span><br><span class="line">Server.objects.<span class="built_in">get</span>(<span class="attribute">name</span>=<span class="string">&#x27;xxx&#x27;</span>)</span><br><span class="line"><span class="built_in">..</span>.</span><br></pre></td></tr></table></figure>
+<p>PMServer 和 VMServer 均可以看做 Server 进行查询，它们的 id 共用同一个自增长序列。</p>
+<h2 id="文档解释"><a href="#文档解释" class="headerlink" title="文档解释"></a>文档解释</h2><p>Django Model 中的继承基本和 Python 中的继承一致，只是所有的类都要继承自<code>django.db.models.Model</code>。<br>你只需要考虑你是否希望父类拥有独立的一张数据表，还是仅仅为子类提供公共字段。所有的信息都由子类提供。<br>Django 中有三种继承关系：</p>
+<ol>
+<li>通常你只是需要一个父类来保存子类所共有的字段而避免重复的在多个子类中定义，这个父类永远不打算单独使用，这种情况你可以选择 Abstract base classes。</li>
+<li>如果你要继承一个已经存在的 model，并且每个 model 都有其独立的数据表，你可以选择 Multi-table inheritance。</li>
+<li>如果你只想改变一个 model Python-level 的行为而不修改其字段，你可以选择 Proxy Model。</li>
+</ol>
+<h3 id="Abstract-base-classes"><a href="#Abstract-base-classes" class="headerlink" title="Abstract base classes"></a>Abstract base classes</h3><p>如果你有一些 models 都包含一些公共的信息，Abstract base classes 就会很有用。你只要定义一个 base class 并把 Meta 下设置<code>abstract=True</code>即可。它本身不会被创建数据表，它的字段会被添加在子类的数据表中。要注意它与子类不能有同名的字段，否则 Django 会抛出异常。<br>例如：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">CommonInfo</span>(<span class="title">models</span>.<span class="type">Model</span>):</span></span><br><span class="line"><span class="class">    name = models.<span class="type">CharField</span>(<span class="title">max_length</span>=100)</span></span><br><span class="line"><span class="class">    age = models.<span class="type">PositiveIntegerField</span>()</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    <span class="keyword">class</span> <span class="type">Meta</span>:</span></span><br><span class="line"><span class="class">        abstract = <span class="type">True</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Student</span>(<span class="type">CommonInfo</span>):</span></span><br><span class="line"><span class="class">    home_group = models.<span class="type">CharField</span>(<span class="title">max_length</span>=5)</span></span><br></pre></td></tr></table></figure>
+<p>Student model 会有三个字段：name, age, home_group。CommonInfo 作为一个 abstract base model 不会像一个普通的 Django Model那样生成数据表，也没有 manager，也不能被实例化或直接的保存。它只在 Python-level 提供公共信息，在 database-level 仅为每个子类创建数据表。</p>
+<h3 id="Multi-table-inheritance"><a href="#Multi-table-inheritance" class="headerlink" title="Multi-table inheritance"></a>Multi-table inheritance</h3><p>Django Model 支持的第二种继承方式是每一个 model 都自成一个模型，都拥有自己的数据表，可以被独立的查询或是创建。子类和父类之间通过一个一对一（OneToOneField）的关系关联。<br>例如：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Place</span>(<span class="title">models</span>.<span class="type">Model</span>):</span></span><br><span class="line"><span class="class">    name = models.<span class="type">CharField</span>(<span class="title">max_length</span>=50)</span></span><br><span class="line"><span class="class">    address = models.<span class="type">CharField</span>(<span class="title">max_length</span>=80)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Restaurant</span>(<span class="type">Place</span>):</span></span><br><span class="line"><span class="class">    serves_hot_dogs = models.<span class="type">BooleanField</span>(<span class="title">default</span>=<span class="type">False</span>)</span></span><br><span class="line"><span class="class">    serves_pizza = models.<span class="type">BooleanField</span>(<span class="title">default</span>=<span class="type">False</span>)</span></span><br></pre></td></tr></table></figure>
+<p><code>Place</code>中的字段在<code>Restaurant</code>中都是可用的，及时数据存在不同的数据表中。以下的查询都是可以的：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Place.objects.<span class="built_in">filter</span>(name=<span class="string">&quot;Bob&#x27;s Cafe&quot;</span>)</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Restaurant.objects.<span class="built_in">filter</span>(name=<span class="string">&quot;Bob&#x27;s Cafe&quot;</span>)</span></span><br></pre></td></tr></table></figure>
+
+<p>如果你有一个<code>Place</code>对象同时也是<code>Restaurant</code>，你可以用小写的类名从<code>Place</code>对象得到<code>Restaurant</code>对象：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; p = Place.objects.<span class="built_in">get</span>(<span class="attribute">id</span>=12)</span><br><span class="line"><span class="comment"># If p is a Restaurant object, this will give the child class:</span></span><br><span class="line">&gt;&gt;&gt; p.restaurant</span><br><span class="line">&lt;Restaurant: <span class="built_in">..</span>.&gt;</span><br></pre></td></tr></table></figure>
+
+<p>要注意，如果<code>p</code>不是<code>Restaurant</code>对象，那么会抛出<code>Restaurant.DoesNotExist</code>异常。</p>
+<p>在<code>Restaurant</code>上自动创建的用于关联<code>Place</code>的<code>OneToOneField</code>如下：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">place_ptr = models.OneToOneField(</span><br><span class="line">    Place, <span class="attribute">on_delete</span>=models.CASCADE,</span><br><span class="line">    <span class="attribute">parent_link</span>=<span class="literal">True</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>你也可以在<code>Restautrant</code>的定义下重写<code>OneToOneField</code>，要设置<code>parent_link=True</code>。</p>
+<h3 id="Proxy-models"><a href="#Proxy-models" class="headerlink" title="Proxy models"></a>Proxy models</h3><p>有时你只希望修改一个 model 在 python-level 的行为，比如修改默认的 manager 或是添加一个方法，你就可以用 proxy model inheritace。你对 proxy model 所做的增删改的操作都会被保存在原始的 model 中。<br>定义一个 proxy model 你只需要在 Meta 中定义<code>proxy = True</code>，如：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Person</span>(<span class="title">models</span>.<span class="type">Model</span>):</span></span><br><span class="line"><span class="class">    first_name = models.<span class="type">CharField</span>(<span class="title">max_length</span>=30)</span></span><br><span class="line"><span class="class">    last_name = models.<span class="type">CharField</span>(<span class="title">max_length</span>=30)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">MyPerson</span>(<span class="type">Person</span>):</span></span><br><span class="line"><span class="class">    <span class="keyword">class</span> <span class="type">Meta</span>:</span></span><br><span class="line"><span class="class">        proxy = <span class="type">True</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">    def do_something(<span class="title">self</span>):</span></span><br><span class="line"><span class="class">        # ...</span></span><br><span class="line"><span class="class">        pass</span></span><br></pre></td></tr></table></figure>
+
+<p><code>MyPerson</code>和<code>Person</code>操作的是同一张数据表。任何<code>Person</code>的实例也可以通过<code>MyPerson</code>来访问，反之亦然</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; p = Person.objects.create(<span class="attribute">first_name</span>=<span class="string">&quot;foobar&quot;</span>)</span><br><span class="line">&gt;&gt;&gt; MyPerson.objects.<span class="built_in">get</span>(<span class="attribute">first_name</span>=<span class="string">&quot;foobar&quot;</span>)</span><br><span class="line">&lt;MyPerson: foobar&gt;</span><br></pre></td></tr></table></figure>
+
+<p>顺便学个英文短语，<em>and vise versa</em>，意为<em>反之亦然</em>。</p>
+<blockquote>
+<p>文档原文： In particular, any new instances of Person will also be accessible through MyPerson, and vice-versa.</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.djangoproject.com/en/1.11/topics/db/models/">官网</a>还有关于继承 Meta 的介绍以及其他详细的说明。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>没事多看文档。<br>本次问题就出现在想当然的把 Server 配置成了<code>abstract = True</code>。<br>在选择方案，做配置时，一定要了解每一项选择，配置的含义。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//three-types-of-inheriting-django-model/" target="_blank" title="Django Model的三种继承方式">https://chowyi.com//three-types-of-inheriting-django-model/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Django" >
+    <span class="tag-code">Django</span>
+  </a>
+
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/how-to-configure-celery-4_1_0-with-django/">
+        <span class="nav-arrow">← </span>
+        
+          Django集成Celery4.1.0
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/PEP-318-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%96%B9%E6%B3%95%E8%A3%85%E9%A5%B0%E5%99%A8/">
+        
+          PEP 318 函数与方法装饰器
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="toc-nav-text">问题背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%90%E5%87%BA"><span class="toc-nav-text">问题提出</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="toc-nav-text">问题分析</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%B0%9D%E8%AF%95%E8%A7%A3%E5%86%B3"><span class="toc-nav-text">尝试解决</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%96%87%E6%A1%A3%E8%A7%A3%E9%87%8A"><span class="toc-nav-text">文档解释</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Abstract-base-classes"><span class="toc-nav-text">Abstract base classes</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Multi-table-inheritance"><span class="toc-nav-text">Multi-table inheritance</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Proxy-models"><span class="toc-nav-text">Proxy models</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-nav-text">结语</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//three-types-of-inheriting-django-model/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

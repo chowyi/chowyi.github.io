@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Django使用MySQL后端日期不能按月过滤的问题及解决方案 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Django使用MySQL后端日期不能按月过滤的问题及解决方案</h2>
+  <p class="post-date">2017-09-19</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/Django使用MySQL后端日期不能按月过滤的问题及解决方案/" target="_blank" title="Django使用MySQL后端日期不能按月过滤的问题及解决方案">https://chowyi.com/Django使用MySQL后端日期不能按月过滤的问题及解决方案/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>近期在工作中有一个需求，按创建年份统计资产的数量，一行代码就能实现，分分钟的事情。后来需求变动，要求按月份统计。我一想，这也没问题啊，对 Django 来说也就是加一个参数的事。代码改完，一调接口，咦，统计结果为什么全是 0 啊？<br>后面一步一步的定位问题，还挺有意思的，记录下来。</p>
+<span id="more"></span>
+
+<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>原项目代码较多，而且涉及工作，下面我用一个简单的例子来重现一下我遇到的问题：<br>开发环境：Python 2.7.11 + Django 1.11.3 + MySQL 5.5.43</p>
+<p>新建一个 Django 工程<code>hello</code>，新建一个 Django app <code>frame</code>:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">django-admin startproject hello</span><br><span class="line"><span class="keyword">cd</span> hello</span><br><span class="line"><span class="keyword">python</span> manage.<span class="keyword">py</span> startapp frame</span><br></pre></td></tr></table></figure>
+
+<p>在 frame&#x2F;models.py 中添加一个模型：</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="title">from</span> __future__ <span class="keyword">import</span> unicode_literals</span><br><span class="line"></span><br><span class="line"><span class="title">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="type">Book</span>(<span class="title">models</span>.<span class="type">Model</span>):</span></span><br><span class="line"><span class="class">    name = models.<span class="type">CharField</span>(&#x27;<span class="type">Name</span>&#x27;, <span class="title">max_length</span>=50)</span></span><br><span class="line"><span class="class">    public_date = models.<span class="type">DateTimeField</span>(&#x27;<span class="type">Public_Date</span>&#x27;, <span class="title">auto_now</span>=<span class="type">True</span>)</span></span><br></pre></td></tr></table></figure>
+
+<p>修改配置文件 hello&#x2F;settings.py，在<code>INSTALLED_APPS</code>中加入<code>hello</code>，修改<code>DATABASES</code>的配置连接到本地 MySQL 数据库，时区设置为<code>TIME_ZONE = &#39;Asia/Shanghai&#39;</code>。</p>
+<p>执行 <code>makemigrations</code> 和 <code>migrate</code> 创建数据表，然后 <code>python manage.py shell</code> 进入交互模式：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> frame.models <span class="keyword">import</span> Book</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">python = Book.objects.create(name=<span class="string">&#x27;Python&#x27;</span>)</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">java = Book.objects.create(name=<span class="string">&#x27;Java&#x27;</span>)</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">python.public_date</span></span><br><span class="line">datetime.datetime(2017, 9, 19, 6, 6, 6, 534471, tzinfo=&lt;UTC&gt;)</span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Book.objects.<span class="built_in">filter</span>(public_date__year=<span class="number">2017</span>)</span></span><br><span class="line">&lt;QuerySet [&lt;Book: Book object&gt;, &lt;Book: Book object&gt;]&gt;</span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Book.objects.<span class="built_in">filter</span>(public_date__month=<span class="number">9</span>)</span></span><br><span class="line">&lt;QuerySet []&gt;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码先创建了两个<code>Book</code>的实例，由于<code>public_date</code>字段设置了<code>auto_now=True</code>，所以默认为当前时间。然后按年份查询了一下，得到两条结果，没有问题。再按月份查询一下，结果为空，问题重现了。</p>
+<h2 id="搜索网络"><a href="#搜索网络" class="headerlink" title="搜索网络"></a>搜索网络</h2><p>能按年份查，不能按月份查，Django 这么成熟的企业级框架应该不会犯这种错误吧。网上搜索一下：</p>
+<ol>
+<li>发现有人遇到了同样的问题，不过只有提问，没有回答。（顺便提一下，这个问题出现在很多小网站上，应该都是用爬虫抓过去凑文章刷访问量的。在此对这种行为表示谴责。）</li>
+<li>还有人说可以用<code>.filter(startswith=&quot;2017-09&quot;)</code>这样的方式来查询。试了一下，可以实现效果，但是有几个问题：<ul>
+<li>查询条件必须和数据库中保存日期的格式相同。</li>
+<li>如果要查询所有9月份而不是2017年的9月份就没有办法了，难道要用正则匹配？</li>
+<li>这实在是不够优雅，我相信应该会有真正的解决办法。</li>
+</ul>
+</li>
+</ol>
+<p>网上没有得到有用信息，自己来想办法吧。</p>
+<h2 id="问题定位"><a href="#问题定位" class="headerlink" title="问题定位"></a>问题定位</h2><p>打印 Django 中 QuerySet 对象的 query 属性可以得到 Django 操作数据库的 sql 语句。</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; print Book.objects.filter(public_date__year=2017).query</span><br><span class="line"><span class="keyword">SELECT</span> <span class="symbol">`frame_book`</span>.<span class="symbol">`id`</span>, <span class="symbol">`frame_book`</span>.<span class="symbol">`name`</span>, <span class="symbol">`frame_book`</span>.<span class="symbol">`public_date`</span> <span class="keyword">FROM</span> <span class="symbol">`frame_book`</span> <span class="keyword">WHERE</span> <span class="symbol">`frame_book`</span>.<span class="symbol">`public_date`</span> <span class="keyword">BETWEEN</span> <span class="number">2016</span><span class="number">-12</span><span class="number">-31</span> <span class="number">16</span>:<span class="number">00</span>:<span class="number">00</span> <span class="keyword">AND</span> <span class="number">2017</span><span class="number">-12</span><span class="number">-31</span> <span class="number">15</span>:<span class="number">59</span>:<span class="number">59</span></span><br><span class="line">&gt;&gt;&gt;</span><br><span class="line">&gt;&gt;&gt; print Book.objects.filter(public_date__month=<span class="number">9</span>).query</span><br><span class="line"><span class="keyword">SELECT</span> <span class="symbol">`frame_book`</span>.<span class="symbol">`id`</span>, <span class="symbol">`frame_book`</span>.<span class="symbol">`name`</span>, <span class="symbol">`frame_book`</span>.<span class="symbol">`public_date`</span> <span class="keyword">FROM</span> <span class="symbol">`frame_book`</span> <span class="keyword">WHERE</span> EXTRACT(MONTH <span class="keyword">FROM</span> CONVERT_TZ(<span class="symbol">`frame_book`</span>.<span class="symbol">`public_date`</span>, <span class="string">&#x27;UTC&#x27;</span>, Asia/Shanghai)) = <span class="number">9</span></span><br></pre></td></tr></table></figure>
+
+<p>看下 where 子句就发现了按年查询和按月份查询的区别。<br>按年份查询2017年的记录时，查询条件是：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">WHERE</span> `frame_book`.`public_date` BETWEEN <span class="number">2016</span>-<span class="number">12</span>-<span class="number">31</span> <span class="number">16</span>:<span class="number">00</span>:<span class="number">00</span> AND <span class="number">2017</span>-<span class="number">12</span>-<span class="number">31</span> <span class="number">15</span>:<span class="number">59</span>:<span class="number">59</span></span><br></pre></td></tr></table></figure>
+
+<p>直接判断日期是不是在2017年1月1日0点到2017年12月31日23点59分59秒之间。（因为 Django 项目设置了时区为<code>Asia/Shanghai</code>，而数据库中保存的是UTC时间，所以要提前8小时）。</p>
+<p>而按月份查询时，要先转换时区，然后提取月份：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">WHERE</span> <span class="built_in">EXTRACT</span>(<span class="keyword">MONTH</span> <span class="keyword">FROM</span> CONVERT_TZ(`frame_book`.`public_date`, <span class="string">&#x27;UTC&#x27;</span>, Asia<span class="operator">/</span>Shanghai)) <span class="operator">=</span> <span class="number">9</span></span><br></pre></td></tr></table></figure>
+
+<p>看起来没什么问题，这个时区的转换没毛病吧？到 MySQL 里试试去。</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select convert_tz(&#x27;2017<span class="string">-09</span><span class="string">-19</span> 17:30:00&#x27;, &#x27;UTC&#x27;, Asia/Shanghai);</span><br><span class="line"><span class="keyword">ERROR </span>1054 (42S22): Unknown column &#x27;Asia&#x27; in &#x27;field list&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>这 Asia&#x2F;Shanghai 没加引号啊？（Django的问题的吗？）加上引号试试。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">mysql&gt; select convert_tz(&#x27;2017-09-19 17:30:00&#x27;, &#x27;UTC&#x27;, &#x27;Asia/Shanghai&#x27;);</span></span><br><span class="line"><span class="section">+-----------------------------------------------------------+</span></span><br><span class="line"><span class="section">| convert_tz(&#x27;2017-09-19 17:30:00&#x27;, &#x27;UTC&#x27;, &#x27;Asia/Shanghai&#x27;) |</span></span><br><span class="line"><span class="section">+-----------------------------------------------------------+</span></span><br><span class="line"><span class="section">| NULL                                                      |</span></span><br><span class="line"><span class="section">+-----------------------------------------------------------+</span></span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>看来就是这里的问题哦！时区转换失败了！</p>
+<h2 id="查找资料"><a href="#查找资料" class="headerlink" title="查找资料"></a>查找资料</h2><p>convert_tz 是 MySQL 中的一个函数。查查<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_convert-tz">官方文档</a>:</p>
+<blockquote>
+<p>CONVERT_TZ(dt,from_tz,to_tz)</p>
+</blockquote>
+<blockquote>
+<p>CONVERT_TZ() converts a datetime value dt from the time zone given by from_tz to the time zone given by to_tz and returns the resulting value. Time zones are specified as described in Section 10.6, “MySQL Server Time Zone Support”. This function returns NULL if the arguments are invalid.</p>
+</blockquote>
+<blockquote>
+<p>If the value falls out of the supported range of the TIMESTAMP type when converted from from_tz to UTC, no conversion occurs. The TIMESTAMP range is described in Section 11.1.2, “Date and Time Type Overview”. </p>
+</blockquote>
+<blockquote>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;mysql&gt; SELECT CONVERT_TZ<span class="punctuation">(</span>&#x27;<span class="number">2004-01-01</span> 12:00:00&#x27;<span class="punctuation">,</span>&#x27;GMT&#x27;<span class="punctuation">,</span>&#x27;MET&#x27;<span class="punctuation">)</span><span class="punctuation">;</span></span><br><span class="line">       <span class="punctuation">-</span>&gt; &#x27;<span class="number">2004-01-01</span> 13:00:00&#x27;</span><br><span class="line">&gt;mysql&gt; SELECT CONVERT_TZ<span class="punctuation">(</span>&#x27;<span class="number">2004-01-01</span> 12:00:00&#x27;<span class="punctuation">,</span>&#x27;+00:00&#x27;<span class="punctuation">,</span>&#x27;+10:00&#x27;<span class="punctuation">)</span><span class="punctuation">;</span></span><br><span class="line">       <span class="punctuation">-</span>&gt; &#x27;<span class="number">2004-01-01</span> 22:00:00&#x27;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Note</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>To use named time zones such as ‘MET’ or ‘Europe&#x2F;Moscow’, the time zone tables must be properly set up. See Section 10.6, “MySQL Server Time Zone Support”, for instructions.</p>
+</blockquote>
+</blockquote>
+<p>这文档写的可真好，很清楚了，简单来说就是：</p>
+<ol>
+<li>convert_tz 用于转换时区，有三个参数，分别是时间，当前时区，目标时区。</li>
+<li>时区有两种写法，一是<code>&#39;+00:00&#39;</code>，<code>&#39;+10:00&#39;</code>这样的直接写时差，二是用时区名，如<code>&#39;GMT&#39;</code>，<code>&#39;MET&#39;</code>。</li>
+<li>如果时区是无效的，结果返回<code>NULL</code>。</li>
+<li>如果不支持时区名可以看<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.5/en/time-zone-support.html">Section 10.6, “MySQL Server Time Zone Support”</a>。</li>
+</ol>
+<p>这答案已经呼之欲出了！不用时区名，直接用时差的写法试试看：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">mysql&gt; select convert_tz(&#x27;2017-09-19 17:30:00&#x27;, &#x27;+00:00&#x27;, &#x27;+08:00&#x27;);</span></span><br><span class="line"><span class="section">+-------------------------------------------------------+</span></span><br><span class="line"><span class="section">| convert_tz(&#x27;2017-09-19 17:30:00&#x27;, &#x27;+00:00&#x27;, &#x27;+08:00&#x27;) |</span></span><br><span class="line"><span class="section">+-------------------------------------------------------+</span></span><br><span class="line"><span class="section">| 2017-09-20 01:30:00                                   |</span></span><br><span class="line"><span class="section">+-------------------------------------------------------+</span></span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>问题就出在查询不支持时区名上！</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>问题找到了，解决就很容易了。上面也提到，MySQL 的文档<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.5/en/time-zone-support.html">Section 10.6, “MySQL Server Time Zone Support”</a>中有解决方案：</p>
+<blockquote>
+<p>The mysql_tzinfo_to_sql program is used to load the time zone tables. On the command line, pass the zoneinfo directory path name to mysql_tzinfo_to_sql and send the output into the mysql program. For example:</p>
+</blockquote>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">shell</span><span class="language-bash">&gt; mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql</span></span><br></pre></td></tr></table></figure>
+
+<p>在命令行中执行上面的命令，除了两个警告，看起来没什么问题。</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(python-django)vagrant@precise64:~/test/hello$ mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -uroot mysql -p</span><br><span class="line">Enter password: </span><br><span class="line">Warning: Unable <span class="built_in">to</span> <span class="built_in">load</span> <span class="string">&#x27;/usr/share/zoneinfo/iso3166.tab&#x27;</span> <span class="keyword">as</span> <span class="built_in">time</span> zone. Skipping <span class="keyword">it</span>.</span><br><span class="line">Warning: Unable <span class="built_in">to</span> <span class="built_in">load</span> <span class="string">&#x27;/usr/share/zoneinfo/zone.tab&#x27;</span> <span class="keyword">as</span> <span class="built_in">time</span> zone. Skipping <span class="keyword">it</span>.</span><br></pre></td></tr></table></figure>
+
+<p>在 MySQL 中验证一下：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">mysql&gt; select convert_tz(&#x27;2017-09-19 17:30:00&#x27;, &#x27;UTC&#x27;, &#x27;Asia/Shanghai&#x27;);</span></span><br><span class="line"><span class="section">+-----------------------------------------------------------+</span></span><br><span class="line"><span class="section">| convert_tz(&#x27;2017-09-19 17:30:00&#x27;, &#x27;UTC&#x27;, &#x27;Asia/Shanghai&#x27;) |</span></span><br><span class="line"><span class="section">+-----------------------------------------------------------+</span></span><br><span class="line"><span class="section">| 2017-09-20 01:30:00                                       |</span></span><br><span class="line"><span class="section">+-----------------------------------------------------------+</span></span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<p>在 Django 中验证一下：</p>
+<figure class="highlight python-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python"><span class="keyword">from</span> frame.models <span class="keyword">import</span> Book</span></span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> <span class="language-python">Book.objects.<span class="built_in">filter</span>(public_date__month=<span class="number">9</span>)</span></span><br><span class="line">&lt;QuerySet [&lt;Book: Book object&gt;, &lt;Book: Book object&gt;]&gt;</span><br><span class="line"><span class="meta prompt_">&gt;&gt;&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p>完全正常，问题解决了！<br>修改配置文件，换用自带的 sqlite 数据库，同样的测试，没有发现此问题。</p>
+<p>对了，上面提到少引号的问题：</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; print Book.objects.filter(public_date__month=<span class="number">9</span>).query</span><br><span class="line">SELECT `frame_book`.`id`, `frame_book`.`name`, `frame_book`.`public_date` FROM `frame_book` WHERE EXTRACT(MONTH FROM CONVERT_TZ(`frame_book`.`public_date`, &#x27;UTC&#x27;, Asia/Shanghai)) = <span class="number">9</span></span><br></pre></td></tr></table></figure>
+
+<p>上面那句中<code>Asia/Shanghai</code>没有加引号，直接拷贝 sql 到 MySQL 执行是会报错的，而在 Django 中没有问题。我猜想可能是 Django 中 Query 对象的<code>__str__</code>方法有问题。看了一下源码，果然是这里有玄机：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/models/sql/query.py </span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Returns the query as a string of SQL with the parameter values</span></span><br><span class="line"><span class="string">    substituted in (use sql_with_params() to see the unsubstituted string).</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Parameter values won&#x27;t necessarily be quoted correctly, since that is</span></span><br><span class="line"><span class="string">    done by the database interface at execution time.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    sql, params = <span class="variable language_">self</span>.sql_with_params()</span><br><span class="line">    <span class="keyword">return</span> sql % params</span><br></pre></td></tr></table></figure>
+<p>这里写了，参数的引用可能不准确，在执行数据库接口时才会被完成。</p>
+<h2 id="我的总结"><a href="#我的总结" class="headerlink" title="我的总结"></a>我的总结</h2><p>这次定位问题，解决问题的思路还是挺清晰的，整个过程也很有趣。<br>以后要加强下 SQL 方面的知识。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/Django使用MySQL后端日期不能按月过滤的问题及解决方案/" target="_blank" title="Django使用MySQL后端日期不能按月过滤的问题及解决方案">https://chowyi.com/Django使用MySQL后端日期不能按月过滤的问题及解决方案/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Django" >
+    <span class="tag-code">Django</span>
+  </a>
+
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/PEP-318-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%96%B9%E6%B3%95%E8%A3%85%E9%A5%B0%E5%99%A8/">
+        <span class="nav-arrow">← </span>
+        
+          PEP 318 函数与方法装饰器
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/learning-zabbix-basic/">
+        
+          初学Zabbix基本原理
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="toc-nav-text">问题描述</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%90%9C%E7%B4%A2%E7%BD%91%E7%BB%9C"><span class="toc-nav-text">搜索网络</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D"><span class="toc-nav-text">问题定位</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%9F%A5%E6%89%BE%E8%B5%84%E6%96%99"><span class="toc-nav-text">查找资料</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-nav-text">解决方案</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%88%91%E7%9A%84%E6%80%BB%E7%BB%93"><span class="toc-nav-text">我的总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com/Django使用MySQL后端日期不能按月过滤的问题及解决方案/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

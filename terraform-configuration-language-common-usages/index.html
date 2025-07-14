@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Terraform Configuration Language常用代码段 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Terraform Configuration Language常用代码段</h2>
+  <p class="post-date">2020-07-17</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//terraform-configuration-language-common-usages/" target="_blank" title="Terraform Configuration Language常用代码段">https://chowyi.com//terraform-configuration-language-common-usages/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>近两个月写了不少 Terraform 的 Configuration Language, 从入门到熟悉，用起来也渐渐得心应手。从名字上看这是一种配置语言，但得益于 Terraform Provider 强大的可扩展性，它不仅可以像 Golang 或是 Python （Terraform本来就是使用Golang开发的）一样处理字符串，读写本地文件，甚至还可以发起网络请求！  </p>
+<p>这篇文章既不是教程（初学者建议先看官方文档学习），也不是进阶的知识分享。我在这里记录一些常用的代码段，希望像我一样的新手可以少走些弯路。</p>
+<span id="more"></span>
+
+<h2 id="Random-Password"><a href="#Random-Password" class="headerlink" title="Random Password"></a>Random Password</h2><p>场景描述：使用 Terraform 生成随机密码，密码长度为<code>16</code>, 特殊字符<code>_%@</code>。</p>
+<p>Terraform 官方提供了名为 <code>random</code> 的 provider，<a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password">文档</a>。</p>
+<p>在找到这个 provider 之前，我曾尝试过使用 <code>timestamp</code>,<code>sha1</code>,<code>uuid</code>,<code>replace</code>等 built-in function 来生成密码，既麻烦又不安全。</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># main.tf</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">provider</span> <span class="string">&quot;random&quot;</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="attribute">resource</span> <span class="string">&quot;random_password&quot;</span> <span class="string">&quot;password&quot;</span> &#123;</span><br><span class="line">  <span class="attribute">length</span> = <span class="number">16</span></span><br><span class="line">  special = <span class="literal">true</span></span><br><span class="line">  override_special = <span class="string">&quot;_%@&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;aws_db_instance&quot;</span> <span class="string">&quot;example&quot;</span> &#123;</span><br><span class="line">  <span class="attribute">password</span> = random_password.password.result</span><br><span class="line">  <span class="comment"># ...省略部分无关参数...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Shuffle"><a href="#Shuffle" class="headerlink" title="Shuffle"></a>Shuffle</h2><p>场景描述：从已定义的变量 <code>locals.default_zone</code> 中随机选择一个 <code>zone_id</code>，然后再随机选择一个该 zone 对应的 <code>vswitch_id</code>。</p>
+<p>使用了<code>random</code> 的 provider 中的 <code>random_shuffle</code>，<a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/shuffle">文档</a>。</p>
+<p>本段代码展示了如何随机选取列表中的项目，并且将第一次随机的输出作为第二次随机的输入。</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># main.tf</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">provider</span> <span class="string">&quot;random&quot;</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="attribute">resource</span> <span class="string">&quot;random_shuffle&quot;</span> <span class="string">&quot;zone_id&quot;</span> &#123;</span><br><span class="line">  <span class="attribute">input</span>        = keys(local.default_zone)</span><br><span class="line">  result_count = <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;random_shuffle&quot;</span> <span class="string">&quot;vswitch_id&quot;</span> &#123;</span><br><span class="line">  <span class="attribute">input</span>        = local.default_zone[random_shuffle.zone_id.result[<span class="number">0</span>]]</span><br><span class="line">  result_count = <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;alicloud_db_instance&quot;</span> <span class="string">&quot;instance&quot;</span> &#123;</span><br><span class="line">  <span class="attribute">vswitch_id</span>    = random_shuffle.vswitch_id.result[<span class="number">0</span>]</span><br><span class="line">  <span class="comment"># ...省略部分无关参数...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># variables.tf</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">locals</span> &#123;</span><br><span class="line">  default_zone = &#123;</span><br><span class="line">    <span class="meta">cn</span>-hangzhou-a = [<span class="string">&quot;vsw-xxxxxxxxx001&quot;</span>, <span class="string">&quot;vsw-xxxxxxxxx002&quot;</span>]</span><br><span class="line">    <span class="meta">cn</span>-hangzhou-<span class="keyword">b</span> = [<span class="string">&quot;vsw-xxxxxxxxx003&quot;</span>, <span class="string">&quot;vsw-xxxxxxxxx004&quot;</span>]</span><br><span class="line">    <span class="meta">cn</span>-hangzhou-c = [<span class="string">&quot;vsw-xxxxxxxxx005&quot;</span>, <span class="string">&quot;vsw-xxxxxxxxx006&quot;</span>]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Generate-File"><a href="#Generate-File" class="headerlink" title="Generate File"></a>Generate File</h2><p>场景描述：需要把一些变量以 json 格式保存在本地文件中。生成文件的同时，还可以指定文件的权限。</p>
+<p>这里使用了官方提供的 <code>local</code> Provider，<a target="_blank" rel="noopener" href="https://registry.terraform.io/providers/hashicorp/local/latest/docs">文档</a>。</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># main.tf</span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;local_file&quot;</span> <span class="string">&quot;file&quot;</span> &#123;</span><br><span class="line">  sensitive_content = jsonencode(&#123;</span><br><span class="line">    <span class="string">&quot;key_1&quot;</span> : <span class="type">local.value_1</span>,</span><br><span class="line">    <span class="string">&quot;Key_2&quot;</span> : &#123;</span><br><span class="line">      <span class="string">&quot;address&quot;</span> : <span class="type">aws_db_instance.rds.address</span>,</span><br><span class="line">      <span class="string">&quot;username&quot;</span> : <span class="type">aws_db_instance.rds.username</span>,</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">  filename             = <span class="string">&quot;./example.json&quot;</span></span><br><span class="line">  file_permission      = <span class="string">&quot;0700&quot;</span></span><br><span class="line">  directory_permission = <span class="string">&quot;0700&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Loop"><a href="#Loop" class="headerlink" title="Loop"></a>Loop</h2><p>场景描述：为 AWS ElasticCache 集群的每一个节点创建 CloudWatch Alarm，使用集群的节点数量来控制循环。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># main.<span class="keyword">tf</span></span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;aws_cloudwatch_metric_alarm&quot;</span> <span class="string">&quot;cpu_utilization&quot;</span> &#123;</span><br><span class="line">  <span class="built_in">count</span>      = aws_elasticache_replication_group.replication_group.number_cache_clusters</span><br><span class="line"></span><br><span class="line">  alarm_name = aws-redis-$&#123;aws_elasticache_replication_group.replication_group.replication_group_id&#125;-<span class="number">00</span>$&#123;<span class="built_in">count</span>.<span class="built_in">index</span> + <span class="number">1</span>&#125;<span class="comment">&quot;</span></span><br><span class="line">  # ...省略部分无关参数...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="If-Statement"><a href="#If-Statement" class="headerlink" title="If Statement"></a>If Statement</h2><p>场景描述：为生产环境的资源创建阿里云CloudMonitor Alarm，其他环境的资源则不需要。  </p>
+<p>Terraform 本身没有提供 if 语句，这里使用<code>count</code>循环指令来控制，<code>count=1</code>即<code>if true</code>, <code>count=0</code>即<code>if false</code>。</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># main.tf</span></span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;alicloud_cms_alarm&quot;</span> <span class="string">&quot;cpu_usage&quot;</span> &#123;</span><br><span class="line">  <span class="keyword">count</span>   = <span class="built_in">var</span>.env == <span class="string">&quot;prod&quot;</span> ? <span class="number">1</span> : <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  project = <span class="string">&quot;acs_rds_dashboard&quot;</span></span><br><span class="line">  name    = <span class="string">&quot;CPU使用率&quot;</span></span><br><span class="line">  metric  = <span class="string">&quot;CpuUsage&quot;</span></span><br><span class="line">  <span class="meta"># ...省略部分无关参数...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Built-in-Function-Example"><a href="#Built-in-Function-Example" class="headerlink" title="Built-in Function Example"></a>Built-in Function Example</h2><p>场景描述：创建 AWS DB Instance 时，只有生产环境且高配置实例开启 performance_insight，small及micro规格实例不开启。  </p>
+<p>这一语句中使用<code>split</code>分隔实例规格字符串，使用<code>reverse</code>翻转列表配合<code>[0]</code>取最末元素，使用<code>&amp;&amp;</code>进行逻辑与运算，使用三元表达式计算最终结果。整个表达式写起来很有python的感觉。  </p>
+<p>Terraform 提供了很多内置函数，<a target="_blank" rel="noopener" href="https://www.terraform.io/docs/configuration/functions.html">文档</a>。</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># main.tf</span></span><br><span class="line"></span><br><span class="line">resource <span class="string">&quot;aws_db_instance&quot;</span> <span class="string">&quot;instance&quot;</span> &#123;</span><br><span class="line">  performance_insights_enabled = (<span class="built_in">var</span>.env == <span class="string">&quot;prod&quot;</span> &amp;&amp; (<span class="keyword">reverse</span>(split(<span class="string">&quot;.&quot;</span>, <span class="built_in">var</span>.instance_class))[<span class="number">0</span>] != <span class="string">&quot;small&quot;</span>) &amp;&amp; (<span class="keyword">reverse</span>(split(<span class="string">&quot;.&quot;</span>, <span class="built_in">var</span>.instance_class))[<span class="number">0</span>] != <span class="string">&quot;micro&quot;</span>)) ? <span class="literal">true</span> : <span class="literal">false</span></span><br><span class="line">  <span class="meta"># ...省略部分无关参数...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># variables.tf</span><br><span class="line"></span><br><span class="line"><span class="keyword">variable</span> <span class="string">&quot;env&quot;</span> &#123;</span><br><span class="line">  description <span class="comment">=</span> <span class="comment">&quot;environment&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">variable</span> <span class="comment">&quot;instance_class&quot;</span> <span class="comment">&#123;</span></span><br><span class="line">  default     <span class="comment">=</span> <span class="comment">&quot;&quot;</span></span><br><span class="line">  description <span class="comment">=</span> <span class="comment">&quot;RDS Instance class&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><strong>Terraform 官方文档</strong> <a target="_blank" rel="noopener" href="https://www.terraform.io/docs/configuration/index.html">https://www.terraform.io/docs/configuration/index.html</a></li>
+<li><strong>The Gruntwork Blog</strong> <a target="_blank" rel="noopener" href="https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9">https://blog.gruntwork.io/terraform-tips-tricks-loops-if-statements-and-gotchas-f739bbae55f9</a></li>
+</ul>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//terraform-configuration-language-common-usages/" target="_blank" title="Terraform Configuration Language常用代码段">https://chowyi.com//terraform-configuration-language-common-usages/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Terraform" >
+    <span class="tag-code">Terraform</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/jmespath-learning-notes/">
+        <span class="nav-arrow">← </span>
+        
+          JMESPath学习分享
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/lets-talk-about-cdn-warm-up/">
+        
+          CDN预热是怎么回事儿
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Random-Password"><span class="toc-nav-text">Random Password</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Shuffle"><span class="toc-nav-text">Shuffle</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Generate-File"><span class="toc-nav-text">Generate File</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Loop"><span class="toc-nav-text">Loop</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#If-Statement"><span class="toc-nav-text">If Statement</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Built-in-Function-Example"><span class="toc-nav-text">Built-in Function Example</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Reference"><span class="toc-nav-text">Reference</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//terraform-configuration-language-common-usages/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      在博客中使用emoji表情 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>在博客中使用emoji表情</h2>
+  <p class="post-date">2016-02-04</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//add-emoji-selector-in-blog/" target="_blank" title="在博客中使用emoji表情">https://chowyi.com//add-emoji-selector-in-blog/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>近期在尝试使用 Django 开发一个个人博客，在评论和留言功能中，我希望能加入些表情。emoji 作为一种流行的字符表情当然是首选。在这个过程中我遇到了一些问题，现在解决了，记录一下。</p>
+<span id="more"></span>
+
+<p>要在 web 页面的评论框中添加输入 emoji 表情的功能，我想应该需要 js 插件来实现。我在 Github 上找到了<a target="_blank" rel="noopener" href="https://github.com/one-signal/emoji-picker">Emoji Picker</a>。这是一个emoji表情选择器，它可以在你的输入框上添加一个表情选择按钮。像这样：<br><img src="https://camo.githubusercontent.com/98fa676463e7d839be12101225dac3e37daf0bf2/687474703a2f2f6f6e652d7369676e616c2e6769746875622e696f2f656d6f6a692d7069636b65722f73637265656e73686f742e706e67"></p>
+<p>那么如何使用呢？它的文档是这么写的：<br><em>注意：按它的文档做是不够的！这是个坑！</em></p>
+<blockquote>
+<h1 id="Installation-Usage"><a href="#Installation-Usage" class="headerlink" title="Installation &amp; Usage:"></a>Installation &amp; Usage:</h1></blockquote>
+<blockquote>
+<p><em>On Robustness</em>: This library isn’t super robust, so if you find any issues, please report it so it can be fixed (or feel free to fix it yourself). Code quality improvements are also welcome, always looking to make it better!</p>
+</blockquote>
+<blockquote>
+<p><em>On CDN &amp; Multiple Files</em>: Currently, the number of JavaScript files you have to include is not ideal (6 files). The files will eventually be concatenated and minified, but it might be a bit until this happens. When that’s complete, it’ll be added to CDNJs as well.</p>
+</blockquote>
+<blockquote>
+<ol>
+<li>In your <code>&lt;head&gt;</code> section, add the following <em>stylesheet</em> links. Adjust the <code>lib/css</code> path to match yours.</li>
+</ol>
+</blockquote>
+<blockquote>
+ <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;link <span class="attribute">href</span>=<span class="string">&quot;lib/css/nanoscroller.css&quot;</span> <span class="attribute">rel</span>=<span class="string">&quot;stylesheet&quot;</span>&gt;</span><br><span class="line">&lt;link <span class="attribute">href</span>=<span class="string">&quot;lib/css/emoji.css&quot;</span> <span class="attribute">rel</span>=<span class="string">&quot;stylesheet&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>Before the end of your <code>&lt;body&gt;</code> section, add the following <em>JavaScript</em> links. This library depends on jQuery, so jQuery must also be included, before these scripts are run. Once again, adjust the <code>lib/css</code> path to match yours.</li>
+</ol>
+</blockquote>
+<blockquote>
+ <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- ** Don&#x27;t forget to Add jQuery here ** --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;lib/js/nanoscroller.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;lib/js/tether.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;lib/js/config.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;lib/js/util.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;lib/js/jquery.emojiarea.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;lib/js/emoji-picker.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>On any input field, add the data attribute <code>data-emojiable=&quot;true&quot;</code>.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="4">
+<li>That’s all you need for the default options. Play around with the demo to see what the default options give you.</li>
+</ol>
+</blockquote>
+<p>它的文档说的很简单，总结起来就是：</p>
+<ol>
+<li>在页面头部<code>&lt;head&gt;</code>中引入它的 css 文件</li>
+<li>在<code>&lt;body&gt;</code>最后引入它的 javascript 文件，别忘了先引入jQuery</li>
+<li>在任何 <code>&lt;input&gt;</code>标签中加入属性<code>data-emojiable=&quot;true&quot;</code></li>
+<li>完成， 如果使用默认设置，这样就可以了</li>
+</ol>
+<p><strong>然而这样是不够的！</strong><br>我的页面看起来什么也没有发生。查看一下它提供的demo源码，原来最下面还有这么一段js：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    $(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// Initializes and creates emoji set from sprite sheet</span></span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">window</span>.<span class="property">emojiPicker</span> = <span class="keyword">new</span> <span class="title class_">EmojiPicker</span>(&#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">emojiable_selector</span>: <span class="string">&#x27;[data-emojiable=true]&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">assetsPath</span>: <span class="string">&#x27;lib/img/&#x27;</span>,</span></span><br><span class="line"><span class="language-javascript">            <span class="attr">popupButtonClasses</span>: <span class="string">&#x27;fa fa-smile-o&#x27;</span></span></span><br><span class="line"><span class="language-javascript">     &#125;);</span></span><br><span class="line"><span class="language-javascript">      <span class="comment">// Finds all elements with `emojiable_selector` and converts them to rich emoji input fields</span></span></span><br><span class="line"><span class="language-javascript">      <span class="comment">// You may want to delay this step if you have dynamically created input fields that appear later in the loading process</span></span></span><br><span class="line"><span class="language-javascript">      <span class="comment">// It can be called as many times as necessary; previously converted input fields will not be converted again</span></span></span><br><span class="line"><span class="language-javascript">      <span class="variable language_">window</span>.<span class="property">emojiPicker</span>.<span class="title function_">discover</span>();</span></span><br><span class="line"><span class="language-javascript">    &#125;);</span></span><br><span class="line"><span class="language-javascript">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>所以我们加上这一段，别忘了修改<code>assetsPath</code>为你的路径。</p>
+<p>试了一下，为什么还是没有demo中看到的那个笑脸按钮？<br>再看源码，原来demo还有引用了这么一个css：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;link <span class="attribute">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attribute">href</span>=<span class="string">&quot;https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>这是一套专门为bootstrap设计的图标字体库,名为font-awesome。<br>我们可以直接引用这个css或者去下载一份 font-awesome 添加到项目。<br>至此，终于可以在页面中使用它了！</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//add-emoji-selector-in-blog/" target="_blank" title="在博客中使用emoji表情">https://chowyi.com//add-emoji-selector-in-blog/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Django" >
+    <span class="tag-code">Django</span>
+  </a>
+
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#emoji" >
+    <span class="tag-code">emoji</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/my-2015-review/">
+        <span class="nav-arrow">← </span>
+        
+          2015年个人总结
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/Django%E4%B8%AD%E4%BD%BF%E7%94%A8emoji%E4%B9%B1%E7%A0%81-MySQL%E5%AD%98%E5%82%A8/">
+        
+          Django中使用emoji乱码 MySQL存储
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Installation-Usage"><span class="toc-nav-text">Installation &amp; Usage:</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//add-emoji-selector-in-blog/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

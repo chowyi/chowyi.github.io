@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      如何正确地使用 HTTP Status Code 400 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>如何正确地使用 HTTP Status Code 400</h2>
+  <p class="post-date">2021-11-23</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//how-to-use-http-status-code-400-correctly/" target="_blank" title="如何正确地使用 HTTP Status Code 400">https://chowyi.com//how-to-use-http-status-code-400-correctly/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>大家对 HTTP 状态码一定都不陌生，也能随口说出它们的含义，但真的有仔细考虑过具体的使用场景吗？前两天与一位同学在何时使用状态码 400 这个问题上有了不同意见。<br>原问题可以细分为如下几个场景：</p>
+<ol>
+<li>业务接口缺少必要的参数，是否可以返回 400 ？</li>
+<li>业务接口收到的 string 类型的参数，转 int 类型失败时，是否可以返回 400 ？</li>
+<li>业务接口的请求体内容在 json 反序列化到 Golang 结构体的过程中失败，是否可以返回 400 ？</li>
+</ol>
+<p>读到这里，你的心中是否有了自己的答案？我与朋友一番讨论并搜集资料后，整理总结在此。  </p>
+<span id="more"></span>
+
+<p>想要了解如何正确的使用 HTTP Status Code 400，最简单直接的方式就是查它的定义。</p>
+<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>随着 HTTP 协议不断地发展完善，RFC 中对状态码的定义也发生了一些变化。</p>
+<h4 id="RFC-2068-January-1997"><a href="#RFC-2068-January-1997" class="headerlink" title="RFC 2068 (January 1997)"></a><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc2068#page-60">RFC 2068</a> (January 1997)</h4><blockquote>
+<p>10.4.1 400 Bad Request</p>
+<p>  The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.</p>
+</blockquote>
+<p>由于错误的语法格式导致请求不能被服务器理解。客户端不应该不经修改重发请求。</p>
+<h4 id="RFC-2616-June-1999"><a href="#RFC-2616-June-1999" class="headerlink" title="RFC 2616 (June 1999)"></a><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc2616#page-65">RFC 2616</a> (June 1999)</h4><p>在 1999 年 6 月发布的 RFC 2616 淘汰了 RFC 2068，但其中 400 Bad Request 的定义没有发生任何变化。</p>
+<h4 id="RFC-4918-June-2007"><a href="#RFC-4918-June-2007" class="headerlink" title="RFC 4918 (June 2007)"></a><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc4918#page-78">RFC 4918</a> (June 2007)</h4><p>RFC 4918 是对 RFC 2616 的扩展补充，新增了状态码 422。</p>
+<blockquote>
+<p>11.2.  422 Unprocessable Entity</p>
+<p>   The 422 (Unprocessable Entity) status code means the server understands the content type of the request entity (hence a 415(Unsupported Media Type) status code is inappropriate), and the syntax of the request entity is correct (thus a 400 (Bad Request) status code is inappropriate) but was unable to process the contained instructions.  For example, this error condition may occur if an XML request body contains well-formed (i.e., syntactically correct), but semantically erroneous, XML instructions.</p>
+</blockquote>
+<p>状态码 422 表示服务器理解了请求实体的内容类型（因此 415(不支持的媒体类型) 是不合适的）并且请求的语法也是正确的（因此 400 是不合适的），但是不能处理其中包含的实体。例如，一个 XML 的请求体格式是正确的（语法正确），但是语义是错误的。</p>
+<h4 id="RFC-7231-June-2014"><a href="#RFC-7231-June-2014" class="headerlink" title="RFC 7231 (June 2014)"></a><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc7231#page-58">RFC 7231</a> (June 2014)</h4><p>在 2014 年 6 月发布的 RFC 7231 淘汰了 RFC 2616，对状态码 400 给出了新的定义。</p>
+<blockquote>
+<p>6.5.1.  400 Bad Request</p>
+<p>   The 400 (Bad Request) status code indicates that the server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).</p>
+</blockquote>
+<p>状态码 400 表示由于某种客户端的错误（例如错误的请求语法，无效的消息帧或欺骗性请求路由），服务器不能或不处理此请求。</p>
+<h3 id="小结（第一部分）"><a href="#小结（第一部分）" class="headerlink" title="小结（第一部分）"></a>小结（第一部分）</h3><p>从上面的定义中可以看到，无论是 1997 年发布的 RFC 2068 还是在 2014 年重新修订的 RFC 7231 ，对状态码 400 的描述中都有提到 <strong>malformed syntax（错误的语法）</strong>。在 RFC 4918 对状态码 422 的定义中还特别区分了 <strong>syntactically（语法）</strong> 和 <strong>semantically（语义）</strong>。现在我们就可以回答最开始提出的三个问题。</p>
+<blockquote>
+<ol>
+<li>业务接口缺少必要的参数，是否可以返回 400 ？</li>
+<li>业务接口收到的 string 类型的参数，转 int 类型失败时，是否可以返回 400 ？</li>
+<li>业务接口的请求体内容在 json 反序列化到 Golang 结构体的过程中失败，是否可以返回 400 ？</li>
+</ol>
+</blockquote>
+<p>问题 1 和问题 2 可以一起回答，不能。因为缺少参数和业务逻辑内部的类型转换都不属于语法错误，而是语义错误。对于 HTTP 协议和服务器来说，已经正确的承载、传输、接收了请求内容。<br>问题 3 需要再细分讨论。在 json 反序列化的过程中，如果是因为 json 本身格式错误（比如乱码，缺少括号）导致的失败，应该返回状态码 400。如果请求体本身的 json 格式正确符合标准，但由于不能与业务中定义的结构体匹配导致的失败（比如字段类型不一致），则不应该返回状态码 400。</p>
+<p>对于以上三种情况，我认为返回状态码 422 都是更合适的选择。</p>
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>但这是一定的吗？<br>在 RFC 7231 中对<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc7231#page-58">响应状态码</a>的介绍如下：</p>
+<blockquote>
+<p> The status-code element is a three-digit integer code giving the<br>   result of the attempt to understand and satisfy the request.  </p>
+<p>  HTTP status codes are extensible.  HTTP clients are not required to understand the meaning of all registered status codes, though such digit, and treat an unrecognized status code as being equivalent to the x00 status code of that class, with the exception that a recipient MUST NOT cache a response with an unrecognized status code.</p>
+</blockquote>
+<p>状态码是3位的整数，HTTP 状态码是可扩充的。HTTP 客户端不被要求理解所有状态码的含义，但一定要能理解每一种类别状态码，即状态码的第一位数字所代表的含义。不能被识别理解的状态码可以把它看做 x00，除非接受者不得缓存不能识别的状态码。</p>
+<h3 id="小结（第二部分）"><a href="#小结（第二部分）" class="headerlink" title="小结（第二部分）"></a>小结（第二部分）</h3><p>由此可知，x00 状态码可以看作是该类别下各种状态的概括。我们已经知道状态码 422 是在 RFC 4918 中进行的扩展补充。当 HTTP 客户端不能识别状态码 422 时也可以把它看作 400。因此，在并不严格的情况下使用 400 代替 422 也不能算是错误。</p>
+<h3 id="我的思考"><a href="#我的思考" class="headerlink" title="我的思考"></a>我的思考</h3><p>前面的讨论是从 HTTP 状态码的定义展开的。从分层的角度来看，HTTP 状态码是协议层的定义，是用来表示 HTTP 请求的结果，与业务层无关。业务层可以在响应体内定义自己的错误码。如果一个 HTTP 请求被正确的接收，但因为业务逻辑缺少参数，那么可以返回 HTTP Status Code 200，并在响应体内带上业务自定义的状态码和错误消息，比如</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">&#123;<span class="string">&quot;code&quot;</span><span class="punctuation">:</span> <span class="number">10001</span><span class="punctuation">,</span> “msg<span class="string">&quot;: &quot;</span>invalid params<span class="string">&quot;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="概念澄清"><a href="#概念澄清" class="headerlink" title="概念澄清"></a>概念澄清</h3><p>在前面状态码 400 的定义中有这么一句话：</p>
+<blockquote>
+<p>由于错误的语法格式导致请求不能被服务器理解。</p>
+</blockquote>
+<p>有的同学对此疑惑，我要一个 int 类型的参数，传给我一个 string 类型的参数，我就是不理解呀，因此说参数类型错误的场景符合 400 的定义。这里有两个概念需要明确。</p>
+<ol>
+<li>语法（syntactically），区别于语义（semantically）。缺少参数或参数错误都属于语义错误，即表达的内容不对，但格式是正确的。</li>
+<li>不能被服务器理解中的”服务器“。这里的服务器应该理解为 web server，比如 Nginx、Apache 或是 Golang 中的 http.Handler。要注意区别于应用程序 application，即我们开发的业务代码。在实际工作中我们常把 server + application 统称为”后端“，因此有同学容易混淆。</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ol>
+<li>状态码 400 用于表示客户端的语法错误，服务器读不懂请求。</li>
+<li>状态码 422 表示服务器可以正确读取客户端的请求，但因为其内容中的语义错误而不能处理请求。</li>
+<li>接口缺少业务参数或参数类型错误时应优先考虑使用 422。</li>
+<li>在某些情况下，x00 是对该类状态码的概括，使用 400 代替 422 也并非错误。</li>
+</ol>
+<h3 id="彩蛋-Hyper-Text-Coffee-Pot-Control-Protocol-HTCPCP-1-0"><a href="#彩蛋-Hyper-Text-Coffee-Pot-Control-Protocol-HTCPCP-1-0" class="headerlink" title="彩蛋 Hyper Text Coffee Pot Control Protocol (HTCPCP&#x2F;1.0)"></a>彩蛋 Hyper Text Coffee Pot Control Protocol (HTCPCP&#x2F;1.0)</h3><p>在查阅资料的过程中，发现了 <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc2324">RFC 2324</a>，一个来自 1998 年愚人节玩笑，超文本咖啡壶控制协议，其中还定义了 <code>418 I&#39;m a teapot</code>，哈哈。</p>
+<h3 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://softwareengineering.stackexchange.com/questions/329229/should-i-return-an-http-400-bad-request-status-if-a-parameter-is-syntactically">Should I return an HTTP 400 (Bad Request) status if a parameter is syntactically correct, but violates a business rule?</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bennadel.com/blog/2434-http-status-codes-for-invalid-data-400-vs-422.htm">http-status-codes-for-invalid-data-400-vs-422</a></li>
+<li><a target="_blank" rel="noopener" href="https://softwareengineering.stackexchange.com/questions/305250/should-i-use-http-status-codes-to-describe-application-level-events">Should I use HTTP status codes to describe application level events</a></li>
+</ol>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//how-to-use-http-status-code-400-correctly/" target="_blank" title="如何正确地使用 HTTP Status Code 400">https://chowyi.com//how-to-use-http-status-code-400-correctly/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#HTTP" >
+    <span class="tag-code">HTTP</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/green-hand-notes-about-mongodb/">
+        <span class="nav-arrow">← </span>
+        
+          MongoDB 新手笔记
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/Hello-Rust/">
+        
+          Hello Rust
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-nav-text">定义</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#RFC-2068-January-1997"><span class="toc-nav-text">RFC 2068 (January 1997)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#RFC-2616-June-1999"><span class="toc-nav-text">RFC 2616 (June 1999)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#RFC-4918-June-2007"><span class="toc-nav-text">RFC 4918 (June 2007)</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#RFC-7231-June-2014"><span class="toc-nav-text">RFC 7231 (June 2014)</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89"><span class="toc-nav-text">小结（第一部分）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%A1%A5%E5%85%85"><span class="toc-nav-text">补充</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%B0%8F%E7%BB%93%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89"><span class="toc-nav-text">小结（第二部分）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%88%91%E7%9A%84%E6%80%9D%E8%80%83"><span class="toc-nav-text">我的思考</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%A6%82%E5%BF%B5%E6%BE%84%E6%B8%85"><span class="toc-nav-text">概念澄清</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%BD%A9%E8%9B%8B-Hyper-Text-Coffee-Pot-Control-Protocol-HTCPCP-1-0"><span class="toc-nav-text">彩蛋 Hyper Text Coffee Pot Control Protocol (HTCPCP&#x2F;1.0)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%9A"><span class="toc-nav-text">参考资料：</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//how-to-use-http-status-code-400-correctly/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

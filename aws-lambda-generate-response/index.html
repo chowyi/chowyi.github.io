@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      AWS Lambda@Edge动态生成响应 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>AWS Lambda@Edge动态生成响应</h2>
+  <p class="post-date">2019-02-18</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//aws-lambda-generate-response/" target="_blank" title="AWS Lambda@Edge动态生成响应">https://chowyi.com//aws-lambda-generate-response/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>最近用了不少 AWS Lambda@Edge，前两篇文章记录了我用 Lambda@Edge 实现请求重定向的过程，今天我又完成了一项新的需求，使用 Lambda@Edge 动态生成响应。</p>
+<span id="more"></span>
+
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>国内的网站都需要备案，备案需要在网站的页脚上注明公司名称和备案号。我司有很多站点都需要备案，这些站点都需要一个类似包含如下信息的备案页：站点名称、公司名称、备案号、copyright、logo图片。现在每个站点都有一个这样的 html 静态页面放在服务器上，由 nginx 对外提供服务。这样做有如下几个问题：</p>
+<ol>
+<li>成本较高，需要提供一台 nginx 服务器。</li>
+<li>维护麻烦，新增站点要创建新的 html 页面。</li>
+<li>需要运维保障服务器平稳运行。</li>
+</ol>
+<p>要解决以上问题，还是需要无服务器化。有同学可能会想到使用对象存储来托管静态资源，这可以解决上面的第1点和第3点。要解决上面全部3个问题，这次我的做法是使用 Lambda@Edge 动态生成响应。</p>
+<h2 id="方案概览"><a href="#方案概览" class="headerlink" title="方案概览"></a>方案概览</h2><ol>
+<li>将各站点的备案页域名都指向 CloudFront。</li>
+<li>CloudFront 上可以配置适配多个域名的 SSL证书（通过 AWS Certificate Manager申请）。</li>
+<li>编写 Lambda 函数部署到 CloudFront 上拦截 ViewerRequest（查看器请求）。<br> 3.1 获取请求站点：<code>request.headers.host[0].value</code>。<br> 3.2 根据请求的站点从配置获取公司名称，备案号和 Logo URI。<br> 3.3 按当前日期生成 copyright 信息，例如：<code>2019 © XXX公司</code>。<br> 3.4 将以上信息填充到 HTML 模板中，生成响应。<br> 3.5 返回响应到用户。</li>
+</ol>
+<p>在 Lambda@Edge 生成响应并返回非常简单，同重定向类似：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pageHTML = <span class="string">&#x27;&lt;html&gt;...&lt;/html&gt;&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> response = &#123;</span><br><span class="line">        <span class="attr">status</span>: <span class="string">&#x27;200&#x27;</span>,</span><br><span class="line">        <span class="attr">statusDescription</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">        <span class="attr">headers</span>: &#123;&#125;,</span><br><span class="line">        <span class="attr">body</span>: pageHTML,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">callback</span>(<span class="literal">null</span>, response);</span><br></pre></td></tr></table></figure>
+
+<p>我的代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&#x27;use strict&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> companyName = <span class="string">&#x27;XXX有限公司&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> imageUri = <span class="string">&#x27;https://example.com/logo.png&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> icpInfos = &#123;</span><br><span class="line">    <span class="string">&#x27;www.aaa.com&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;companyName&#x27;</span>: <span class="string">&#x27;&#x27;</span> || companyName ,</span><br><span class="line">        <span class="string">&#x27;icpNumber&#x27;</span>: <span class="string">&#x27;粤ICP备12345678号-6&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;imageUri&#x27;</span>: <span class="string">&#x27;&#x27;</span> || imageUri</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&#x27;www.bbb.net&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;companyName&#x27;</span>: <span class="string">&#x27;&#x27;</span> || companyName ,</span><br><span class="line">        <span class="string">&#x27;icpNumber&#x27;</span>: <span class="string">&#x27;粤ICP备12345678号-4&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;imageUri&#x27;</span>: <span class="string">&#x27;&#x27;</span> || imageUri</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exports</span>.<span class="property">handler</span> = <span class="function">(<span class="params">event, context, callback</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> request = event.<span class="property">Records</span>[<span class="number">0</span>].<span class="property">cf</span>.<span class="property">request</span>;</span><br><span class="line">    <span class="keyword">const</span> host = request.<span class="property">headers</span>.<span class="property">host</span>[<span class="number">0</span>].<span class="property">value</span>;</span><br><span class="line">    <span class="keyword">const</span> icpInfo = icpInfos[host];</span><br><span class="line">    <span class="keyword">if</span>(!icpInfo)&#123;</span><br><span class="line">        <span class="title function_">callback</span>(<span class="literal">null</span>, request);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> year = <span class="keyword">new</span> <span class="title class_">Date</span>().<span class="title function_">getFullYear</span>();</span><br><span class="line">    <span class="keyword">const</span> pageHTML = <span class="string">`&lt;!DOCTYPE html&gt;&lt;html lang=&quot;zh-cmn-Hans&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;UTF-8&quot;&gt;</span></span><br><span class="line"><span class="string">        &lt;title&gt;<span class="subst">$&#123;host&#125;</span>&lt;/title&gt;</span></span><br><span class="line"><span class="string">        &lt;style&gt;</span></span><br><span class="line"><span class="string">            *&#123;</span></span><br><span class="line"><span class="string">              margin: 0;</span></span><br><span class="line"><span class="string">              padding: 0;</span></span><br><span class="line"><span class="string">              background-color: #f7f7f7;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">            h1&#123;</span></span><br><span class="line"><span class="string">              text-align: center;</span></span><br><span class="line"><span class="string">              font-size: 48px;</span></span><br><span class="line"><span class="string">              padding: 10%;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">            p&#123;</span></span><br><span class="line"><span class="string">              position: absolute;</span></span><br><span class="line"><span class="string">              bottom: 0;</span></span><br><span class="line"><span class="string">              left: 0;</span></span><br><span class="line"><span class="string">              width: 100%;</span></span><br><span class="line"><span class="string">              text-align: center;</span></span><br><span class="line"><span class="string">              color: #999;</span></span><br><span class="line"><span class="string">              padding: 10px 0;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">            p a &#123;</span></span><br><span class="line"><span class="string">              color: #999;</span></span><br><span class="line"><span class="string">              padding-left: 20px;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        &lt;/style&gt;</span></span><br><span class="line"><span class="string">        &lt;/head&gt;</span></span><br><span class="line"><span class="string">        &lt;body&gt;</span></span><br><span class="line"><span class="string">          &lt;p style=&quot;text-align:center&quot;&gt;&lt;img src=&quot;<span class="subst">$&#123;icpInfo.imageUri&#125;</span>&quot;&gt;&lt;/p&gt;  </span></span><br><span class="line"><span class="string">          &lt;h1&gt;<span class="subst">$&#123;host&#125;</span>&lt;/h1&gt;</span></span><br><span class="line"><span class="string">          &lt;p&gt;<span class="subst">$&#123;year&#125;</span> &amp;copy; <span class="subst">$&#123;icpInfo.companyName&#125;</span> &lt;a href=&quot;http://www.miitbeian.gov.cn/&quot;&gt;<span class="subst">$&#123;icpInfo.icpNumber&#125;</span>&lt;/a&gt;&lt;/p&gt;</span></span><br><span class="line"><span class="string">        &lt;/body&gt;</span></span><br><span class="line"><span class="string">        &lt;/html&gt;`</span>;</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">const</span> response = &#123;</span><br><span class="line">        <span class="attr">status</span>: <span class="string">&#x27;200&#x27;</span>,</span><br><span class="line">        <span class="attr">statusDescription</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">        <span class="attr">headers</span>: &#123;&#125;,</span><br><span class="line">        <span class="attr">body</span>: pageHTML,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="title function_">callback</span>(<span class="literal">null</span>, response);</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>用户从浏览器访问域名，域名解析到 CloudFront，触发 Lambda@Edge 的 ViewerRequest。在 ViewerRequest 中根据站点、当前时间动态生成正常包含相应备案号、copyright 时间等信息的 HTTP 响应。</li>
+<li>Lambda@Edge 运行在靠近用户的 CloudFront 边缘节点上，响应更快。</li>
+<li>新增站点只需要在 Lambda@Edge 代码中添加配置，无需创建 HTML 文件。</li>
+<li>copyright 信息可以动态更新（当然，静态资源也可以用 JavaScript 实现）。</li>
+<li>成本低，无需维护，稳定性高。</li>
+</ol>
+<p>相比之前使用 Lambda@Edge 做重定向，其实这次的需求也没有太多新东西，理解了原理就非常简单，但实现的效果非常棒！</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//aws-lambda-generate-response/" target="_blank" title="AWS Lambda@Edge动态生成响应">https://chowyi.com//aws-lambda-generate-response/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/two-ways-to-redirect-domain-zone-apex/">
+        <span class="nav-arrow">← </span>
+        
+          使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/reverse-proxy-by-lambda-at-edge/">
+        
+          AWS Lambda@Edge实现反向代理
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%96%B9%E6%A1%88%E6%A6%82%E8%A7%88"><span class="toc-nav-text">方案概览</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//aws-lambda-generate-response/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link active">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link mobile-active">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <main class="app-body">
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/first-try-aws-lambda-with-cloudwatch-events/">CloudWatch Events配合AWS Lambda使用初体验</a>
+      </h2>
+      <p class="article-date">2018年9月12日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+  <a href="/tags#CloudWatch" >
+    <span class="tag-code">CloudWatch</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>按照团队的标准规范，在 AWS 上新建的 EC2 实例都要添加 Name, Region, App, Env, Layer, Group 等标签。其中 Name 标签的格式是：<code>&#123;Region&#125;-&#123;App&#125;-&#123;Layer&#125;-&#123;Env&#125;-&#123;Group&#125;-&#123;IP后两段&#125;</code>，例如：<code>vg-store-web-release-a-12-34</code>。<br>在 Auto Scaling Group 的配置上，我设置了为新扩容出的实例自动添加 Region, App, Env, Layer, Group 这些标签，但因为 Name 标签中包含 IP 后缀，因此没办法预先设置在 Auto Scaling Group 上，只能在实例创建出来分配到私有 IP 后手动的添加 Name 标签。</p>
+<p>为了解决这个问题，我最先想到的方案是：使用脚本调用 API 定时扫描没有 Name 标签的实例，然后获取实例的 PrivateIP 和其他标签拼装出 Name 添加到实例上。<br>我很快就编写出 Demo，经过测试，可以实现需求，但总觉得不够优雅：</p>
+<ol>
+<li>需要定时调用脚本，间隔时间过长就不能及时发现新扩容的实例，间隔过短则显得有些浪费计算资源（事实上，在我们的业务场景中发生扩容的次数很少，间隔以天为单位设置都有些多余）。</li>
+<li>需要部署维护脚本及crontab。</li>
+<li>需要找一台服务器运行脚本。</li>
+</ol>
+<p>后来我想到了 Auto Scaling Group 有 LifeCycle Hook，又从它的设置界面了解到了 CloudWatch Events 这一服务。<br>最后通过 CloudWatch Events 和 AWS Lambda 就可以很好的实现我的需求！</p>
+        
+      </div>
+      <a class="more" href="/first-try-aws-lambda-with-cloudwatch-events/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/thoughts-about-the-core-and-essence-of-aws-auto-scaling/">一点思考——AWS Auto Scaling的核心与本质——CloudWatch</a>
+      </h2>
+      <p class="article-date">2018年9月4日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AutoScaling" >
+    <span class="tag-code">AutoScaling</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>在了解了目标跟踪扩展策略（Target Tracking Scaling Policy）的机制之后，突然就对 AWS Auto Scaling 有了新的理解。它最核心的部分其实是 CloudWatch！</p>
+<p>想明白了这一点之后，AWS Auto Scaling 就不再那么神奇与神秘了。我甚至可以利用 CloudWatch 和 EC2 的相关 API 自己来实现一套 Auto Scaling！</p>
+<p>（当然，这并不能否认 AWS Auto Scaling 的强大，无论是在细节上还是用户体验上它都打磨的非常完美了。）</p>
+        
+      </div>
+      <a class="more" href="/thoughts-about-the-core-and-essence-of-aws-auto-scaling/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/aws-auto-scaling-target-tracking-scaling-policy/">深入了解AWS Auto Scaling的动态扩展——目标跟踪扩展策略</a>
+      </h2>
+      <p class="article-date">2018年8月31日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AutoScaling" >
+    <span class="tag-code">AutoScaling</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>AWS Auto Scaling 有手动扩展（Manual Scaling）、计划的扩展（Scheduled Scaling）及动态扩展（Dynamic Scaling）三种扩展方式。<br>手动扩展（Manual Scaling）、计划的扩展（Scheduled Scaling）两种方式使用比较简单，本文主要记录我在使用动态扩展（Dynamic Scaling）时遇到的一些疑惑及解答。</p>
+<p>动态扩展（Dynamic Scaling）目前支持的扩展策略类型有：</p>
+<ol>
+<li>目标跟踪扩展策略（Target tracking scaling）</li>
+<li>步进扩展策略（Step scaling）</li>
+<li>简单扩展策略（Simple scaling）</li>
+</ol>
+<p>详细的介绍可以看官网文档：<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/autoscaling/ec2/userguide/as-scale-based-on-demand.html">适用于 Amazon EC2 Auto Scaling 的动态扩展</a></p>
+<p>以下内容会记录一些在文档中没有写清，我通过实际测试并与AWS 技术支持沟通得到的结果。</p>
+        
+      </div>
+      <a class="more" href="/aws-auto-scaling-target-tracking-scaling-policy/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/%E4%BD%BF%E7%94%A8AWS-Auto-Scaling-Processes%E7%81%B5%E6%B4%BB%E9%85%8D%E7%BD%AE%E6%89%A9%E7%BC%A9%E5%AE%B9%E8%A1%8C%E4%B8%BA/">使用AWS Auto Scaling Processes灵活配置扩缩容行为</a>
+      </h2>
+      <p class="article-date">2018年7月31日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AutoScaling" >
+    <span class="tag-code">AutoScaling</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>近期在工作中大量用到了 AWS Auto Scaling，经过多次试验，学习文档并与AWS的技术支持沟通，在我对 Auto Scaling 各项功能不断了解的同时，也深感 AWS 的强大。遇到的种种场景、需求，AWS 似乎早就已经替你考虑好了。<br>今天我遇到的问题是，在对线上服务器进行变更发版等操作时，要求不能发生自动扩缩容，否则可能导致意外的错误（扩容时，新机器使用的是老镜像。缩减时，发版操作将会中断）。要实现这一点，我想到了很多方案。</p>
+        
+      </div>
+      <a class="more" href="/%E4%BD%BF%E7%94%A8AWS-Auto-Scaling-Processes%E7%81%B5%E6%B4%BB%E9%85%8D%E7%BD%AE%E6%89%A9%E7%BC%A9%E5%AE%B9%E8%A1%8C%E4%B8%BA/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/aws-auto-scaling-with-latest-image/">为AWS Auto Scaling持续提供最新映像</a>
+      </h2>
+      <p class="article-date">2018年7月18日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AutoScaling" >
+    <span class="tag-code">AutoScaling</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>通过之前的踩坑与学习，目前我对 AWS Auto Scaling 已经有了一定程度的了解。那么对完成工作需求也就有了更高的标准。<br><strong>新的问题是：</strong>随着业务功能的更新，如何保证 Auto Scaling 可以扩容出与线上保持版本一致的 EC2 实例？<br>这就要求我们，在业务更新发版后，及时的去更新 Auto Scaling 所配置的映像（Image）。</p>
+        
+      </div>
+      <a class="more" href="/aws-auto-scaling-with-latest-image/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/aws-auto-scaling-study/">AWS Auto Scaling 学习与踩坑</a>
+      </h2>
+      <p class="article-date">2018年7月2日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AutoScaling" >
+    <span class="tag-code">AutoScaling</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>最近工作不太顺，总踩坑，当然这是客观原因。主观因素呢，就归结于自己经验不足。</p>
+<p>这又刚被 AWS Auto Scaling 给坑了，于是学习总结了一番，记录下来，主要是关于 Auto Scaling 的详细介绍和容易犯错踩坑的地方。方便以后自己查询，也希望能帮到看到这篇文章的人。</p>
+        
+      </div>
+      <a class="more" href="/aws-auto-scaling-study/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/aws-route53-failover-with-cloudwatch/">AWS Route53配合CloudWatch自定义监控实现故障转移</a>
+      </h2>
+      <p class="article-date">2018年6月25日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#Route53" >
+    <span class="tag-code">Route53</span>
+  </a>
+
+  <a href="/tags#CloudWatch" >
+    <span class="tag-code">CloudWatch</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近工作中遇到的一个场景：业务系统在国内及国外各部署一套，两套系统有各自的域名。当其中一套发生故障时，要求通过修改域名解析，转移流量到另一套系统进行容灾。<br>现状是通过脚本进行监控，产生告警后手动修改域名解析实现故障转移，待故障系统恢复后，再将域名解析修改回来。<br>这样的方式存在的几个明显的问题：</p>
+<ol>
+<li>出现故障时，人员响应不够及时。</li>
+<li>存在多个业务系统，手工操作工作量大，速度慢。</li>
+<li>手工操作易出现错误。</li>
+<li>故障恢复后，需要再次人工干预改回解析记录。</li>
+</ol>
+<p>为解决如上问题，近几天搭建了一套测试环境，通过 AWS CloudWatch 自定义监控 + Route53 Failover 记录实现了故障发生时的自动切换解析，故障恢复后，自动切回解析的效果。</p>
+        
+      </div>
+      <a class="more" href="/aws-route53-failover-with-cloudwatch/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/learning-zabbix-basic/">初学Zabbix基本原理</a>
+      </h2>
+      <p class="article-date">2017年10月21日</p>
+      
+        
+  <a href="/tags#Zabbix" >
+    <span class="tag-code">Zabbix</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>对 Zabbix 的了解一直停留在听说过没用过的状态，以前通过 python-zabbix 调用过简单的 API，但是讲原理的话我真的说不上来什么。很开心新的工作对我提出了新的要求，我的 Mentor——Rick 也是个很好的老师，从基本原理和架构上给我介绍了 Zabbix 到底是什么。下面是我的学习整理。</p>
+        
+      </div>
+      <a class="more" href="/learning-zabbix-basic/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/Django%E4%BD%BF%E7%94%A8MySQL%E5%90%8E%E7%AB%AF%E6%97%A5%E6%9C%9F%E4%B8%8D%E8%83%BD%E6%8C%89%E6%9C%88%E8%BF%87%E6%BB%A4%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">Django使用MySQL后端日期不能按月过滤的问题及解决方案</a>
+      </h2>
+      <p class="article-date">2017年9月19日</p>
+      
+        
+  <a href="/tags#Django" >
+    <span class="tag-code">Django</span>
+  </a>
+
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>近期在工作中有一个需求，按创建年份统计资产的数量，一行代码就能实现，分分钟的事情。后来需求变动，要求按月份统计。我一想，这也没问题啊，对 Django 来说也就是加一个参数的事。代码改完，一调接口，咦，统计结果为什么全是 0 啊？<br>后面一步一步的定位问题，还挺有意思的，记录下来。</p>
+        
+      </div>
+      <a class="more" href="/Django%E4%BD%BF%E7%94%A8MySQL%E5%90%8E%E7%AB%AF%E6%97%A5%E6%9C%9F%E4%B8%8D%E8%83%BD%E6%8C%89%E6%9C%88%E8%BF%87%E6%BB%A4%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/PEP-318-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%96%B9%E6%B3%95%E8%A3%85%E9%A5%B0%E5%99%A8/">PEP 318 函数与方法装饰器</a>
+      </h2>
+      <p class="article-date">2017年9月16日</p>
+      
+        
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#PEP" >
+    <span class="tag-code">PEP</span>
+  </a>
+
+  <a href="/tags#装饰器" >
+    <span class="tag-code">装饰器</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>这两天回顾 Python 知识点，想到 Python 中的装饰器和 Java 的注解在语法上如此相像，它们是否有什么渊源？又为什么选用了<code>@</code>符号呢？在 PEP 318 中我找到了答案，在此翻译记录。</p>
+        
+      </div>
+      <a class="more" href="/PEP-318-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%96%B9%E6%B3%95%E8%A3%85%E9%A5%B0%E5%99%A8/">阅读全文</a>
+    </article>
+  
+
+  
+    <div class="guide-pager">
+  
+    <a href="/page/2/"><span class="page-arrow">← </span>Prev</a>
+  
+  
+    <a href="/page/4/">Next<span class="page-arrow"> →</span></a>
+  
+</div>
+  
+</main>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

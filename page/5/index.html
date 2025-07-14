@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link active">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link mobile-active">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <main class="app-body">
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E2%80%94%E2%80%94%E9%AB%98%E6%95%88%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%8445%E4%B8%AA%E4%B9%A0%E6%83%AF%EF%BC%9A%E6%95%8F%E6%8D%B7%E5%BC%80%E5%8F%91%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/">读书笔记——高效程序员的45个习惯：敏捷开发修炼之道</a>
+      </h2>
+      <p class="article-date">2016年7月21日</p>
+      
+        
+  <a href="/tags#读书" >
+    <span class="tag-code">读书</span>
+  </a>
+
+  <a href="/tags#敏捷开发" >
+    <span class="tag-code">敏捷开发</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          1.做事
+“出了问题，第一重要的是确定元凶。找到那个白痴！一旦证实了是他的错误，就可以保证这样的问题永远不会再发生了。”
+
+没想到这本书的第一小节就指出了我的一个错误。在软件开发的过程中，往往是需要团队合作的，这就免不了与其他程序员的代码打交道。有时遇到bug或是看到代码中的错误，我确实很想 ...
+        
+      </div>
+      <a class="more" href="/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E2%80%94%E2%80%94%E9%AB%98%E6%95%88%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%8445%E4%B8%AA%E4%B9%A0%E6%83%AF%EF%BC%9A%E6%95%8F%E6%8D%B7%E5%BC%80%E5%8F%91%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/the-first-year-after-graduation/">Year One</a>
+      </h2>
+      <p class="article-date">2016年7月16日</p>
+      
+        
+  <a href="/tags#生活" >
+    <span class="tag-code">生活</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>记不起生活的起点，看不到生活的终点，我们只能数着日子来计算那些已经走过里程。</p>
+        
+      </div>
+      <a class="more" href="/the-first-year-after-graduation/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/Python%E4%B8%AD%E7%9A%84%E4%B8%80%E7%82%B9%E5%B0%8F%E5%8F%91%E7%8E%B0/">Python中的一点小发现</a>
+      </h2>
+      <p class="article-date">2016年5月31日</p>
+      
+        
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>使用Python快一年了，回头看看Python基础，还能时不时的发现一些小惊喜，在这里分享一下。</p>
+        
+      </div>
+      <a class="more" href="/Python%E4%B8%AD%E7%9A%84%E4%B8%80%E7%82%B9%E5%B0%8F%E5%8F%91%E7%8E%B0/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E2%80%94%E2%80%94%E6%83%B3%E8%B1%A1%E5%8F%A6%E4%B8%80%E7%A7%8D%E5%8F%AF%E8%83%BD/">读书笔记——想象另一种可能</a>
+      </h2>
+      <p class="article-date">2016年4月28日</p>
+      
+        
+  <a href="/tags#读书" >
+    <span class="tag-code">读书</span>
+  </a>
+
+  <a href="/tags#想象另一种可能" >
+    <span class="tag-code">想象另一种可能</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <blockquote>
+<p>人生有一万种可能，无需抵触，不必恐慌。<br>本书作者打破学科界限，不仅设想如霍比特人的未来城市和诗意生活，描绘诺兰用爱搭建星际穿越的桥梁以寻求人类自我解救的美好旨归，还趣谈智商神话、体重危机，并且思考物理领域的新突破，包括上帝粒子、暴涨理论、平行世界等。他化身诗人、哲学家，在电影、科幻，科学、宗教、生活中追问人类的“终极”性问题——我们从哪里来？我们是谁？我们向何处去？</p>
+</blockquote>
+        
+      </div>
+      <a class="more" href="/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%E2%80%94%E2%80%94%E6%83%B3%E8%B1%A1%E5%8F%A6%E4%B8%80%E7%A7%8D%E5%8F%AF%E8%83%BD/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/SQLAlchemy%E5%88%9D%E4%BD%93%E9%AA%8C/">SQLAlchemy初体验</a>
+      </h2>
+      <p class="article-date">2016年4月16日</p>
+      
+        
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#SQLAlchemy" >
+    <span class="tag-code">SQLAlchemy</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>使用Django已经有一段时间了，对Django的ORM印象深刻，它简单易用，也足够灵活。但是在自己做一些小实验小例子时，仅为了ORM而使用Django这么一个web框架显然不太合适。于是我找到了SQLAlchemy。从<a target="_blank" rel="noopener" href="http://www.sqlalchemy.org/">官方</a>介绍来看，SQLAlchemy是Python下的一款强大且灵活的ORM框架及SQL工具集。那么我就从<a target="_blank" rel="noopener" href="http://docs.sqlalchemy.org/en/rel_1_0/orm/tutorial.html">官方教程</a>入手，一边学习，一边感受一下吧。</p>
+        
+      </div>
+      <a class="more" href="/SQLAlchemy%E5%88%9D%E4%BD%93%E9%AA%8C/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/shenzhen-100km-2016/">新的体验！我的深圳百公里</a>
+      </h2>
+      <p class="article-date">2016年3月26日</p>
+      
+        
+  <a href="/tags#生活" >
+    <span class="tag-code">生活</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>上周三在公司群发的邮件中得知了深圳百公里这个活动，刚刚爱上夜跑的我和项目组另外三个小伙伴当即决定，报名参加！于是，我们在磨房论坛收集了一些相关资料，在周末前两天仓促的准备了些食物，按网上的建议购买了五指袜，创可贴。就这样，我们怀着激动的心情，在周六出发了！</p>
+        
+      </div>
+      <a class="more" href="/shenzhen-100km-2016/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/bottle-tutorial-chinese-translation/">Bottle Tutorial 官方教程中文翻译</a>
+      </h2>
+      <p class="article-date">2016年2月26日</p>
+      
+        
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#Bottle" >
+    <span class="tag-code">Bottle</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <blockquote>
+<p>在学习Bottle的同时，我翻译了这篇 <a target="_blank" rel="noopener" href="http://bottlepy.org/docs/dev/tutorial.html">Bottle官网</a>上的教程，希望能为后来者提供一些便利。我尽自己所能翻译的准确易懂，但因个人水平有限而不可避免的会出现一些错误，希望大家指正。对有能力阅读英文原文的同学我还是推荐去阅读官方的教程。看英文吃力的同学，我也希望你可以把本文与原文对比阅读，以便更好地体会一些专业术语的准确含义。</p>
+</blockquote>
+<h1 id="Bottle-Python-Web-Framework"><a href="#Bottle-Python-Web-Framework" class="headerlink" title="Bottle: Python Web Framework"></a>Bottle: Python Web Framework</h1><p>Bottle是一个快速，简单，轻量的 <a target="_blank" rel="noopener" href="http://www.wsgi.org/">WSGI</a> 微型Python web 框架。它只有一个文件模块，不依赖除了 <a target="_blank" rel="noopener" href="http://docs.python.org/library/">Python标准库</a> 之外的任何库。</p>
+        
+      </div>
+      <a class="more" href="/bottle-tutorial-chinese-translation/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/display-emoji-in-django-template/">在Django模板中显示emoji表情</a>
+      </h2>
+      <p class="article-date">2016年2月4日</p>
+      
+        
+  <a href="/tags#Django" >
+    <span class="tag-code">Django</span>
+  </a>
+
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#emoji" >
+    <span class="tag-code">emoji</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>现在我已经成功的在博客的评论功能中加入了输入emoji表情的功能，它们以Unicode编码的形式保存在MySQL数据库中，并使用MySQL的utf8mb4字符集解决了乱码的问题。现在要如何把它们从Unicode编码重新转换为emoji表情显示在页面上呢？
+        
+      </div>
+      <a class="more" href="/display-emoji-in-django-template/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/Django%E4%B8%AD%E4%BD%BF%E7%94%A8emoji%E4%B9%B1%E7%A0%81-MySQL%E5%AD%98%E5%82%A8/">Django中使用emoji乱码 MySQL存储</a>
+      </h2>
+      <p class="article-date">2016年2月4日</p>
+      
+        
+  <a href="/tags#Django" >
+    <span class="tag-code">Django</span>
+  </a>
+
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#emoji" >
+    <span class="tag-code">emoji</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>严格来说，emoji的乱码跟django并没有什么关系。这个最后再说吧。<br>我在尝试使用django来创建一个自己个人博客，在评论功能中，我使用emoji-picker插件给web页面上的输入框加入了输入emoji表情的功能。而然在MySQL中储存emoji时发生了乱码，在网络上查资料后解决了问题，记录一下。</p>
+        
+      </div>
+      <a class="more" href="/Django%E4%B8%AD%E4%BD%BF%E7%94%A8emoji%E4%B9%B1%E7%A0%81-MySQL%E5%AD%98%E5%82%A8/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/add-emoji-selector-in-blog/">在博客中使用emoji表情</a>
+      </h2>
+      <p class="article-date">2016年2月4日</p>
+      
+        
+  <a href="/tags#Django" >
+    <span class="tag-code">Django</span>
+  </a>
+
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#emoji" >
+    <span class="tag-code">emoji</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>近期在尝试使用 Django 开发一个个人博客，在评论和留言功能中，我希望能加入些表情。emoji 作为一种流行的字符表情当然是首选。在这个过程中我遇到了一些问题，现在解决了，记录一下。</p>
+        
+      </div>
+      <a class="more" href="/add-emoji-selector-in-blog/">阅读全文</a>
+    </article>
+  
+
+  
+    <div class="guide-pager">
+  
+    <a href="/page/4/"><span class="page-arrow">← </span>Prev</a>
+  
+  
+    <a href="/page/6/">Next<span class="page-arrow"> →</span></a>
+  
+</div>
+  
+</main>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

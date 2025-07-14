@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link active">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link mobile-active">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <main class="app-body">
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/vary-response-header-causes-miss-cdn-cache/">Vary response header导致的CDN预热无效</a>
+      </h2>
+      <p class="article-date">2020年2月12日</p>
+      
+        
+  <a href="/tags#CDN" >
+    <span class="tag-code">CDN</span>
+  </a>
+
+  <a href="/tags#HttpHeader" >
+    <span class="tag-code">HttpHeader</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>今年春节被新型冠状病毒（2019-nCoV）困在家里了，哪也不敢去。不过远程工作已经开始了，前两天需要在阿里云CDN上预热一个静态资源，预热后浏览器访问却依旧很慢，响应头表明缓存未命中。咨询了阿里云技术支持，又查找了一些资料，终于搞明白了，详细记录如下。太长不看版请直接跳到文章尾部<a href="#%E6%80%BB%E7%BB%93">总结</a>。</p>
+        
+      </div>
+      <a class="more" href="/vary-response-header-causes-miss-cdn-cache/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/key-points-of-chained-assignment-in-python/">Python连续赋值的两个要点</a>
+      </h2>
+      <p class="article-date">2019年5月13日</p>
+      
+        
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>写 Python 四年有余了，常见的坑和奇淫巧技也都知道一些。今天在 Python 连续赋值上遇到了一个新的知识点，学习记录一下。</p>
+<p>Python 连续赋值容易导致错误的情况有两个知识点：</p>
+<ol>
+<li>相同的引用</li>
+<li>赋值的顺序（本次探讨的重点）</li>
+</ol>
+        
+      </div>
+      <a class="more" href="/key-points-of-chained-assignment-in-python/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/the-way-of-cloudfront-domain-hijacking/">CloudFront域名劫持的原理与保护</a>
+      </h2>
+      <p class="article-date">2019年3月1日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#CloudFront" >
+    <span class="tag-code">CloudFront</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>在配置 CloudFront Distribution 时，需要填写的有一项是**Alternate Domain Names (CNAMEs)<strong>，中文是</strong>备用域名 (CNAMEs)**。一直不太清楚为什么要填这一项。</p>
+<ul>
+<li>在 DNS 上直接把域名解析到 CloudFront Distribution 生成的域名 dxxxxxxxxxxxx.cloudfront.net 上不就可以了吗？  </li>
+<li>为什么新建 CloudFront Distribution 时填写的 Alternate Domain Names (CNAMEs) 不能与现有的重复？  </li>
+<li>是填写 subdomain 好，还是填写 wildcard domain 好？</li>
+</ul>
+<p>昨天，在我创建 CloudFront Distribution 时，AWS 提示我填写的 subdomain 已经配置在了一个 Distribution 上，而我的账号上并没有这样的配置。由此我了解到了 CloudFront 域名劫持这一现象。带着上面的疑问我做了些实验，查询了文档并向 AWS Support 了解到了相关原理，在这里记录一下。</p>
+        
+      </div>
+      <a class="more" href="/the-way-of-cloudfront-domain-hijacking/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/reverse-proxy-by-lambda-at-edge/">AWS Lambda@Edge实现反向代理</a>
+      </h2>
+      <p class="article-date">2019年2月21日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>前面几篇文章记录了我学习使用 AWS Lambda@Edge 由浅入深的过程，通过 Lambda@Edge 实现了请求重定向和动态生成响应：</p>
+<ul>
+<li><a href="/handle-request-like-nginx-by-lambda-at-edge/">AWS Lambda@Edge小试牛刀——代替Nginx处理请求</a></li>
+<li><a href="/two-ways-to-redirect-domain-zone-apex/">使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手</a></li>
+<li><a href="/aws-lambda-generate-response/">AWS Lambda@Edge动态生成响应</a></li>
+</ul>
+<p>今天再进一步，使用 Lambda@Edge 实现反向代理。</p>
+        
+      </div>
+      <a class="more" href="/reverse-proxy-by-lambda-at-edge/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/aws-lambda-generate-response/">AWS Lambda@Edge动态生成响应</a>
+      </h2>
+      <p class="article-date">2019年2月18日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>最近用了不少 AWS Lambda@Edge，前两篇文章记录了我用 Lambda@Edge 实现请求重定向的过程，今天我又完成了一项新的需求，使用 Lambda@Edge 动态生成响应。</p>
+        
+      </div>
+      <a class="more" href="/aws-lambda-generate-response/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/two-ways-to-redirect-domain-zone-apex/">使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手</a>
+      </h2>
+      <p class="article-date">2019年2月14日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>As we know, 在 RFC 中有明确说明 CNAME 记录不能与其他记录共存，特别是容易与 MX 记录产生冲突。因此，很多域名解析服务提供商都不允许为顶级域名设置 CNAME 解析。那如果我希望访问域名 example.net 跳转到 example.com 该如何做呢？</p>
+<p>使用Nginx等后端服务器做跳转这里不考虑，现在讲究 Serverless 嘛。通过查询 AWS 相关文档，我找到了两种方法。  </p>
+<ol>
+<li>使用 Route53 提供的 Alias 别名记录配合 S3 静态网站托管功能实现。</li>
+<li>使用 Route53 提供的 Alias 别名记录配合 CloudFront 和 Lambda@Edge 实现。</li>
+</ol>
+<p>需要注意：</p>
+<ul>
+<li>两种方法都依赖于 Route53 的别名记录功能，这不是 RFC 标准中提供方法，详细原理下文中说明。其他解析服务商应该也有类似的功能。  </li>
+<li>方法1使用 S3 静态网站托管功能实现跳转，设置简单，但无法配置 SSL 证书，需要 https 协议的网站不适用于此方法。  </li>
+<li>为了解决方法1不适用 https 协议的问题，可以使用方法2，在 CloudFront 上配置 SSL 证书，利用 Lambda@Edge 实现跳转。</li>
+</ul>
+<p>下面详细记录我的配置过程。</p>
+        
+      </div>
+      <a class="more" href="/two-ways-to-redirect-domain-zone-apex/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/handle-request-like-nginx-by-lambda-at-edge/">AWS Lambda@Edge小试牛刀——代替Nginx处理请求</a>
+      </h2>
+      <p class="article-date">2019年1月24日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>前一段时间，我在工作中用 Lambda 实现了很多功能，比如，对云上资源进行定时巡检，CloudWatch警报转发等等。现在我对 AWS Lambda 类似的传统用法已经非常熟悉了，除此之外，AWS Lambda还有一个强大的功能 —— Lambda@Edge。之前通过学习文档了解了一些，今天正好有实际需求可以拿来练练手。</p>
+        
+      </div>
+      <a class="more" href="/handle-request-like-nginx-by-lambda-at-edge/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/my-2018-review/">我的2018流水账</a>
+      </h2>
+      <p class="article-date">2019年1月12日</p>
+      
+      <div class="article-summary">
+        
+          <p>看过这么一种理论：一年的时间对于一个3岁的孩子来说，是他所经历的整个人生的三分之一，而对于一个耄耋老人来说，只是他漫长人生中的短短的一小部分，所以年龄越大会感到时间流逝的越快。小时候一下午就可以跑东跑西玩个痛快，暑假就好像有一年那么长。而现在一年似乎也不过是转瞬之间的事情。从前鲜活的记忆在慢慢褪色，那些令人开心、激动、难忘亦或是伤心的事情似乎也越来越远。翻看老照片时我会感到恍惚，这些真的是我所经历过的生活吗？这些事真的是我亲身参与其中的吗？往昔不可谏,来者犹可追。还是希望能把生活过的更加充实，更加有意义一些。至少在一年结束之际回首之时，可以想起些什么有趣的事会心一笑，而不至于空叹时光飞逝。在2018年结束之前我就打算着做做总结了，因为各种原（jie）因（kou），今天已经是2019年的1月12日了，就算是流水账也要写点什么了。</p>
+        
+      </div>
+      <a class="more" href="/my-2018-review/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/modify-delete-on-termination-config-for-ebs-on-ec2-instance/">修改EC2实例上EBS终止时删除的设置</a>
+      </h2>
+      <p class="article-date">2018年10月23日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>前段时间把很多项目都上了 Auto Scaling 功能，这两天发现有些 EC2 实例缩减后留下了 EBS 没有释放。这是因为实例的块存设备(Block devices)没有设置**终止时释放(DeleteOnTermination)<strong>。<br>在启动新实例或创建 AMI 映像时可设置</strong>终止时释放(DeleteOnTermination)**，但已启动的实例该怎么办呢？就此问题我求助了 AWS 客户支持，在这里把解决方案分享出来。</p>
+        
+      </div>
+      <a class="more" href="/modify-delete-on-termination-config-for-ebs-on-ec2-instance/">阅读全文</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/aws-lambda-faq/">AWS Lambda常见问题</a>
+      </h2>
+      <p class="article-date">2018年9月17日</p>
+      
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          <p>前两天对 AWS Lambda 做了一些学习，发现正好有实际需求用的上。于是业务需求又反推学习，现在我对 AWS Lambda 有了更多的了解。下面以问答形式记录一些我遇到的问题和解决方案。</p>
+        
+      </div>
+      <a class="more" href="/aws-lambda-faq/">阅读全文</a>
+    </article>
+  
+
+  
+    <div class="guide-pager">
+  
+    <a href="/"><span class="page-arrow">← </span>Prev</a>
+  
+  
+    <a href="/page/3/">Next<span class="page-arrow"> →</span></a>
+  
+</div>
+  
+</main>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

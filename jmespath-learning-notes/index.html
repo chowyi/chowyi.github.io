@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      JMESPath学习分享 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>JMESPath学习分享</h2>
+  <p class="post-date">2020-04-14</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//jmespath-learning-notes/" target="_blank" title="JMESPath学习分享">https://chowyi.com//jmespath-learning-notes/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>在学习 AWS CLI 文档时偶然了解到 JMESPath，之前从没接触到类似的技术，赶紧学习了一番，顿觉收获颇丰，在此记录分享。</p>
+<span id="more"></span>
+
+<h2 id="什么是JMESPath"><a href="#什么是JMESPath" class="headerlink" title="什么是JMESPath"></a>什么是JMESPath</h2><p>先贴上官网地址：<a target="_blank" rel="noopener" href="https://jmespath.org/">https://jmespath.org/</a>.  </p>
+<p>JMESPath 读作 “James Path”，因为它的作者名字叫 <a target="_blank" rel="noopener" href="https://github.com/jamesls">James Saryerwinnie</a>。  </p>
+<p>官网上的第一句话就是对 JMESPath 的介绍：JMESPath is a query language for JSON. JMESPath 有一套完备的语言规范，完善的测试用例以及各种编程语言的实现，用它可以构造出灵活强大的查询。官网上有一篇浅显易读的<a target="_blank" rel="noopener" href="https://jmespath.org/tutorial.html">教程文档</a>，并且配有示例和交互式环境来学习，半个小时就能上手，学到就是赚到！</p>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>JMESPath 有什么用？</p>
+<p>不论是前端还是后端，我们通过接口取到数据之后，往往都需要做数据的整理工作（按条件过滤，清理无用字段，构造新的结构，或是将层层嵌套的json扁平化等），使用 JMESPath 来完成这些工作真是再好不过了。特别是在命令行环境中，编写程序或脚本就相对困难一些，在这种情况下 JMESPath 也可以大显身手。</p>
+<h3 id="一个实际的应用场景"><a href="#一个实际的应用场景" class="headerlink" title="一个实际的应用场景"></a>一个实际的应用场景</h3><p>AWS CLI 是一个非常强大的命令行工具，可以实现几乎所有的 AWS 控制台操作。使用 AWS CLI 进行查询操作时，输出结果通常是 json 格式。这时，使用<code>--query</code>参数就可以传入 JMESPath 来对结果进行处理。AWS 的文档上有<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/cli/latest/userguide/cli-usage-output.html#cli-usage-output-filter">一些示例</a>。这里，我也举一个自己的例子。</p>
+<p>目标：查询在指定 subnet 中的 RDS 实例。<br>使用 AWS CLI 命令<code>aws rds describe-db-instances</code>可列出所有的 RDS 实例，结果输出样例如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&#x27;Marker&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;DBInstances&#x27;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&#x27;DBInstanceIdentifier&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;DBInstanceClass&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;Engine&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;DBInstanceStatus&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;MasterUsername&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;DBName&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;Endpoint&#x27;</span>: &#123;</span><br><span class="line">                <span class="string">&#x27;Address&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;Port&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">                <span class="string">&#x27;HostedZoneId&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&#x27;AllocatedStorage&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">            <span class="string">&#x27;InstanceCreateTime&#x27;</span>: <span class="title function_">datetime</span>(<span class="number">2015</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">            <span class="string">&#x27;PreferredBackupWindow&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;BackupRetentionPeriod&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">            <span class="string">&#x27;DBSecurityGroups&#x27;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&#x27;DBSecurityGroupName&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;Status&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                &#125;,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;VpcSecurityGroups&#x27;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&#x27;VpcSecurityGroupId&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;Status&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                &#125;,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;DBParameterGroups&#x27;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&#x27;DBParameterGroupName&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;ParameterApplyStatus&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                &#125;,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;AvailabilityZone&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;DBSubnetGroup&#x27;</span>: &#123;</span><br><span class="line">                <span class="string">&#x27;DBSubnetGroupName&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;DBSubnetGroupDescription&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;VpcId&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;SubnetGroupStatus&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;Subnets&#x27;</span>: [</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="string">&#x27;SubnetIdentifier&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;SubnetAvailabilityZone&#x27;</span>: &#123;</span><br><span class="line">                            <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                        &#125;,</span><br><span class="line">                        <span class="string">&#x27;SubnetStatus&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                    &#125;,</span><br><span class="line">                ],</span><br><span class="line">                <span class="string">&#x27;DBSubnetGroupArn&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&#x27;PreferredMaintenanceWindow&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;PendingModifiedValues&#x27;</span>: &#123;</span><br><span class="line">                <span class="string">&#x27;DBInstanceClass&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;AllocatedStorage&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">                <span class="string">&#x27;MasterUserPassword&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;Port&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">                <span class="string">&#x27;BackupRetentionPeriod&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">                <span class="string">&#x27;MultiAZ&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">                <span class="string">&#x27;EngineVersion&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;LicenseModel&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;Iops&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">                <span class="string">&#x27;DBInstanceIdentifier&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;StorageType&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;CACertificateIdentifier&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;DBSubnetGroupName&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;PendingCloudwatchLogsExports&#x27;</span>: &#123;</span><br><span class="line">                    <span class="string">&#x27;LogTypesToEnable&#x27;</span>: [</span><br><span class="line">                        <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    ],</span><br><span class="line">                    <span class="string">&#x27;LogTypesToDisable&#x27;</span>: [</span><br><span class="line">                        <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    ]</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&#x27;ProcessorFeatures&#x27;</span>: [</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                        <span class="string">&#x27;Value&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                    &#125;,</span><br><span class="line">                ]</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&#x27;LatestRestorableTime&#x27;</span>: <span class="title function_">datetime</span>(<span class="number">2015</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">            <span class="string">&#x27;MultiAZ&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">            <span class="string">&#x27;EngineVersion&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;AutoMinorVersionUpgrade&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">            <span class="string">&#x27;ReadReplicaSourceDBInstanceIdentifier&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;ReadReplicaDBInstanceIdentifiers&#x27;</span>: [</span><br><span class="line">                <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;ReadReplicaDBClusterIdentifiers&#x27;</span>: [</span><br><span class="line">                <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;LicenseModel&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;Iops&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">            <span class="string">&#x27;OptionGroupMemberships&#x27;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&#x27;OptionGroupName&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;Status&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                &#125;,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;CharacterSetName&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;SecondaryAvailabilityZone&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;PubliclyAccessible&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">            <span class="string">&#x27;StatusInfos&#x27;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&#x27;StatusType&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;Normal&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">                    <span class="string">&#x27;Status&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;Message&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                &#125;,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;StorageType&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;TdeCredentialArn&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;DbInstancePort&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">            <span class="string">&#x27;DBClusterIdentifier&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;StorageEncrypted&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">            <span class="string">&#x27;KmsKeyId&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;DbiResourceId&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;CACertificateIdentifier&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;DomainMemberships&#x27;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&#x27;Domain&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;Status&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;FQDN&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;IAMRoleName&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                &#125;,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;CopyTagsToSnapshot&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">            <span class="string">&#x27;MonitoringInterval&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">            <span class="string">&#x27;EnhancedMonitoringResourceArn&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;MonitoringRoleArn&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;PromotionTier&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">            <span class="string">&#x27;DBInstanceArn&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;Timezone&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;IAMDatabaseAuthenticationEnabled&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">            <span class="string">&#x27;PerformanceInsightsEnabled&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">            <span class="string">&#x27;PerformanceInsightsKMSKeyId&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;PerformanceInsightsRetentionPeriod&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">            <span class="string">&#x27;EnabledCloudwatchLogsExports&#x27;</span>: [</span><br><span class="line">                <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;ProcessorFeatures&#x27;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&#x27;Name&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;Value&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                &#125;,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;DeletionProtection&#x27;</span>: <span class="title class_">True</span>|<span class="title class_">False</span>,</span><br><span class="line">            <span class="string">&#x27;AssociatedRoles&#x27;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&#x27;RoleArn&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;FeatureName&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;Status&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">                &#125;,</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&#x27;ListenerEndpoint&#x27;</span>: &#123;</span><br><span class="line">                <span class="string">&#x27;Address&#x27;</span>: <span class="string">&#x27;string&#x27;</span>,</span><br><span class="line">                <span class="string">&#x27;Port&#x27;</span>: <span class="number">123</span>,</span><br><span class="line">                <span class="string">&#x27;HostedZoneId&#x27;</span>: <span class="string">&#x27;string&#x27;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&#x27;MaxAllocatedStorage&#x27;</span>: <span class="number">123</span></span><br><span class="line">        &#125;,</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的 AWS CLI 命令后加上<code>--query</code>参数即可实现目标效果，命令如下：</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aws rds describe-db-instances --query &#x27;DBInstances<span class="comment">[]</span>.<span class="comment">[DBInstanceIdentifier, DBSubnetGroup.Subnets<span class="comment">[]</span>.SubnetIdentifier]</span><span class="comment">[*]</span>.&#123;name: <span class="comment">[0]</span>, nets: <span class="comment">[1]</span>&#125;<span class="comment">[?nets!=null &amp;&amp; contains(nets, `subnet-12345678`)]</span>&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>解释：JMESPath 可以从左往右逐步计算结果，下面逐步解释。  </p>
+<ol>
+<li><code>DBInstances[]</code><br> 提取出结果中的<code>DBInstances</code>列表。  </li>
+<li><code>.[DBInstanceIdentifier, DBSubnetGroup.Subnets[].SubnetIdentifier]</code><br> MultiSelect语法，从<code>DBInstances</code>列表中去掉无用字段，仅保留<code>DBInstanceIdentifier</code>和<code>DBSubnetGroup结构中Subnets列表中的每一个SubnetIdentifier</code>字段。</li>
+<li><code>[*].&#123;name: [0], nets: [1]&#125;</code><br> 按指定形式构造新的对象（结构）</li>
+<li><code>[?nets!=null &amp;&amp; contains(nets, </code>subnet-12345678<code>)]</code><br> 条件过滤，仅保留<code>nets</code>字段不为null且包含指定subnet-id的对象。</li>
+</ol>
+<p>这个例子是一个较为复杂的综合场景，用到了 Projection，MultiSelect，Function等特性。从这里就可以看出 JMESPath 的灵活强大。</p>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>当然 JMESPath 也有它的缺点： </p>
+<ol>
+<li>复杂逻辑编写困难（至少对于初学者来说是的） </li>
+<li>可读性较差，想要一眼看出一个较复杂的 JMESPath 是什么意思并不容易。相比来说，Python 就更加友好一些。</li>
+</ol>
+<p>还是上面的例子，换成 Python 来实现如下：<br>先写一个 Lambda 函数实现上面 JMESPath 的功能：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f = <span class="keyword">lambda</span> data, subnet_id: [instance[<span class="string">&#x27;DBInstanceIdentifier&#x27;</span>] <span class="keyword">for</span> instance <span class="keyword">in</span> data[<span class="string">&#x27;DBInstances&#x27;</span>] <span class="keyword">if</span> instance.get(<span class="string">&#x27;DBSubnetGroup&#x27;</span>) <span class="keyword">and</span> instance[<span class="string">&#x27;DBSubnetGroup&#x27;</span>][<span class="string">&#x27;Subnets&#x27;</span>] <span class="keyword">and</span> (subnet_id <span class="keyword">in</span> [subnet[<span class="string">&#x27;SubnetIdentifier&#x27;</span>] <span class="keyword">for</span> subnet <span class="keyword">in</span> instance[<span class="string">&#x27;DBSubnetGroup&#x27;</span>][<span class="string">&#x27;Subnets&#x27;</span>]])]</span><br></pre></td></tr></table></figure>
+
+<p>然后为了能在命令行中接收 AWS CLI 通过管道的输出，稍作改造，整个命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aws rds describe-db-instances | python -c &quot;import sys,json;content=sys.stdin.read();data=json.loads(content);f = lambda data, subnet_id: [instance[&#x27;DBInstanceIdentifier&#x27;] for instance in data[&#x27;DBInstances&#x27;] if instance.get(&#x27;DBSubnetGroup&#x27;) and instance[&#x27;DBSubnetGroup&#x27;][&#x27;Subnets&#x27;] and (subnet_id in [subnet[&#x27;SubnetIdentifier&#x27;] for subnet in instance[&#x27;DBSubnetGroup&#x27;][&#x27;Subnets&#x27;]])];r=f(data, &#x27;subnet-12345678&#x27;);print(r)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>以上可以达到相同的效果。</p>
+<p>在这个例子中，为了写出正确的 JMESPath 我花了将近一个小时来调试，而写 Python 代码我用了不到一分钟。也许是我初学 JMESPath 还不够熟练的缘故吧。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>文章写到这里，我刚学习完 JMESPath 的那种兴奋也平复下来。好像用 Python 也能实现相同的效果嘛，而且语义似乎也更清晰一些。不过在上面的 Python Lambda 函数中，后置较长的 if 语句对阅读代码造成了一定的影响（需要前面看看后面看看），而 JMESPath 可以从左向右分段阅读，数据的处理流程类似于“管道”。大家怎么看呢？</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//jmespath-learning-notes/" target="_blank" title="JMESPath学习分享">https://chowyi.com//jmespath-learning-notes/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#JMESPath" >
+    <span class="tag-code">JMESPath</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/custom-http-headers-on-cdn/">
+        <span class="nav-arrow">← </span>
+        
+          在CDN上配置自定义响应头（CloudFront）
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/terraform-configuration-language-common-usages/">
+        
+          Terraform Configuration Language常用代码段
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFJMESPath"><span class="toc-nav-text">什么是JMESPath</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%BA%94%E7%94%A8"><span class="toc-nav-text">应用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%B8%80%E4%B8%AA%E5%AE%9E%E9%99%85%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-nav-text">一个实际的应用场景</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-nav-text">缺点</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//jmespath-learning-notes/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

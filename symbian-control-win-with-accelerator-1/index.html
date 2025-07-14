@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      手机重力感应控制电脑（一） | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>手机重力感应控制电脑（一）</h2>
+  <p class="post-date">2013-06-02</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//symbian-control-win-with-accelerator-1/" target="_blank" title="手机重力感应控制电脑（一）">https://chowyi.com//symbian-control-win-with-accelerator-1/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>这几天没什么事，看着自己的手机nokia5530，想到这手机虽然过时了，但是能不能做点什么有意思的事呢?我喜欢在电脑上玩极品飞车，如果能用手机的重力感应器操控电脑玩极品飞车那多好啊！正好学过一点Qt，可以开发symbian应用，为什么不试试？咱们工科男，说干就干，马上就开始！</p>
+<span id="more"></span>
+
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>首先，搭建symbian应用开发环境。这里我使用的是<a target="_blank" rel="noopener" href="http://www.developer.nokia.com/info/sw.nokia.com/id/84801bfe-8517-4287-9829-014c6f572127/Qt_SDK_1_1_2.html">Qt_SDK_Win_v1_1_2_en(1.78G)</a>，在nokia developer网站下载，需要注册一个账号。用它开发的程序，手机需要<a target="_blank" rel="noopener" href="http://download.csdn.net/detail/htttw/4352005">Qt 4.07（3）库</a>的支持。另外Qt SDK还有1.2.1版的，如果用它开发，则手机需要<a target="_blank" rel="noopener" href="http://download.csdn.net/detail/htttw/4352012">Qt 4.07（4）库</a>的支持。更多的详细内容可以参考CSDN一位前辈的博客：<a target="_blank" rel="noopener" href="http://blog.csdn.net/htttw/article/details/7630831%E3%80%82%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B%E5%BE%88%E7%AE%80%E5%8D%95%EF%BC%8C%E6%88%91%E4%B8%AA%E4%BA%BA%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98%E6%98%AF%EF%BC%9A%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BAwinXP">http://blog.csdn.net/htttw/article/details/7630831。安装过程很简单，我个人遇到的一个问题是：在虚拟机winXP</a> sp3中安装之后会发现项目设置里没有模拟器选项，并且一些头文件会找不到。具体原因没有找到，我在主机win7 64bit下重新安装一切正常。</p>
+<p>开发环境搭建起来以后，就可以写个hello world测试一下了。新建一个 Qt Gui应用 项目就可以，项目设置勾选塞班设备和模拟器就行。</p>
+<h2 id="HelloWorld"><a href="#HelloWorld" class="headerlink" title="HelloWorld"></a>HelloWorld</h2><p>开发环境搭建起来以后，就可以写个hello world测试一下了。新建一个 Qt Gui应用 项目就可以，项目设置勾选塞班设备和模拟器就行。<br><img src="https://blog-1252856176.file.myqcloud.com/post/symbian-control-win-with-accelerator-1/project-settings.png" alt="项目设置"></p>
+<p>项目建成以后，和开发普通的windows桌面程序一样，ui文件注意调整一下大小。<br>点击左边的绿色箭头就可以调试运行了。<br><img src="https://blog-1252856176.file.myqcloud.com/post/symbian-control-win-with-accelerator-1/debug-1.png" alt="调试1"></p>
+<p>这里有两个选项，选择模拟器则直接在模拟器中运行程序。选择塞班设备，会提示1个错误，没有设备连接。（也许还会有很多警告，没有关系。）<br><img src="https://blog-1252856176.file.myqcloud.com/post/symbian-control-win-with-accelerator-1/debug-2.png" alt="调试2"></p>
+<p>不用担心，在项目文件夹中已经生成了.sis 文件，手动拷贝到手机上安装就可以了。<br>因为我只是想做一次塞班应用试一试，所以没有安装Nokia Ovi Suite.想要更方便的调试可以安装连接套件和调试工具。<br>具体方法还是看前辈的介绍吧：<a target="_blank" rel="noopener" href="http://blog.csdn.net/htttw/article/details/7632122%E3%80%82">http://blog.csdn.net/htttw/article/details/7632122。</a></p>
+<h2 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h2><p>要想用手机的重力感应器操控电脑，我的想法是写一个手机端程序不断获取传感器数据，通过wifi传输到电脑，电脑端的程序接收消息并作出响应。</p>
+<p>那么就从手机端程序开始做起吧！</p>
+<ol>
+<li>获取传感器数据<br>我之前并没有开发symbian应用的经验，手上也没有参考资料，对于如何获取传感器的数据一点头绪也没有，那就上网搜搜看吧！<br>在这里不得不再次感谢网上那些前辈们，这里介绍的十分详细：<a target="_blank" rel="noopener" href="http://blog.csdn.net/htttw/article/details/7637674%E3%80%82">http://blog.csdn.net/htttw/article/details/7637674。</a></li>
+<li>传输：我的手机是nokia5530，支持wifi。所以我使用wifi与电脑通信。因为我们要对电脑进行实时操控，并且使用wifi网络，所以这里我使用<code>QUdpSocket</code>来进行信息的传输，把重力感应器xyz三个方向上的数据以字符串的形式发送。这个相信有基础的都会，很多书中都有详细讲解，网上也有很多例子，不再具体介绍。</li>
+<li>电脑端的开发：<br>在这里我花了很多时间。我以为接收到手机端程序发送到的消息，根据重力感应器三个方向上的数值发送键盘消息响应即可。可是问题就出在这键盘消息上了。</li>
+</ol>
+<p>最初我使用<code>keybd_event();</code>来模拟键盘消息。             </p>
+<p>函数原型： </p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VOID keybd_event(<span class="built_in">BYTE</span> bVk，<span class="built_in">BYTE</span> bScan，<span class="built_in">DWORD</span> dwFlags，<span class="built_in">DWORD</span> dwExtralnfo)<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<p>参数：<br>    - bVk：定义一个虚拟键码。键码值必须在1～254之间。<br>    - bScan:定义该键的硬件扫描码。<br>    - dwFlags:定义函数操作的各个方面的一个标志位集。应用程序可使用如下一些预定义常数的组合设置标志位。<br>    - KEYEVENTF_EXTENDEDKEY：若指定该值，则扫描码前一个值为OXEO（224）的前缀字节。<br>    - KEYEVENTF_KEYUP：若指定该值，该键将被释放；若未指定该值，该键将被按下。<br>    - dwExtralnfo：定义与击键相关的附加的32位值。<br>返回值：该函数无返回值。</p>
+<p>这样做十分简单，很快程序就写好了。我模拟了键盘的方向键，通过手机的重力感应器控制，测试一下，正常工作！可以控制光标的移动，网页的上下滚动，焦点的选择。我天真的以为这样就没问题了，兴奋的打开极品飞车想要试试手感。游戏一打开，就被泼了盆冷水，刚才的兴奋全没了。在极品飞车中完全没有反应啊！好吧，没关系，有问题我们就去解决！</p>
+<p>网上搜一下，看看问题出在哪里，原因是什么？原来很多游戏都用了DirectInpput技术，直接读硬件端口的。所以像我这样发键盘消息也自然没用了。原因找到了，那就去想办法解决它！我们需要做到驱动级的键盘模拟！像我这种小菜鸟怎么可能做得出来那样的东西嘛。幸运的是有一位国外大牛帮我们做好了！那就是很有名的WinIo.dll !</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//symbian-control-win-with-accelerator-1/" target="_blank" title="手机重力感应控制电脑（一）">https://chowyi.com//symbian-control-win-with-accelerator-1/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Qt" >
+    <span class="tag-code">Qt</span>
+  </a>
+
+  <a href="/tags#Symbian" >
+    <span class="tag-code">Symbian</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/bmp%E6%A0%BC%E5%BC%8F/">
+        <span class="nav-arrow">← </span>
+        
+          bmp格式
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/symbian-control-win-with-accelerator-2/">
+        
+          手机重力感应控制电脑（二）
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-nav-text">环境搭建</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#HelloWorld"><span class="toc-nav-text">HelloWorld</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%BC%80%E5%8F%91"><span class="toc-nav-text">开发</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//symbian-control-win-with-accelerator-1/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

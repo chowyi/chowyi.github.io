@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手</h2>
+  <p class="post-date">2019-02-14</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//two-ways-to-redirect-domain-zone-apex/" target="_blank" title="使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手">https://chowyi.com//two-ways-to-redirect-domain-zone-apex/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>As we know, 在 RFC 中有明确说明 CNAME 记录不能与其他记录共存，特别是容易与 MX 记录产生冲突。因此，很多域名解析服务提供商都不允许为顶级域名设置 CNAME 解析。那如果我希望访问域名 example.net 跳转到 example.com 该如何做呢？</p>
+<p>使用Nginx等后端服务器做跳转这里不考虑，现在讲究 Serverless 嘛。通过查询 AWS 相关文档，我找到了两种方法。  </p>
+<ol>
+<li>使用 Route53 提供的 Alias 别名记录配合 S3 静态网站托管功能实现。</li>
+<li>使用 Route53 提供的 Alias 别名记录配合 CloudFront 和 Lambda@Edge 实现。</li>
+</ol>
+<p>需要注意：</p>
+<ul>
+<li>两种方法都依赖于 Route53 的别名记录功能，这不是 RFC 标准中提供方法，详细原理下文中说明。其他解析服务商应该也有类似的功能。  </li>
+<li>方法1使用 S3 静态网站托管功能实现跳转，设置简单，但无法配置 SSL 证书，需要 https 协议的网站不适用于此方法。  </li>
+<li>为了解决方法1不适用 https 协议的问题，可以使用方法2，在 CloudFront 上配置 SSL 证书，利用 Lambda@Edge 实现跳转。</li>
+</ul>
+<p>下面详细记录我的配置过程。</p>
+<span id="more"></span>
+
+<h2 id="什么是-Alias-别名记录"><a href="#什么是-Alias-别名记录" class="headerlink" title="什么是 Alias 别名记录"></a>什么是 Alias 别名记录</h2><p>引用一段来自<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/Route53/latest/DeveloperGuide/resource-record-sets-choosing-alias-non-alias.html">AWS Route53 文档</a>中的介绍：</p>
+<blockquote>
+<p>Amazon Route 53 别名记录 为 DNS 功能提供特定于 Route 53 的扩展。别名记录允许您将流量路由到所选 AWS 资源，如 CloudFront 分配和 Amazon S3 存储桶。它们还允许您将流量从托管区域中的一个记录路由到另一个记录。<br>与 CNAME 记录不同，您可以在 DNS 命名空间的顶端节点（又称为顶级域名）上创建别名记录。例如，如果您注册了 DNS 名称 example.com，则顶级域名就是 example.com。您不能为 example.com 创建 CNAME 记录，但可以为将流量路由到 <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> 的 example.com 创建别名记录。 </p>
+</blockquote>
+<blockquote>
+<p>当您使用别名记录将流量路由到 AWS 资源时，Route 53 会自动识别资源中的更改。例如，假设 example.com 的一个别名记录指向位于 lb1-1234.us-east-2.elb.amazonaws.com 上的一个 ELB 负载均衡器。如果负载均衡器的 IP 地址更改，Route 53 将使用新 IP 地址自动开始响应 DNS 查询。</p>
+</blockquote>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/two-ways-to-redirect-domain-zone-apex/cname-is-not-permitted-at-apex.png" alt="顶级域名不允许配置CNAME记录"></p>
+<h3 id="个人理解（如果有误还望指正）"><a href="#个人理解（如果有误还望指正）" class="headerlink" title="个人理解（如果有误还望指正）"></a>个人理解（如果有误还望指正）</h3><p>别名记录是 Route53 对 A记录的一层包装，将域名与 AWS 中的资源ID 关联起来。例如，将一个域名通过别名记录解析到 CloudFront Distribution，从外部来看实际上是用 A记录把域名解析到了一个 CloudFront 边缘节点的 IP，在内部 Route53 会自动识别资源中的更改，返回资源实际对应的 IP。通过命令<code>dig example.com</code>就可以看到。</p>
+<h2 id="通过-S3-实现跳转"><a href="#通过-S3-实现跳转" class="headerlink" title="通过 S3 实现跳转"></a>通过 S3 实现跳转</h2><p>这个方法我是在 AWS 的文档库中搜索到的：<a target="_blank" rel="noopener" href="https://amazonaws-china.com/cn/premiumsupport/knowledge-center/redirect-domain-route-53/">有没有办法使用 Amazon S3 和 Amazon Route 53 将一个域重定向到其他域？</a></p>
+<p>详情看原文，这里简述步骤：</p>
+<ol>
+<li>创建一个与当前域名完全同名的 S3 存储桶。</li>
+<li>设置存储桶的Properties(属性)，设置 Static Website Hosting(静态网站托管)，选择重定向请求，目标设置为要跳转到的域名。</li>
+<li>为当前域名添加一条 A记录，选择 Alias 别名，设置为上一步中创建的 S3 存储桶。</li>
+</ol>
+<p>跟着文档设置完成后，确实实现了顶级域名的跳转。但整个过程中都没有地方让我配置 SSL 证书，也就是说这种方法不支持 https 协议。</p>
+<p>虽然这种方法不够完美，但还是给了我启发！我可以利用 Alias别名记录将域名指向 CloudFront 配置 SSL证书，然后利用 Lambda@Edge 拦截 ViewerRequest 实现跳转。</p>
+<h2 id="通过-Lambda-Edge-实现跳转（CloudFront配置SSL证书）"><a href="#通过-Lambda-Edge-实现跳转（CloudFront配置SSL证书）" class="headerlink" title="通过 Lambda@Edge 实现跳转（CloudFront配置SSL证书）"></a>通过 Lambda@Edge 实现跳转（CloudFront配置SSL证书）</h2><p>整个流程大致如下：<br><img src="https://blog-1252856176.file.myqcloud.com/post/two-ways-to-redirect-domain-zone-apex/apex-domain-redirect-by-cloudfront-and-lambda.png" alt="使用Lambda@Edge实现顶级域名跳转"></p>
+<p>之前的一遍文章<a href="/handle-request-like-nginx-by-lambda-at-edge/">AWS Lambda@Edge小试牛刀——代替Nginx处理请求</a>详细的说明如何创建 CloudFront Distribution 和 Lambda 函数。同样的方法，现在来实现本次的需求。</p>
+<ol>
+<li>先创建一个新的 CloudFront Distribution(分配)，注意配置 Alternate Domane Names(备用域名) 为 example.net 并配置 SSL 证书，源站配置无所谓，因为我们要用 Lambda@Edge 拦截 ViewerRequest 做跳转。</li>
+<li>创建一个 Lambda@Edge 函数，将来自 example.net 的请求都 301 重定向到 example.com，下面贴上我简化后的函数代码。</li>
+<li>将 Lambda@Edge 函数部署到第一步创建的 CloudFront Distribution 的 ViewerRequest 上。</li>
+<li>为 example.net 添加一条 A记录，Alias别名设置为第一步创建的 CloudFront Distribution 的域名。</li>
+</ol>
+<p>这样就大功告成了，看起来有点复杂，动手配置一次就会明白啦！</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&#x27;use strict&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> siteConfigs = &#123;</span><br><span class="line">    <span class="string">&#x27;example.net&#x27;</span>: &#123;</span><br><span class="line">        <span class="string">&#x27;response&#x27;</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;status&#x27;</span>: <span class="string">&#x27;301&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;statusDescription&#x27;</span>: <span class="string">&#x27;Moved Permanently&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;location&#x27;</span>: <span class="string">&#x27;https://example.com&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exports</span>.<span class="property">handler</span> = <span class="function">(<span class="params">event, context, callback</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> request = event.<span class="property">Records</span>[<span class="number">0</span>].<span class="property">cf</span>.<span class="property">request</span>;</span><br><span class="line">    <span class="keyword">const</span> oldURI = request.<span class="property">uri</span>;</span><br><span class="line">    <span class="keyword">let</span> host = request.<span class="property">headers</span>.<span class="property">host</span>[<span class="number">0</span>].<span class="property">value</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> key <span class="keyword">in</span> siteConfigs)&#123;</span><br><span class="line">        <span class="keyword">if</span>(key === host)&#123;</span><br><span class="line">            <span class="keyword">const</span> siteConfig = siteConfigs[key];</span><br><span class="line">            <span class="keyword">if</span>(siteConfig.<span class="property">response</span>)&#123;</span><br><span class="line">                <span class="keyword">const</span> response = &#123;</span><br><span class="line">                    <span class="attr">status</span>: siteConfig.<span class="property">response</span>.<span class="property">status</span>,</span><br><span class="line">                    <span class="attr">statusDescription</span>: siteConfig.<span class="property">response</span>.<span class="property">statusDescription</span>,</span><br><span class="line">                    <span class="attr">headers</span>: &#123;</span><br><span class="line">                        <span class="attr">location</span>: [&#123;</span><br><span class="line">                            <span class="attr">key</span>: <span class="string">&#x27;Location&#x27;</span>,</span><br><span class="line">                            <span class="attr">value</span>: siteConfig.<span class="property">response</span>.<span class="property">location</span> + oldURI + (request.<span class="property">querystring</span>?(<span class="string">&#x27;?&#x27;</span>+request.<span class="property">querystring</span>):<span class="string">&#x27;&#x27;</span>),</span><br><span class="line">                        &#125;]</span><br><span class="line">                    &#125;,</span><br><span class="line">                &#125;;</span><br><span class="line">                <span class="title function_">callback</span>(<span class="literal">null</span>, response);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_">callback</span>(<span class="literal">null</span>, request);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在这次的工作任务中学到了很多 DNS 的相关知识。AWS 提供了跟多强大的功能，灵活运用会有意想不到的效果。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//two-ways-to-redirect-domain-zone-apex/" target="_blank" title="使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手">https://chowyi.com//two-ways-to-redirect-domain-zone-apex/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/handle-request-like-nginx-by-lambda-at-edge/">
+        <span class="nav-arrow">← </span>
+        
+          AWS Lambda@Edge小试牛刀——代替Nginx处理请求
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/aws-lambda-generate-response/">
+        
+          AWS Lambda@Edge动态生成响应
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Alias-%E5%88%AB%E5%90%8D%E8%AE%B0%E5%BD%95"><span class="toc-nav-text">什么是 Alias 别名记录</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%B8%AA%E4%BA%BA%E7%90%86%E8%A7%A3%EF%BC%88%E5%A6%82%E6%9E%9C%E6%9C%89%E8%AF%AF%E8%BF%98%E6%9C%9B%E6%8C%87%E6%AD%A3%EF%BC%89"><span class="toc-nav-text">个人理解（如果有误还望指正）</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%80%9A%E8%BF%87-S3-%E5%AE%9E%E7%8E%B0%E8%B7%B3%E8%BD%AC"><span class="toc-nav-text">通过 S3 实现跳转</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%80%9A%E8%BF%87-Lambda-Edge-%E5%AE%9E%E7%8E%B0%E8%B7%B3%E8%BD%AC%EF%BC%88CloudFront%E9%85%8D%E7%BD%AESSL%E8%AF%81%E4%B9%A6%EF%BC%89"><span class="toc-nav-text">通过 Lambda@Edge 实现跳转（CloudFront配置SSL证书）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//two-ways-to-redirect-domain-zone-apex/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

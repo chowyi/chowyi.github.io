@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      PEP 318 函数与方法装饰器 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>PEP 318 函数与方法装饰器</h2>
+  <p class="post-date">2017-09-16</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/PEP-318-函数与方法装饰器/" target="_blank" title="PEP 318 函数与方法装饰器">https://chowyi.com/PEP-318-函数与方法装饰器/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>这两天回顾 Python 知识点，想到 Python 中的装饰器和 Java 的注解在语法上如此相像，它们是否有什么渊源？又为什么选用了<code>@</code>符号呢？在 PEP 318 中我找到了答案，在此翻译记录。</p>
+<span id="more"></span>
+
+<h1 id="PEP-318-–-Decorators-for-Functions-and-Methods"><a href="#PEP-318-–-Decorators-for-Functions-and-Methods" class="headerlink" title="PEP 318 – Decorators for Functions and Methods"></a>PEP 318 – Decorators for Functions and Methods</h1><p>PEP:	318<br>Title:	Decorators for Functions and Methods<br>Author:	Kevin D. Smith &lt;Kevin.Smith at theMorgue.org&gt;, Jim J. Jewett, Skip Montanaro, Anthony Baxter<br>Status:	Final<br>Type:	Standards Track<br>Created:	05-Jun-2003<br>Python-Version:	2.4<br>Post-History:	09-Jun-2003, 10-Jun-2003, 27-Feb-2004, 23-Mar-2004, 30-Aug-2004, 2-Sep-2004</p>
+<h2 id="警告"><a href="#警告" class="headerlink" title="警告"></a>警告</h2><p>此文档旨在描述装饰器的语法以及确定此语法的过程。本文不会列出那些数量之多的可选语法，也不会一一列举它们的优缺点。</p>
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>当前用来转换<code>function</code>和<code>method</code>的方法（例如把它们声明为类方法或静态方法）是笨拙且难于理解的。理想的情况是，<code>function</code>或<code>method</code>的转换和声明应该在代码的同一处位置。本 PEP 介绍了一种新的方法来转换<code>function</code>或<code>method</code>。</p>
+<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>当前对<code>function</code>或<code>method</code>转换的方法是把实际的转换置于函数体之后。对于大函数来说，这会将改变函数行为的一个关键组件和函数的对外定义相分离。</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def foo(<span class="keyword">self</span>):</span><br><span class="line">    perform <span class="keyword">method</span> <span class="title function_">operation</span></span><br><span class="line"><span class="title function_">foo</span> = <span class="title function_">classmethod</span><span class="params">(foo)</span></span><br></pre></td></tr></table></figure>
+
+<p>当<code>method</code>变得很长时，代码的可读性就会下降。对一个函数多次命名的这种写法看起来也不够 pythonic。一个解决方案是把方法的转换移动到靠近它声明的位置。为了取代下面这种写法：</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">def</span> <span class="function"><span class="title">foo</span>(<span class="variable">cls</span>):</span></span><br><span class="line"><span class="function">    <span class="variable">pass</span></span></span><br><span class="line"><span class="function"><span class="variable">foo</span> = <span class="title">synchronized</span>(<span class="variable">lock</span>)(<span class="variable">foo</span>)</span></span><br><span class="line"><span class="variable">foo</span> = <span class="function"><span class="title">classmethod</span>(<span class="variable">foo</span>)</span></span><br></pre></td></tr></table></figure>
+
+<p>新的语法在函数的声明处放置装饰器：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@classmethod</span></span><br><span class="line"><span class="variable">@synchronized</span>(lock)</span><br><span class="line">def <span class="built_in">foo</span>(cls):</span><br><span class="line">    pass</span><br></pre></td></tr></table></figure>
+
+<p>这种用装饰器的方法去修改类也是可能的，虽然好处没那么显而易见。但可以肯定的是，任何可以用元类（metaclasses）来做的事，同样也可以用装饰器来实现。但使用元类让人感到晦涩难懂，修改类还有更加简单且吸引人的方法。在 Python 2.4 中仅仅加入了 <code>function/method</code>装饰器。</p>
+<p><a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-3129">PEP 3129</a> 在 Python 2.6 中加入类装饰器的提案。</p>
+<h3 id="为什么这么难？"><a href="#为什么这么难？" class="headerlink" title="为什么这么难？"></a>为什么这么难？</h3><p><code>classmethod()</code>和<code>staticmethod()</code>这两个装饰器在 Python 2.2 中就可用了。从那时起，人们就猜测它会被作为一种语法特性加入到 Python 中。有了这个猜测，有人会想知道，为什么最终达成共识是如此的困难。关于如何最好的实现函数装饰器的讨论一直在 comp.lang.python 和 python-dev 邮件列表中不断进行着。讨论没有得到一个明确的结果，但是发现了几个分歧最大的问题：</p>
+<ul>
+<li>在哪里做装饰声明的分歧。几乎所有人都认为把装饰声明放在函数之后是不够好的，但是放在哪里却没有达成明确的共识。</li>
+<li>语法约束。Python 是一门简单的语言，同时也有足够的限制规定什么能做而什么不能。现在没有一种好的方法来构造这种信息，可以使得用户在第一次看到时就会想，“哦，是的，我明白这是在做什么”。最好避免使这个新概念让用户产生误解。</li>
+<li>陌生的概念。对于学过代数（甚至仅仅是算术）或至少使用过一门其他编程语言的人来说，Python 是很符合直觉的。很少有人在使用 Python 之前遇到过装饰器的概念。没有足够的经验让人们理解装饰器这个概念。</li>
+<li>对语法的讨论比其他任何东西都多。另一个例子是，<a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-0308">PEP 308</a>中有关的关于三元运算符的讨论。</li>
+</ul>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>当前的语法支持基本得到了认可。在第十届 Python 大会上，Guido 在他的 DevDay 演讲中提到了有关装饰器的语法支持，虽然后来他说，那只是他“半开玩笑的”提出的几项扩展之一。在那次会议后不久，Michael Hudson 在 python-dev 上提出，括号语法最早是 Gareth McCaughan 在 comp.lang.python 上的提出的。</p>
+<p>看起来下一步就是类装饰器了，因为函数的定义和类定义在语法上很相似。然而 Guido 对此持怀疑态度，几乎可以确定在 Python 2.4 中不会出现类装饰器。</p>
+<p>讨论从2002年的2月一直持续到2004年的7月，人们发出成百上千封邮件给出可能的语法提议。Guido 把一份提议列表拿到 EuroPython 2004 大会上讨论。在这之后，他决定了我们要使用 Java 风格的 <code>@</code> 装饰器语法。这最早出现在 2.4a2 版本中。Barry Warsaw 将这命名为“Pie-装饰器”，用来纪念发生在当时的 Pie-thon Parrot shootout（译者注：可能是指当时的Python vs Parrot challenge），同时 <code>@</code> 看起来也有点像一个 Pie。在 Python-dev 会上 Guido 提到了他的想法，包括一些被拒绝的形式。</p>
+<h2 id="关于“装饰器（Decorator）”这个名字"><a href="#关于“装饰器（Decorator）”这个名字" class="headerlink" title="关于“装饰器（Decorator）”这个名字"></a>关于“装饰器（Decorator）”这个名字</h2><p>关于把这个特性命名为“装饰器（decorator）”有很多抱怨。最主要的原因是装饰器这个名字与 GoF Book （译者注：GoF 即 Gang of Four：Erich Gamma， Richard Helm， Ralph Johnson，John Vlissides是软件设计领域的四位世界顶级大师.合著有《设计模式:可复用面向对象软件的基础》。来源：<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/Gang%20Of%20Four/7474322?fr=aladdin#2">百度百科</a>）中的意义不一致。装饰器这个名词可能更多的用在编译器领域——语法树的遍历和注解。应该会有比这更好的名字。</p>
+<h2 id="设计目标"><a href="#设计目标" class="headerlink" title="设计目标"></a>设计目标</h2><p>新的语法应该做到：</p>
+<ul>
+<li>支持任意的包装，包括用户定义的可调用的对象及已经存在的内置方法<code>classmethod</code>和<code>staticmethod</code>。这意味着装饰器语法必须支持传递参数到包装结构。</li>
+<li>支持对一个定义多次包装。</li>
+<li>用途显而易见。至少对新用户而言，可放心的忽略它去编写自己的代码。</li>
+<li>作为一种学一次就可以记住的语法。</li>
+<li>不使以后的扩展更困难。</li>
+<li>容易输入。它将会在编程时经常被使用到。</li>
+<li>不使快速的代码扫描更困难。对搜索全部的定义，特定的定义及函数接收的参数应该仍然简单。</li>
+<li>不需要复杂的辅助工具支持，例如语言敏感的编辑器或其他的解析工具。</li>
+<li>允许以后的编译器对装饰器优化。随着 Python JIT 编译器即将到来，装饰器的语法应该在函数定义之前。</li>
+<li>从现在藏在函数尾部的位置，移到更靠前让你一眼就看到的位置。</li>
+</ul>
+<p>在 Andrew Kuchling 的<a target="_blank" rel="noopener" href="http://www.amk.ca/diary/archives/cat_python.html#003255">博客</a>中有很多关于动机和用例的链接。尤其值得注意的是 Jim Huginin 的<a target="_blank" rel="noopener" href="https://mail.python.org/pipermail/python-dev/2004-April/044132.html">用例列表</a>。</p>
+<h2 id="现在的语法"><a href="#现在的语法" class="headerlink" title="现在的语法"></a>现在的语法</h2><p>现在的函数装饰器语法是在 Python 2.4a2 中实现的：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@dec2</span></span><br><span class="line"><span class="variable">@dec1</span></span><br><span class="line">def <span class="built_in">func</span>(arg1, arg2, ...):</span><br><span class="line">    pass</span><br></pre></td></tr></table></figure>
+
+<p>它等同于：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def <span class="function"><span class="keyword">func</span><span class="params">(arg1, arg2, ...)</span></span>:</span><br><span class="line">    pass</span><br><span class="line"><span class="function"><span class="keyword">func</span> = <span class="title">dec2</span><span class="params">(dec1(<span class="keyword">func</span>)</span></span>)</span><br></pre></td></tr></table></figure>
+
+<p>没有给变量 func 赋值。装饰器靠近函数的声明。<code>@</code>标记清楚的表示出这里有一些新东西。</p>
+<p>自下而上应用的顺序原则与通常函数应用的规则一致。在数学中，复合函数 (g o f)(x) 写为 g(f(x))，在 Python 中<code>@g @f def foo()</code> 也等同于 <code>foo=g(f(foo)</code>。</p>
+<p>装饰器语句并不能接收任意的语句。<br>下面这些是不被允许的：</p>
+<figure class="highlight node-repl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">&gt;</span> <span class="language-javascript">@<span class="title function_">foo</span>().<span class="title function_">bar</span>()</span></span><br><span class="line"><span class="meta prompt_">&gt;</span> <span class="language-javascript">@foo or bar</span></span><br><span class="line"><span class="meta prompt_">&gt;</span> <span class="language-javascript">@mydecorators[<span class="string">&#x27;foo&#x27;</span>]</span></span><br><span class="line"><span class="meta prompt_">&gt;</span> <span class="language-javascript">@lambda <span class="attr">f</span>: <span class="title function_">foo</span>(f) or <span class="title function_">bar</span>(f)</span></span><br></pre></td></tr></table></figure>
+
+<p>这些看起来太复杂了，Guido 在直觉上不喜欢这样。<br>当前装饰器的语法允许装饰器的声明是一个可以返回装饰器的函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@decomaker(<span class="params">argA, argB, ...</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">arg1, arg2, ...</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p>这等同于：</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">func</span> = <span class="title function_">decomaker</span><span class="params">(argA, argB, ...)</span><span class="params">(func)</span></span><br></pre></td></tr></table></figure>
+
+<p>装饰器的声明可以是一个返回装饰器的函数，它的原理是<code>@</code>符号后面的部分可以看作是一个表达式（虽然被限制为只能是一个函数），并且表达式的返回是可调用的。可以参考<a target="_blank" rel="noopener" href="https://mail.python.org/pipermail/python-dev/2004-September/048874.html">declaration arguments</a>。</p>
+<h2 id="可选的语法"><a href="#可选的语法" class="headerlink" title="可选的语法"></a>可选的语法</h2><p>曾经有大量不同的语法提议，数量远远超出了可以逐个讨论它们的可能性。逐个分析讨论它们是不明智的，可取的方式是分部分讨论。</p>
+<h3 id="装饰器的位置"><a href="#装饰器的位置" class="headerlink" title="装饰器的位置"></a>装饰器的位置</h3><p>第一个语法点是装饰器的位置。下面的例子，我们用 2.4a2 中<code>@</code>语法。<br>装饰器在 def 语句之前是第一个可选项，并被用在 2.4a2 中：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@classmethod</span></span><br><span class="line">def <span class="built_in">foo</span>(arg1,arg2):</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line"><span class="variable">@accepts</span>(int,int)</span><br><span class="line"><span class="variable">@returns</span>(float)</span><br><span class="line">def <span class="built_in">bar</span>(low,high):</span><br><span class="line">    pass</span><br></pre></td></tr></table></figure>
+
+<p>对这个位置有很多反对意见。最主要的一个是，在 Python 中，前一行代码会影响后一行代码的情况之前从没有过。这个语法在 Python 2.4a3 要求每个装饰器独占一行（在 2.4a2 版中多个装饰器可以写在一行），在 2.4 的最终版本中，要求是每个装饰器独占一行。</p>
+<p>人们还抱怨当同时使用多个装饰器的时候，语法看起来就不够优雅了。虽然如此，但在一个函数上使用大量装饰器的情况很少，因此也不必担心。</p>
+<p>装饰器在方法体外这种形式的一些好处是：它们在函数定义时就执行了。</p>
+<p>另一个好处是，在函数定义前的前缀有助于在理解代码本身之前了解代码语义上的改变。这样你在阅读代码的时候就可以顺畅的理解而不至于看到后面又改变了前面的想法。</p>
+<p>Guido 青睐于把装饰器放在<code>def</code>之前，这样就不会因为当参数列表很长时，装饰器看起来不够醒目。</p>
+<p>第二种形式是把装饰器放在<code>def</code>和函数名之前，或是函数名和参数列表之间：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> @<span class="built_in">classmethod</span> foo(arg1,arg2):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> @accepts(<span class="built_in">int</span>,<span class="built_in">int</span>),@returns(<span class="built_in">float</span>) bar(low,high):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span> @<span class="built_in">classmethod</span> (arg1,arg2):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bar</span> @accepts(<span class="built_in">int</span>,<span class="built_in">int</span>),@returns(<span class="built_in">float</span>) (low,high):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p>对这种形式也有几个反对观点。第一，这破坏了代码的易查找性（”greppability”）——你无法再搜索“def foo(”来查找函数定义了。第二点，更严重的是，使用多个装饰器时会让语法看起来很混乱。</p>
+<p>另一种有很多支持者的形式是，把装饰器放在参数列表和<code>def</code>定义行尾的<code>:</code>之间：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>(<span class="params">arg1,arg2</span>) @<span class="built_in">classmethod</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bar</span>(<span class="params">low,high</span>) @accepts(<span class="built_in">int</span>,<span class="built_in">int</span>),@returns(<span class="built_in">float</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p>Guido 总结了对这种形式的反对意见（有很多也同样适用于前一种）：</p>
+<ul>
+<li>它隐藏了函数签名后的关键信息（例如：这是一个静态方法）</li>
+<li>当参数列表和装饰器都很多很长时容易被忽视</li>
+<li>当想要重用装饰器是很不方便复制和粘贴，因为它在一行中间的位置</li>
+</ul>
+<p>接下来的一种形式是把装饰器放在函数体内部的起始位置，和现在文档注释的位置一样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>(<span class="params">arg1,arg2</span>):</span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bar</span>(<span class="params">low,high</span>):</span><br><span class="line"><span class="meta">    @accepts(<span class="params"><span class="built_in">int</span>,<span class="built_in">int</span></span>)</span></span><br><span class="line"><span class="meta">    @returns(<span class="params"><span class="built_in">float</span></span>)</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p>对此的主要反对意见是，检查装饰器还要去看函数的内部，另外，虽然装饰器在方法体内，当它并不会在方法运行时执行。Guido 认为 docstring 就是个不好的例子，而且文档注释装饰器甚至有可能把 docstring 移到方法体外面。</p>
+<p>最后一种形式是用一个新的代码块包含原有代码。这个例子中使用“decorator”关键词，这个<code>@</code>语法比起来没什么意义。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">decorate:</span><br><span class="line">    <span class="built_in">classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">foo</span>(<span class="params">arg1,arg2</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">decorate:</span><br><span class="line">    accepts(<span class="built_in">int</span>,<span class="built_in">int</span>)</span><br><span class="line">    returns(<span class="built_in">float</span>)</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">bar</span>(<span class="params">low,high</span>):</span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p>这种形式会导致有装饰器的方法和没有装饰器的方法缩进不一致。另外，一个有装饰器的方法的方法体在第三级缩进才开始。</p>
+<h3 id="语法形式"><a href="#语法形式" class="headerlink" title="语法形式"></a>语法形式</h3><ul>
+<li>@decorator<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@classmethod</span></span><br><span class="line">def <span class="built_in">foo</span>(arg1,arg2):</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line"><span class="variable">@accepts</span>(int,int)</span><br><span class="line"><span class="variable">@returns</span>(float)</span><br><span class="line">def <span class="built_in">bar</span>(low,high):</span><br><span class="line">    pass</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>对此语法的主要反对是<code>@</code>符号之前从没在 Python 中使用过（但在 IPython 和 Leo 中都用过），而且<code>@</code>符号本身没什么意义。另一个反对点是这浪费了一个未使用过的字符在一个并不认为是重要的功能上。</p>
+<ul>
+<li>|decorator<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">|<span class="built_in">classmethod</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>(<span class="params">arg1,arg2</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">|accepts(<span class="built_in">int</span>,<span class="built_in">int</span>)</span><br><span class="line">|returns(<span class="built_in">float</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bar</span>(<span class="params">low,high</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>这是 @decorator 语法的一种变体。它的好处是不会影响到 IPython 和 Leo。和 @decorator 相比主要缺点是<code>|</code>符号看起来像大写字母 I 和小写字母 l。</p>
+<ul>
+<li>list 语法<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="built_in">classmethod</span>]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>(<span class="params">arg1,arg2</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">[accepts(<span class="built_in">int</span>,<span class="built_in">int</span>), returns(<span class="built_in">float</span>)]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bar</span>(<span class="params">low,high</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>对此的反对意见主要是 list 语法在此之前已经有相应的用途了。而且也缺乏指示这个语句是一个装饰器。</p>
+<ul>
+<li>使用其他括号的 list 语法  (&lt;…&gt;, [[…]], …)<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="built_in">classmethod</span>&gt;</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>(<span class="params">arg1,arg2</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">&lt;accepts(<span class="built_in">int</span>,<span class="built_in">int</span>), returns(<span class="built_in">float</span>)&gt;</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bar</span>(<span class="params">low,high</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>这些选项并没有获得太多的关注。和方括号相比，这些只是明显的表示这不是一个list。它们没有使代码解析更加简单。其中“&lt;…&gt;”这一选项还会因为已经有非成对出现的用途而带来代码解析上的问题。向右的尖括号更有可能是大于号而不是一个装饰器的结束符号。</p>
+<ul>
+<li>decorate()<br>（译者注：我对本小节还没有清楚的理解，不敢轻易翻译，以免误导读者）<br>The <code>decorate()</code> proposal was that no new syntax be implemented – instead a magic function that used introspection to manipulate the following function. Both Jp Calderone and Philip Eby produced implementations of functions that did this. Guido was pretty firmly against this – with no new syntax, the magicness of a function like this is extremely high:</li>
+</ul>
+<blockquote>
+<p>Using functions with “action-at-a-distance” through sys.settraceback may be okay for an obscure feature that can’t be had any other way yet doesn’t merit changes to the language, but that’s not the situation for decorators. The widely held view here is that decorators need to be added as a syntactic feature to avoid the problems with the postfix notation used in 2.2 and 2.3. Decorators are slated to be an important new language feature and their design needs to be forward-looking, not constrained by what can be implemented in 2.3.</p>
+</blockquote>
+<ul>
+<li>新的关键词（和代码块）<br>这个想法是 comp.lang.python 中的一个公认选项（详情可以看下面的 社区意见 章节）。 Robert Brewer 写了一份详细的 <a target="_blank" rel="noopener" href="http://www.aminus.org/rbre/python/pydec.html">J2 提案</a> 阐述他青睐于此的理由。对于这种语法形式有一些问题是：<ul>
+<li>需要一个新的关键词。那么就会需要<code>from __future__ import decorators</code>语句。</li>
+<li>关键词选择的争议。最终<code>using</code>被选了出来并用在提案和实现方案中。</li>
+<li>关键词&#x2F;代码块的形式看起来就像一个普通的代码块，但并不是这样的。尝试在这个代码块中写语句会导致语法错误，这会让用户费解。</li>
+</ul>
+</li>
+</ul>
+<p>几天后 Guido 否决了这项提案，主要有两个理由。其一：</p>
+<blockquote>
+<p>块语法强烈建议它的内容应该是一系列 statements，但实际上不是——只有 expressions 被允许。并且会默默的“收集”这些 expressions 直到它们可以被应用到后面的函数定义上。</p>
+</blockquote>
+<p>其二:</p>
+<blockquote>
+<p>以关键词起头的代码块会吸引太多的注意。这对 if， while，for，try，def 和 class 这些是应该的。但是关键词”using“或是任何其他作此用的关键词都不值得吸引那么多注意。重点应该放在装饰器本身，它们才是重要的。</p>
+</blockquote>
+<p>读者请看<a target="_blank" rel="noopener" href="https://mail.python.org/pipermail/python-dev/2004-September/048518.html">详细回答</a>。</p>
+<ul>
+<li>其他形式<br>还有各种各样的形式和提议在 <a target="_blank" rel="noopener" href="http://www.python.org/moin/PythonDecorators">wiki页</a>。</li>
+</ul>
+<h3 id="为什么用"><a href="#为什么用" class="headerlink" title="为什么用@"></a>为什么用<code>@</code></h3><p>最初 Java 在 Javadoc comments 中使用<code>@</code>作为标识符，后来在 Java 1.5 中又用作为注解（annotations），和 Python 的装饰器很相似。实际上在 Python 之前的版本中从未使用过<code>@</code>作为标识符，这意味着使用<code>@</code>不会导致早期的 Python 代码产生奇怪的语义错误。也就是说，什么是装饰器，什么不是装饰器这种模糊的概念被消除了。这样说，<code>@</code>其实还是一个相当随意的选择，有建议使用<code>|</code>来代替。</p>
+<p>一些提议用像列表一样的语法表示装饰器：<br><code>[|...|]</code>, <code>*[...]*</code>和 <code>&lt;...&gt;</code></p>
+<h2 id="当前的实现，历史"><a href="#当前的实现，历史" class="headerlink" title="当前的实现，历史"></a>当前的实现，历史</h2><p>Guido 要找一个志愿者实现他所倾向的语法，Mark Russell 向 SF 提交了一个补丁。<br>新的语法在 2.4a2 中可用了。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@dec2</span></span><br><span class="line"><span class="variable">@dec1</span></span><br><span class="line">def <span class="built_in">func</span>(arg1, arg2, ...):</span><br><span class="line">    pass</span><br></pre></td></tr></table></figure>
+
+<p>等同于：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def <span class="function"><span class="keyword">func</span><span class="params">(arg1, arg2, ...)</span></span>:</span><br><span class="line">    pass</span><br><span class="line"><span class="function"><span class="keyword">func</span> = <span class="title">dec2</span><span class="params">(dec1(<span class="keyword">func</span>)</span></span>)</span><br></pre></td></tr></table></figure>
+
+<p>而没有创建变量<code>func</code>的过程。</p>
+<p>在 2.4a2 版本中的实现允许多个装饰器写在一行。到了 2.4a3 中做出了限制，装饰器必须每行一个。</p>
+<p>Michael Hudson 实现的 list-after-def 的语法补丁也被剔除了。</p>
+<p>在 2.4a2 发布之后，面对社区的反应，Guido表示，如果社区中可以提出一个公认的靠谱的提议和代码实现，他会重新审视这个提议的。后来在 Python wiki 中收到了大量的选项，一个社区公认的方案出现了。Guido 后来拒绝了这个方案，说道：</p>
+<blockquote>
+<p>本周四要发布的 Python 2.4a3 将保持现在 CVS 中的一切。对于 Python 2.4b1，我在考虑用其他的字符替换<code>@</code>，虽然我认为用<code>@</code>是有好处的，它和 Java 中的<code>@</code>特性有些相似。对此还有些争议，它们也不完全相同，<code>@</code>在 Java 中用于不改变语义的属性，但是由于 Python 的动态特性使它的语法元素从来不与其他语言中相似的结构完全一致，而且有明显的重叠。对于第三方工具的影响：IPython 的作者表示不会有太大的影响。Leo 的作者也说 Leo 可以接受（虽然他和他的用户会有一些过渡的痛苦）。实际上我还是认为选择一个 Python 中已经使用过的字符会让外部工具更难适配，因为对此要做更加细致微妙的解析。坦白说我还没有决定，仍然有回旋的余地。我不想在语法上继续考虑下去了： the buck has to stop at some point, everyone has had their say, and the show must go on.</p>
+</blockquote>
+<h3 id="社区意见"><a href="#社区意见" class="headerlink" title="社区意见"></a>社区意见</h3><p>这部分介绍被拒绝的 J2 语法，为了历史的完整性写在这里。</p>
+<p>J2 语法在 comp.lang.python 上提出（”J2” 是它在 PythonDecorator wiki 页上的引用）：在关键词<code>def</code>之前使用一个由<code>using</code>开头的代码块，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">using:</span><br><span class="line">    <span class="built_in">classmethod</span></span><br><span class="line">    synchronized(lock)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">cls</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p>对此语法的争论主要归结于“可读性”原则：</p>
+<ul>
+<li>代码块好于多行<code>@</code>结构。使用<code>using</code>关键词将<code>def</code>声明转为多代码块的结构，类似于<code>try/finally</code>等。</li>
+<li>关键词好于新加一个标识符。关键词可以使用现有的标识符，没有必要新加一个标识符。关键词也可以将 Python 的装饰器与 Java 的注解和 .Net 中的属性区分开，它们明显是不同的东西。</li>
+</ul>
+<p>Robert Brewer 为此写了一份详细的<a target="_blank" rel="noopener" href="http://www.aminus.org/rbre/python/pydec.html">提议</a>，Michael Sparks 开发了<a target="_blank" rel="noopener" href="http://www.python.org/sf/1013835">补丁</a>。</p>
+<p>如之前提到的，Guido 拒绝了这种形式，在 python-dev 和 comp.lang.python 上发<a target="_blank" rel="noopener" href="https://mail.python.org/pipermail/python-dev/2004-September/048518.html">消息</a>写明了他的问题。</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>在 comp.lang.python 和 python-dev 上有很多讨论集中在优雅的使用装饰器就像使用内置的<code>staticmethod()</code>和<code>classmethod()</code>一样简洁。装饰器远比这更强大，下面介绍一些：</p>
+<ol>
+<li>定义一个函数在退出时执行。注意这个函数没有被“包含”在通常的场景中。<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">onexit</span>(<span class="params">f</span>):</span><br><span class="line">    import atexit</span><br><span class="line">    atexit.register(f)</span><br><span class="line">    <span class="keyword">return</span> f</span><br><span class="line"></span><br><span class="line"><span class="variable">@onexit</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>():</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>请注意这可能不适合真实的场景，只作为示例。</p>
+<ol start="2">
+<li><p>定义一个单例模式的类。注意，一旦类消失了，程序员需要去创建更多的实例。（来自 python-dev 上的 Shane Hathaway ）</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">singleton</span>(<span class="params">cls</span>):</span><br><span class="line">    instances = &#123;&#125;</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">getinstance</span>():</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> <span class="symbol">instances:</span></span><br><span class="line">            instances[cls] = cls()</span><br><span class="line">        <span class="keyword">return</span> instances[cls]</span><br><span class="line">    <span class="keyword">return</span> getinstance</span><br><span class="line"></span><br><span class="line"><span class="variable">@singleton</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyClass</span>:</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>给函数添加属性。（基于 python-dev 上 Anders Munch 提交的例子）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">attrs</span>(<span class="params">**kwds</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">decorate</span>(<span class="params">f</span>):</span><br><span class="line">        <span class="keyword">for</span> k <span class="keyword">in</span> kwds:</span><br><span class="line">            <span class="built_in">setattr</span>(f, k, kwds[k])</span><br><span class="line">        <span class="keyword">return</span> f</span><br><span class="line">    <span class="keyword">return</span> decorate</span><br><span class="line"></span><br><span class="line"><span class="meta">@attrs(<span class="params">versionadded=<span class="string">&quot;2.2&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">       author=<span class="string">&quot;Guido van Rossum&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">mymethod</span>(<span class="params">f</span>):</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>强制函数的参数及返回类型。请注意这从旧函数向新函数拷贝了函数名属性（func_name）。<br>func_name 在 Python 2.4a3 中被允许修改。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">accepts</span>(<span class="params">*types</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">check_accepts</span>(<span class="params">f</span>):</span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">len</span>(types) == f.func_code.co_argcount</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">new_f</span>(<span class="params">*args, **kwds</span>):</span><br><span class="line">            <span class="keyword">for</span> (a, t) <span class="keyword">in</span> <span class="built_in">zip</span>(args, types):</span><br><span class="line">                <span class="keyword">assert</span> <span class="built_in">isinstance</span>(a, t), \</span><br><span class="line">                       <span class="string">&quot;arg %r does not match %s&quot;</span> % (a,t)</span><br><span class="line">            <span class="keyword">return</span> f(*args, **kwds)</span><br><span class="line">        new_f.func_name = f.func_name</span><br><span class="line">        <span class="keyword">return</span> new_f</span><br><span class="line">    <span class="keyword">return</span> check_accepts</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">returns</span>(<span class="params">rtype</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">check_returns</span>(<span class="params">f</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">new_f</span>(<span class="params">*args, **kwds</span>):</span><br><span class="line">            result = f(*args, **kwds)</span><br><span class="line">            <span class="keyword">assert</span> <span class="built_in">isinstance</span>(result, rtype), \</span><br><span class="line">                   <span class="string">&quot;return value %r does not match %s&quot;</span> % (result,rtype)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        new_f.func_name = f.func_name</span><br><span class="line">        <span class="keyword">return</span> new_f</span><br><span class="line">    <span class="keyword">return</span> check_returns</span><br><span class="line"></span><br><span class="line"><span class="meta">@accepts(<span class="params"><span class="built_in">int</span>, (<span class="params"><span class="built_in">int</span>,<span class="built_in">float</span></span>)</span>)</span></span><br><span class="line"><span class="meta">@returns(<span class="params">(<span class="params"><span class="built_in">int</span>,<span class="built_in">float</span></span>)</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">arg1, arg2</span>):</span><br><span class="line">    <span class="keyword">return</span> arg1 * arg2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>声明一个类实现指定接口。来自 python-dev 上 Bob Ippolito 基于 <a target="_blank" rel="noopener" href="http://peak.telecommunity.com/PyProtocols.html">PyProtocols</a>的经验的投稿。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">provides</span>(<span class="params">*interfaces</span>):</span><br><span class="line">     <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">     An actual, working, implementation of provides for</span></span><br><span class="line"><span class="string">     the current implementation of PyProtocols.  Not</span></span><br><span class="line"><span class="string">     particularly important for the PEP text.</span></span><br><span class="line"><span class="string">     &quot;&quot;&quot;</span></span><br><span class="line">     <span class="keyword">def</span> <span class="title function_">provides</span>(<span class="params">typ</span>):</span><br><span class="line">         declareImplementation(typ, instancesProvide=interfaces)</span><br><span class="line">         <span class="keyword">return</span> typ</span><br><span class="line">     <span class="keyword">return</span> provides</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">IBar</span>(<span class="title class_ inherited__">Interface</span>):</span><br><span class="line">     <span class="string">&quot;&quot;&quot;Declare something about IBar here&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@provides(<span class="params">IBar</span>)</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Foo</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Implement something here...&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>当然，即使没有语法支持，这些示例在今天也是可以实现的。</p>
+<h2 id="（不再是）未解决的问题"><a href="#（不再是）未解决的问题" class="headerlink" title="（不再是）未解决的问题"></a>（不再是）未解决的问题</h2><ol>
+<li>还不确定类装饰器是否会被作为一种特性加入到语言中。Guido 对此概念表示了怀疑。但是在 python-dev 上，人们都有支持他们自己观点的有力论据。在 Python 2.4 中很可能不会有类装饰器了。</li>
+<li>在 Python 2.4b1 中会重新审视对字符<code>@</code>的选择。<br>在最后，<code>@</code>还是被保留下来了。</li>
+</ol>
+<h1 id="我的总结"><a href="#我的总结" class="headerlink" title="我的总结"></a>我的总结</h1><p>我最早接触 Python 是在2015年年初，那时的 Python 版本是 2.7.x，在整个 Python 的历史中已经是非常完备非常现代的一个版本了。在这次对 Python 装饰器起源的探索中，我浏览了一些年代久远的邮件列表，看到了前辈大神们讨论问题中的种种趣事，不禁产生崇拜与感激之情。感谢前辈们无私的付出。</p>
+<p>在了解了 Python 装饰器的起源之后，我对这一特性也有了更深的理解。这也是我第一次了解到一项技术，一项特性从无到有的诞生过程。这其中有各位前辈大神的指引，也有遍布全球的热心开发者积极贡献建议，无数的想法与智慧在一起碰撞，融合。现在的成果都是在这一次次的取舍中演进，逐步完善。这真是令人感动。</p>
+<p>最后，希望自己能保持好奇心，多思考，去探究事物的本质，工作原理，设计思路。本文中的翻译我尽力保证准确，但因个人的理解偏差与能力范围难免产生错误，如有发现，请务必向我指出以免对更多人产生误导。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/PEP-318-函数与方法装饰器/" target="_blank" title="PEP 318 函数与方法装饰器">https://chowyi.com/PEP-318-函数与方法装饰器/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#PEP" >
+    <span class="tag-code">PEP</span>
+  </a>
+
+  <a href="/tags#装饰器" >
+    <span class="tag-code">装饰器</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/three-types-of-inheriting-django-model/">
+        <span class="nav-arrow">← </span>
+        
+          Django Model的三种继承方式
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/Django%E4%BD%BF%E7%94%A8MySQL%E5%90%8E%E7%AB%AF%E6%97%A5%E6%9C%9F%E4%B8%8D%E8%83%BD%E6%8C%89%E6%9C%88%E8%BF%87%E6%BB%A4%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">
+        
+          Django使用MySQL后端日期不能按月过滤的问题及解决方案
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#PEP-318-%E2%80%93-Decorators-for-Functions-and-Methods"><span class="toc-nav-text">PEP 318 – Decorators for Functions and Methods</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%AD%A6%E5%91%8A"><span class="toc-nav-text">警告</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%91%98%E8%A6%81"><span class="toc-nav-text">摘要</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%B5%B7%E5%9B%A0"><span class="toc-nav-text">起因</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E9%9A%BE%EF%BC%9F"><span class="toc-nav-text">为什么这么难？</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%85%B3%E4%BA%8E%E2%80%9C%E8%A3%85%E9%A5%B0%E5%99%A8%EF%BC%88Decorator%EF%BC%89%E2%80%9D%E8%BF%99%E4%B8%AA%E5%90%8D%E5%AD%97"><span class="toc-nav-text">关于“装饰器（Decorator）”这个名字</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%9B%AE%E6%A0%87"><span class="toc-nav-text">设计目标</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%8E%B0%E5%9C%A8%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="toc-nav-text">现在的语法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%8F%AF%E9%80%89%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="toc-nav-text">可选的语法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-nav-text">装饰器的位置</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%AF%AD%E6%B3%95%E5%BD%A2%E5%BC%8F"><span class="toc-nav-text">语法形式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8"><span class="toc-nav-text">为什么用@</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%BD%93%E5%89%8D%E7%9A%84%E5%AE%9E%E7%8E%B0%EF%BC%8C%E5%8E%86%E5%8F%B2"><span class="toc-nav-text">当前的实现，历史</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%A4%BE%E5%8C%BA%E6%84%8F%E8%A7%81"><span class="toc-nav-text">社区意见</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-nav-text">实例</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%EF%BC%88%E4%B8%8D%E5%86%8D%E6%98%AF%EF%BC%89%E6%9C%AA%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-nav-text">（不再是）未解决的问题</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#%E6%88%91%E7%9A%84%E6%80%BB%E7%BB%93"><span class="toc-nav-text">我的总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com/PEP-318-函数与方法装饰器/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

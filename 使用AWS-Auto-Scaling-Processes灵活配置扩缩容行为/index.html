@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      使用AWS Auto Scaling Processes灵活配置扩缩容行为 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>使用AWS Auto Scaling Processes灵活配置扩缩容行为</h2>
+  <p class="post-date">2018-07-31</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/使用AWS-Auto-Scaling-Processes灵活配置扩缩容行为/" target="_blank" title="使用AWS Auto Scaling Processes灵活配置扩缩容行为">https://chowyi.com/使用AWS-Auto-Scaling-Processes灵活配置扩缩容行为/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>近期在工作中大量用到了 AWS Auto Scaling，经过多次试验，学习文档并与AWS的技术支持沟通，在我对 Auto Scaling 各项功能不断了解的同时，也深感 AWS 的强大。遇到的种种场景、需求，AWS 似乎早就已经替你考虑好了。<br>今天我遇到的问题是，在对线上服务器进行变更发版等操作时，要求不能发生自动扩缩容，否则可能导致意外的错误（扩容时，新机器使用的是老镜像。缩减时，发版操作将会中断）。要实现这一点，我想到了很多方案。</p>
+<span id="more"></span>
+
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li><p>方案一（不推荐）<br> 在发版构建前，使用脚本调用 AWS API 删除扩展策略（Scaling Policies）。在发版完成之后，再调用 AWS API 重新添加扩展策略。<br> 优点：简单粗暴？？？(╯‵□′)╯︵┻━┻<br> 缺点：扩展策略需要配置在脚本中，修改麻烦。在 AWS Console 上对扩展策略的修改，将在下一次发版后被重置。</p>
+</li>
+<li><p>方案二（不推荐）<br> 在发版构建前，使用脚本调用 AWS API 暂停扩展流程（Suspend Scaling Processes）：<strong>Terminated、Launch、ReplaceUnhealthy</strong>。在发版完成后，再调用 AWS API 恢复这些流程。<br> 优点：不用在脚本中配置扩展策略，但也有类似的缺点。<br> 缺点：在 AWS Console 上对暂停扩展流程的配置，将在下一次发版后被重置。</p>
+</li>
+<li><p>方案三<br> 与方案二类似，是仔细看了 AWS 文档后确定的。通过暂停扩展流程：<strong>AlarmNotification</strong> 即可实现暂停自动扩缩容动作。同样通过 AWS API 在发版前后停用及恢复此流程。<br> 优点：仅需要修改这一个扩展流程，且该流程不会在平时配置，影响极小。<br> 缺点：暂未想到，目前自用的方案。</p>
+</li>
+</ol>
+<h2 id="扩展流程（Scaling-Processes）详解"><a href="#扩展流程（Scaling-Processes）详解" class="headerlink" title="扩展流程（Scaling Processes）详解"></a>扩展流程（Scaling Processes）详解</h2><p>Amazon EC2 Auto Scaling 目前支持 8 中扩展流程（Scaling Processes）：<br>以下摘自 <a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/autoscaling/ec2/userguide/as-suspend-resume-processes.html">Amazon EC2 Auto Scaling 用户指南</a></p>
+<ul>
+<li><p>Launch<br>  将新的 EC2 实例添加到组，从而增加组的容量。<br>  <strong>警告</strong><br>  如果您暂停 Launch，这会中断其他流程。例如，如果暂停 Launch 流程，则无法使处于备用状态的实例恢复运行，因为组无法扩展。</p>
+</li>
+<li><p>Terminate<br>  从组中删除 EC2 实例，从而减少组的容量。<br>  <strong>警告</strong><br>  如果您暂停 Terminate，这会中断其他流程。</p>
+</li>
+<li><p>HealthCheck<br>  检查实例的运行状况。如果 Amazon EC2 或 Elastic Load Balancing 通知 Amazon EC2 Auto Scaling 实例运行状况不佳，Amazon EC2 Auto Scaling 会将该实例标记为运行状况不佳。此流程可覆盖您手动设置的实例运行状况状态。</p>
+</li>
+<li><p>ReplaceUnhealthy<br>  终止被标记为运行状况不佳的实例，然后创建新实例将其替换。此流程与 HealthCheck 流程结合使用，并使用 Terminate 和 Launch 流程。</p>
+</li>
+<li><p>AZRebalance<br>  在区域内的可用区之间均衡组中 EC2 实例的数量。如果从 Auto Scaling 组中删除可用区，或可用区运行状况不佳或无法使用，扩展流程会在终止运行状况不佳或无法使用的实例前，在不受影响的可用区中启动新实例。当运行状况不佳的可用区恢复正常状态时，扩展流程自动在组的可用区中重新均匀分布实例。有关更多信息，请参阅 再平衡活动。</p>
+<p>  如果您暂停 AZRebalance 并且发生了扩大或缩小事件，扩展流程仍会尝试均衡可用区。例如，在扩展期间，它会在实例最少的可用区中启动实例。</p>
+<p>  如果您暂停 Launch 流程，AZRebalance 不会启动新实例，也不会终止现有实例。这是因为 AZRebalance 只会在启动替换实例后才终止实例。如果您暂停 Terminate 流程，Auto Scaling 组容量可以增加到超出最大大小百分之十，因为在重新均衡活动期间允许临时发生这种情况。如果扩展流程不能终止实例，Auto Scaling 组可以保持超出其最大大小，直到您恢复 Terminate 流程。</p>
+</li>
+<li><p>AlarmNotification<br>  接受来自与组关联的 CloudWatch 警报的通知。<br>  如果您暂停 AlarmNotification，Amazon EC2 Auto Scaling 不会自动执行会被警报触发的策略。如果您暂停 Launch 或 Terminate，将无法分别执行扩大或缩小策略。</p>
+</li>
+<li><p>ScheduledActions<br>  执行您创建的计划操作。<br>  如果您暂停 Launch 或 Terminate，涉及启动或终止实例的计划操作会受到影响。</p>
+</li>
+<li><p>AddToLoadBalancer<br>  在实例启动时，将其添加到附加的负载均衡器或目标组。<br>  如果您暂停 AddToLoadBalancer，Amazon EC2 Auto Scaling 会启动实例，但不会将其添加到负载均衡器或目标组。如果您恢复 AddToLoadBalancer 流程，该流程也会在启动实例时将其添加到负载均衡器或目标组。不过，它不会添加在此流程暂停时启动的实例。您必须手动注册这些实例。</p>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过灵活地组合配置这些扩展流程，可以实现各种不同的需求，但使用时也要做到心中有数，如上所说，暂停 Launch 流程，会影响到 ReplaceUnhealthy、AZRebalance、ScheduledActions等多个流程。<br>灵活强大的功能就像一把双刃剑，使用得当，事半功倍，但若不能熟练掌握，就很容易给自己埋下隐患。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/使用AWS-Auto-Scaling-Processes灵活配置扩缩容行为/" target="_blank" title="使用AWS Auto Scaling Processes灵活配置扩缩容行为">https://chowyi.com/使用AWS-Auto-Scaling-Processes灵活配置扩缩容行为/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AutoScaling" >
+    <span class="tag-code">AutoScaling</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/aws-auto-scaling-with-latest-image/">
+        <span class="nav-arrow">← </span>
+        
+          为AWS Auto Scaling持续提供最新映像
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/aws-auto-scaling-target-tracking-scaling-policy/">
+        
+          深入了解AWS Auto Scaling的动态扩展——目标跟踪扩展策略
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-nav-text">解决方案</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%89%A9%E5%B1%95%E6%B5%81%E7%A8%8B%EF%BC%88Scaling-Processes%EF%BC%89%E8%AF%A6%E8%A7%A3"><span class="toc-nav-text">扩展流程（Scaling Processes）详解</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com/使用AWS-Auto-Scaling-Processes灵活配置扩缩容行为/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

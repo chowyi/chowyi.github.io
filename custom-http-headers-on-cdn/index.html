@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      在CDN上配置自定义响应头（CloudFront） | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>在CDN上配置自定义响应头（CloudFront）</h2>
+  <p class="post-date">2020-03-11</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//custom-http-headers-on-cdn/" target="_blank" title="在CDN上配置自定义响应头（CloudFront）">https://chowyi.com//custom-http-headers-on-cdn/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>今天接到一个小需求，要在业务系统的 HTTP 响应中添加几个安全相关的响应头。我的第一反应是在 Kong&#x2F;Nginx 上配置，但我们的业务现在已经是 ServerLess 架构了，那么就要在 CDN 上做配置了。</p>
+<p>我这里业务上用的 AWS CloudFront 和阿里云 CDN，同时我又去看了一下腾讯云 CDN 的配置方式，这里简单对比一下，我想重点说明的是 CloudFront。</p>
+<span id="more"></span>
+
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>需要在网站的响应中添加下面几个安全相关的响应头：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/docs/Web/HTTP/Headers/X-Content-Type-Options">X-Content-Type-Options</a>: nosniff</p>
+</blockquote>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/X-XSS-Protection">X-XSS-Protection</a>: 10;mode&#x3D;block</p>
+</blockquote>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/X-Frame-Options">X-Frame-Options</a>: deny</p>
+</blockquote>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/docs/Web/HTTP/Headers/Strict-Transport-Security">Strict-Transport-Security</a>: max-age&#x3D;31536000; includeSubDomains</p>
+</blockquote>
+<h2 id="腾讯云"><a href="#腾讯云" class="headerlink" title="腾讯云"></a>腾讯云</h2><p>腾讯云的配置就很简单了，直接在控制台添加就可以了。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/custom-http-headers-on-cdn/qcloud-cdn-edit-http-headers.png" alt="qcloud-cdn-edit-http-headers"></p>
+<h2 id="阿里云"><a href="#阿里云" class="headerlink" title="阿里云"></a>阿里云</h2><p>阿里云的控制台也有配置 HTTP Headers 的地方，但有两点不足之处：</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/custom-http-headers-on-cdn/aliyun-cdn-edit-http-headers.png" alt="aliyun-cdn-edit-http-headers"></p>
+<ol>
+<li><p>配置的入口不太合理，不是常用阿里云的同学可能不太好找，它位于：<code>CDN控制台 -&gt; 域名管理 -&gt; 缓存配置 -&gt; HTTP头</code>。</p>
+</li>
+<li><p><del>目前（2020-03-11），在控制台上只支持配置以下 10 个 HTTP Headers，如果要配置其他 HTTP Header，需要提交工单处理。</del><br>2020-12-03 Update：现在看阿里云已经支持在控制台上配置自定义Header了。</p>
+<ul>
+<li>Content-Type</li>
+<li>Cache-Control</li>
+<li>Content-Disposition</li>
+<li>Content-Language</li>
+<li>Expires</li>
+<li>Access-Control-Allow-Origin</li>
+<li>Access-Control-Allow-Headers</li>
+<li>Access-Control-Allow-Methods</li>
+<li>Access-Control-Max-Age</li>
+<li>Access-Control-Expose-Headers</li>
+</ul>
+</li>
+</ol>
+<p>我这次需求就需要通过提交工单来完成，好在工单处理的速度还算快，从我提交工单 -&gt; 灰度节点测试 -&gt; 全量部署，一个小时完成（工作日工作时间）。 不太理解阿里云为什么不能像腾讯云那样，让用户在控制台上就可以添加自定义的 HTTP Header。</p>
+<h2 id="AWS-CloudFront"><a href="#AWS-CloudFront" class="headerlink" title="AWS CloudFront"></a>AWS CloudFront</h2><p>CloudFront 配置 HTTP 响应头相对来说复杂一些，它不支持在控制台上直接配置添加，需要配合 Lambda@Edge 来实现，对用户来说也要求具备基本的开发能力（NodeJS&#x2F;Python）。但同时它也更加强大，可以灵活应对多种多样的用户需求。如果用照相机来打比方，它更像一台专业的单反相机：一开始你也许会觉得它难于使用，甚至还不如手机拍照来的方便好看，然而一旦你掌握它之后，就能将它的强大功能为己所用，灵活创造出多种玩法。</p>
+<p>前面说到，CloudFront 配置 HTTP 响应头需要配合 Lambda@Edge 来实现。触发 Lambda 函数的 CloudFront 事件一共有四种：</p>
+<ul>
+<li>Viewer Request</li>
+<li>Origin Request</li>
+<li>Origin Response</li>
+<li>Viewer Response</li>
+</ul>
+<p><img src="https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/images/cloudfront-events-that-trigger-lambda-functions.png" alt="cloudfront-events-that-trigger-lambda-functions"></p>
+<p>那么如何确定要在哪里配置我们的 Lambda 函数呢？</p>
+<p>以下摘自官方文档-<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AmazonCloudFront/latest/DeveloperGuide/lambda-how-to-choose-event.html">如何确定用于触发 Lambda 函数的 CloudFront 事件</a>:</p>
+<blockquote>
+<p><strong>您是否希望 CloudFront 缓存 Lambda 函数更改的对象？</strong></p>
+<p>   如果您希望 CloudFront 缓存 Lambda 函数修改的对象，以便在下次请求该对象时 CloudFront 可以从边缘站点中提供该对象，请使用源请求或源响应事件。这样可减少源上的负载、减少后续请求的延迟，并降低对后续请求调用 Lambda@Edge 的成本。</p>
+<p>   例如，如果要添加、删除或更改由源返回的对象的标头，并且希望 CloudFront 缓存结果，请使用源响应事件。</p>
+</blockquote>
+<p>官方文档上还提供了一段示例代码：<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AmazonCloudFront/latest/DeveloperGuide/lambda-examples.html#lambda-examples-overriding-response-header">示例：覆盖响应标头</a></p>
+<p>我这里需要 CloudFront 来缓存我的响应，因此我要对<code>Origin Response</code> 编写 Lambda 函数。下面附上我的代码吧。</p>
+<p>在<code>config</code>中可以配置按四种方式修改响应头。</p>
+<ol>
+<li>add: 当且仅当<code>add</code>中指定的头部<strong>不</strong>存在时，添加头部。若已经存在，则忽略此配置。</li>
+<li>replace: 当且仅当<code>replace</code>中指定的头部存在时，替换头部。若不存在，则忽略次配置。</li>
+<li>remove: 当且仅当<code>remove</code>中指定的头部存在时，移除头部。若不存在，则忽略次配置。</li>
+<li>append: 当<code>append</code>中指定的头部存在时，保持原头部不变，新增同名头部。若不存在，则直接添加头部。</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">    <span class="string">&quot;add&quot;</span>: [</span><br><span class="line">        &#123; <span class="string">&quot;name&quot;</span>: <span class="string">&quot;X-Content-Type-Options&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="string">&quot;nosniff&quot;</span> &#125;,</span><br><span class="line">        &#123; <span class="string">&quot;name&quot;</span>: <span class="string">&quot;X-XSS-Protection&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="string">&quot;10;mode=block&quot;</span> &#125;,</span><br><span class="line">        &#123; <span class="string">&quot;name&quot;</span>: <span class="string">&quot;X-Frame-Options&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="string">&quot;deny&quot;</span> &#125;,</span><br><span class="line">        &#123; <span class="string">&quot;name&quot;</span>: <span class="string">&quot;Strict-Transport-Security&quot;</span>, <span class="string">&quot;value&quot;</span>: <span class="string">&quot;max-age=31536000;includeSubDomains&quot;</span> &#125;</span><br><span class="line">    ],</span><br><span class="line">    <span class="string">&quot;replace&quot;</span>: [],</span><br><span class="line">    <span class="string">&quot;remove&quot;</span>: [],</span><br><span class="line">    <span class="string">&quot;append&quot;</span>: [],</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">exports</span>.<span class="property">handler</span> = <span class="title function_">async</span> (event, context, callback) =&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> response = event.<span class="property">Records</span>[<span class="number">0</span>].<span class="property">cf</span>.<span class="property">response</span>;</span><br><span class="line">    <span class="keyword">const</span> respHeaders = response.<span class="property">headers</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> addHeaders = config[<span class="string">&#x27;add&#x27;</span>];</span><br><span class="line">    <span class="keyword">let</span> replaceHeaders = config[<span class="string">&#x27;replace&#x27;</span>];</span><br><span class="line">    <span class="keyword">let</span> removeHeaders = config[<span class="string">&#x27;remove&#x27;</span>];</span><br><span class="line">    <span class="keyword">let</span> appendHeaders = config[<span class="string">&#x27;append&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If and only if the header is already set, replace its old value with the new one. Ignored if the header is not already set.</span></span><br><span class="line">    <span class="keyword">if</span> (replaceHeaders) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; replaceHeaders.<span class="property">length</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> h = replaceHeaders[i];</span><br><span class="line">            <span class="keyword">if</span> (respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()]) &#123;</span><br><span class="line">                respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()] = h[<span class="string">&#x27;value&#x27;</span>].<span class="title function_">split</span>(<span class="string">&#x27;,&#x27;</span>).<span class="title function_">map</span>(<span class="function">(<span class="params">v</span>) =&gt;</span> &#123; <span class="keyword">return</span> &#123; <span class="string">&#x27;key&#x27;</span>: h[<span class="string">&#x27;name&#x27;</span>], <span class="string">&#x27;value&#x27;</span>: v.<span class="title function_">trim</span>() &#125; &#125;);</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Replaced Header(<span class="subst">$&#123;h[<span class="string">&#x27;name&#x27;</span>]&#125;</span>).`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Header(<span class="subst">$&#123;h[<span class="string">&#x27;name&#x27;</span>]&#125;</span>) does not exists, ignore replacing.`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Unset the header(s) with the given name.</span></span><br><span class="line">    <span class="keyword">if</span> (removeHeaders) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; removeHeaders.<span class="property">length</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> h = removeHeaders[i];</span><br><span class="line">            <span class="keyword">if</span> (respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()]) &#123;</span><br><span class="line">                <span class="keyword">delete</span> respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()];</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Removed Header(<span class="subst">$&#123;h[<span class="string">&#x27;name&#x27;</span>]&#125;</span>).`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Header(<span class="subst">$&#123;h[<span class="string">&#x27;name&#x27;</span>]&#125;</span>) does not exists, ignore removing.`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If the header is not set, set it with the given value. If it is already set, a new header with the same name and the new value will be set.</span></span><br><span class="line">    <span class="keyword">if</span> (appendHeaders) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; appendHeaders.<span class="property">length</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> h = appendHeaders[i];</span><br><span class="line">            <span class="keyword">if</span> (respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()]) &#123;</span><br><span class="line">                respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()] = respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()].<span class="title function_">concat</span>(h[<span class="string">&#x27;value&#x27;</span>].<span class="title function_">split</span>(<span class="string">&#x27;,&#x27;</span>).<span class="title function_">map</span>(<span class="function">(<span class="params">v</span>) =&gt;</span> &#123; <span class="keyword">return</span> &#123; <span class="string">&#x27;key&#x27;</span>: h[<span class="string">&#x27;name&#x27;</span>], <span class="string">&#x27;value&#x27;</span>: v.<span class="title function_">trim</span>() &#125; &#125;));</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Appended Header(<span class="subst">$&#123;h[<span class="string">&#x27;name&#x27;</span>]&#125;</span>).`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()] = h[<span class="string">&#x27;value&#x27;</span>].<span class="title function_">split</span>(<span class="string">&#x27;,&#x27;</span>).<span class="title function_">map</span>(<span class="function">(<span class="params">v</span>) =&gt;</span> &#123; <span class="keyword">return</span> &#123; <span class="string">&#x27;key&#x27;</span>: h[<span class="string">&#x27;name&#x27;</span>], <span class="string">&#x27;value&#x27;</span>: v.<span class="title function_">trim</span>() &#125; &#125;);</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Added(by append) Header(<span class="subst">$&#123;h[<span class="string">&#x27;name&#x27;</span>]&#125;</span>).`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Add function must be after Replace/Remove/Append. Otherwise added headers may be overwritten.</span></span><br><span class="line">    <span class="comment">// If and only if the header is not already set, set a new header with the given value. Ignored if the header is already set.</span></span><br><span class="line">    <span class="keyword">if</span> (addHeaders) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; addHeaders.<span class="property">length</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> h = addHeaders[i];</span><br><span class="line">            <span class="keyword">if</span> (respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()]) &#123;</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Header(<span class="subst">$&#123;h[<span class="string">&#x27;name&#x27;</span>]&#125;</span>) already exists, ignore adding.`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                respHeaders[h[<span class="string">&#x27;name&#x27;</span>].<span class="title function_">toLowerCase</span>()] = h[<span class="string">&#x27;value&#x27;</span>].<span class="title function_">split</span>(<span class="string">&#x27;,&#x27;</span>).<span class="title function_">map</span>(<span class="function">(<span class="params">v</span>) =&gt;</span> &#123; <span class="keyword">return</span> &#123; <span class="string">&#x27;key&#x27;</span>: h[<span class="string">&#x27;name&#x27;</span>], <span class="string">&#x27;value&#x27;</span>: v.<span class="title function_">trim</span>() &#125; &#125;);</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`Added Header(<span class="subst">$&#123;h[<span class="string">&#x27;name&#x27;</span>]&#125;</span>).`</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="title function_">callback</span>(<span class="literal">null</span>, response);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>腾讯云可以直接在 CDN 控制台配置自定义的响应头部。</li>
+<li><del>阿里云可以在 CDN 控制台配置部分响应头部，特殊的头部需要提工单后台处理。</del> 2020-12-03 Update: 已支持控制台配置自定义的响应头部。</li>
+<li>AWS CloudFront 不支持在控制台配置响应头部，需要配合 Lambda@Edge 自行编写函数处理。</li>
+</ol>
+<p>仅对 CDN 配置 HTTP Headers 而言，腾讯云最简单易用，AWS 最灵活强大。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//custom-http-headers-on-cdn/" target="_blank" title="在CDN上配置自定义响应头（CloudFront）">https://chowyi.com//custom-http-headers-on-cdn/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+  <a href="/tags#CloudFront" >
+    <span class="tag-code">CloudFront</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/vary-response-header-causes-miss-cdn-cache/">
+        <span class="nav-arrow">← </span>
+        
+          Vary response header导致的CDN预热无效
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/jmespath-learning-notes/">
+        
+          JMESPath学习分享
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%85%BE%E8%AE%AF%E4%BA%91"><span class="toc-nav-text">腾讯云</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%98%BF%E9%87%8C%E4%BA%91"><span class="toc-nav-text">阿里云</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#AWS-CloudFront"><span class="toc-nav-text">AWS CloudFront</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//custom-http-headers-on-cdn/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

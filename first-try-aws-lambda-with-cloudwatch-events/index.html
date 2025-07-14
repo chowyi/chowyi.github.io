@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      CloudWatch Events配合AWS Lambda使用初体验 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>CloudWatch Events配合AWS Lambda使用初体验</h2>
+  <p class="post-date">2018-09-12</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//first-try-aws-lambda-with-cloudwatch-events/" target="_blank" title="CloudWatch Events配合AWS Lambda使用初体验">https://chowyi.com//first-try-aws-lambda-with-cloudwatch-events/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>按照团队的标准规范，在 AWS 上新建的 EC2 实例都要添加 Name, Region, App, Env, Layer, Group 等标签。其中 Name 标签的格式是：<code>&#123;Region&#125;-&#123;App&#125;-&#123;Layer&#125;-&#123;Env&#125;-&#123;Group&#125;-&#123;IP后两段&#125;</code>，例如：<code>vg-store-web-release-a-12-34</code>。<br>在 Auto Scaling Group 的配置上，我设置了为新扩容出的实例自动添加 Region, App, Env, Layer, Group 这些标签，但因为 Name 标签中包含 IP 后缀，因此没办法预先设置在 Auto Scaling Group 上，只能在实例创建出来分配到私有 IP 后手动的添加 Name 标签。</p>
+<p>为了解决这个问题，我最先想到的方案是：使用脚本调用 API 定时扫描没有 Name 标签的实例，然后获取实例的 PrivateIP 和其他标签拼装出 Name 添加到实例上。<br>我很快就编写出 Demo，经过测试，可以实现需求，但总觉得不够优雅：</p>
+<ol>
+<li>需要定时调用脚本，间隔时间过长就不能及时发现新扩容的实例，间隔过短则显得有些浪费计算资源（事实上，在我们的业务场景中发生扩容的次数很少，间隔以天为单位设置都有些多余）。</li>
+<li>需要部署维护脚本及crontab。</li>
+<li>需要找一台服务器运行脚本。</li>
+</ol>
+<p>后来我想到了 Auto Scaling Group 有 LifeCycle Hook，又从它的设置界面了解到了 CloudWatch Events 这一服务。<br>最后通过 CloudWatch Events 和 AWS Lambda 就可以很好的实现我的需求！</p>
+<span id="more"></span>
+
+<h2 id="方案总览"><a href="#方案总览" class="headerlink" title="方案总览"></a>方案总览</h2><p>在 AWS Lambda 中编写 Python 脚本，响应 CloudWatch Events 发送的 Auto Scaling 的 <code>EC2 Instance Launch Successful</code>事件。Python 脚本使用 boto3 对实例进行查询及创建标签等操作。<br>如图所示：<br><img src="https://blog-1252856176.file.myqcloud.com/post/first-try-aws-lambda-with-cloudwatch-events/solution.png" alt="solution.png"></p>
+<h2 id="逐步配置"><a href="#逐步配置" class="headerlink" title="逐步配置"></a>逐步配置</h2><h3 id="AWS-Lambda"><a href="#AWS-Lambda" class="headerlink" title="AWS Lambda"></a>AWS Lambda</h3><h4 id="添加运行函数角色"><a href="#添加运行函数角色" class="headerlink" title="添加运行函数角色"></a>添加运行函数角色</h4><p>在 AWS Lambda 中，运行函数需要一个 IAM Role，就好像一个 IAM User 调用 API 一样。AWS Lambda 可以通过 IAM Role 来判断是否有权限执行代码中的操作。<br>在 IAM 中可以创建角色并附加所需的权限策略。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/first-try-aws-lambda-with-cloudwatch-events/iam-role-settings.png" alt="iam-role-settings.png"></p>
+<h4 id="创建函数"><a href="#创建函数" class="headerlink" title="创建函数"></a>创建函数</h4><p>创建一个 AWS Lambda 函数，指定函数名称，选择运行语言及上一步创建的用于运行函数的角色。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/first-try-aws-lambda-with-cloudwatch-events/add-aws-lambda-function.png" alt="add-aws-lambda-function.png"></p>
+<p>之后就可以看到如下的可视化Designer，中间的是我们的<strong>函数</strong>，<strong>函数</strong>右侧连接了所选的函数运行角色可操作的 AWS 资源。<strong>函数</strong>左侧还没有连接任何东西，可以从页面左侧的触发器列表中选择 CloudWatch Events。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/first-try-aws-lambda-with-cloudwatch-events/aws-lambda-settings.png" alt="aws-lambda-settings.png"></p>
+<p>从左侧的触发器列表中选择 CloudWatch Events 后，在下方配置详细的触发规则。规则类型设置为事件模式，服务选择 Auto Scaling，事件类型选择 EC2 Instance Launch Successful。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/first-try-aws-lambda-with-cloudwatch-events/cloudwatch-events-settings.png" alt="cloudwatch-events-settings.png"></p>
+<p>上面的步骤是在 AWS Lambda 创建 CloudWatch Events事件。反过来在 CloudWatch 中定义事件源再关联 Lambda 也是可以的。如下图所示：<br>可以注意一下页面底部的<strong>显示示例事件</strong>中的内容，这是一段包含了此事件详细信息的json串，会作为参数传递给 AWS Lambda。<br><img src="https://blog-1252856176.file.myqcloud.com/post/first-try-aws-lambda-with-cloudwatch-events/cloudwatch-events-settings-2.png" alt="cloudwatch-events-settings-2.png"></p>
+<p>设置好事件源后，就可以编写 Lambda 函数的代码了。点击 Designer 中的 Lambda 实体。在下方可以看到代码编辑器。在这里可以添加 CloudWatch Events 触发后需要运行的脚本。<br>脚本自动接收 event, context 两个参数。event 参数包含了触发事件的详细信息，context 参数包含了运行环境的上下文信息。通过 event 参数我们可以获取到 Auto Scaling 新扩容的实例的 InstanceId，然后就可以用 boto3 来做各种操作了。<br>下面是通过相关标签及私有 IP 设置 Name 标签的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> boto3</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_tag_value</span>(<span class="params">instance, key</span>):</span><br><span class="line">    _ = [tag[<span class="string">&#x27;Value&#x27;</span>] <span class="keyword">for</span> tag <span class="keyword">in</span> instance[<span class="string">&#x27;Tags&#x27;</span>] <span class="keyword">if</span> tag[<span class="string">&#x27;Key&#x27;</span>] == key]</span><br><span class="line">    <span class="keyword">return</span> _[<span class="number">0</span>] <span class="keyword">if</span> _ <span class="keyword">else</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">set_name_by_tags</span>(<span class="params">client, instance_id</span>):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        result = client.describe_instances(InstanceIds=[instance_id])</span><br><span class="line">        instance = result[<span class="string">&#x27;Reservations&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;Instances&#x27;</span>][<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">        private_ip = instance[<span class="string">&#x27;PrivateIpAddress&#x27;</span>]</span><br><span class="line">        region = get_tag_value(instance, <span class="string">&#x27;Region&#x27;</span>)</span><br><span class="line">        app = get_tag_value(instance, <span class="string">&#x27;App&#x27;</span>)</span><br><span class="line">        layer = get_tag_value(instance, <span class="string">&#x27;Layer&#x27;</span>)</span><br><span class="line">        env = get_tag_value(instance, <span class="string">&#x27;Env&#x27;</span>)</span><br><span class="line">        group = get_tag_value(instance, <span class="string">&#x27;Group&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> (private_ip <span class="keyword">and</span> region <span class="keyword">and</span> app <span class="keyword">and</span> layer <span class="keyword">and</span> env <span class="keyword">and</span> group):</span><br><span class="line">            <span class="comment"># some tag is empty, can not generate name</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span>, <span class="string">&#x27;[Error] some tag is empty&#x27;</span></span><br><span class="line"></span><br><span class="line">        ip_suffix = <span class="string">&#x27;-&#x27;</span>.join(private_ip.split(<span class="string">&#x27;.&#x27;</span>)[-<span class="number">2</span>:])</span><br><span class="line">        new_name = <span class="string">f&#x27;<span class="subst">&#123;region&#125;</span>-<span class="subst">&#123;app&#125;</span>-<span class="subst">&#123;layer&#125;</span>-<span class="subst">&#123;env&#125;</span>-<span class="subst">&#123;group&#125;</span>-<span class="subst">&#123;ip_suffix&#125;</span>&#x27;</span></span><br><span class="line">        old_name = get_tag_value(instance, <span class="string">&#x27;Name&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> old_name:</span><br><span class="line">            <span class="keyword">if</span> old_name == new_name:</span><br><span class="line">                <span class="comment"># already have name, nothing need to do</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span>, <span class="string">&#x27;Alreay have the right name&#x27;</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment"># remove old name</span></span><br><span class="line">                client.delete_tags(Resources=[instance_id], Tags=[&#123;<span class="string">&#x27;Key&#x27;</span>: <span class="string">&#x27;Name&#x27;</span>, <span class="string">&#x27;Value&#x27;</span>: old_name&#125;])</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&#x27;remove old Name: <span class="subst">&#123;old_name&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># set new name</span></span><br><span class="line">        client.create_tags(Resources=[instance_id], Tags=[&#123;<span class="string">&#x27;Key&#x27;</span>: <span class="string">&#x27;Name&#x27;</span>, <span class="string">&#x27;Value&#x27;</span>: new_name&#125;])</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span>, <span class="string">f&#x27;Created Name: <span class="subst">&#123;new_name&#125;</span>&#x27;</span></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span>, <span class="string">f&#x27;[Error] <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">lambda_handler</span>(<span class="params">event, context</span>):</span><br><span class="line">    region = event[<span class="string">&#x27;region&#x27;</span>]</span><br><span class="line">    instance_id = event[<span class="string">&#x27;detail&#x27;</span>][<span class="string">&#x27;EC2InstanceId&#x27;</span>]</span><br><span class="line">    client = boto3.client(<span class="string">&#x27;ec2&#x27;</span>, region_name=region)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&#x27;Ready to set Name for instance: <span class="subst">&#123;instance_id&#125;</span>&#x27;</span>)</span><br><span class="line">    result, msg = set_name_by_tags(client, instance_id)</span><br><span class="line">    <span class="built_in">print</span>(msg)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;statusCode&quot;</span>: <span class="number">200</span>,</span><br><span class="line">        <span class="string">&quot;body&quot;</span>: &#123;<span class="string">&#x27;result&#x27;</span>: <span class="string">&#x27;OK&#x27;</span> <span class="keyword">if</span> result <span class="keyword">else</span> <span class="string">&#x27;Error&#x27;</span>, <span class="string">&#x27;msg&#x27;</span>: msg&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在页面的右上方可以配置一个测试事件，然后点击测试按钮就可以看到脚本的运行结果了。测试通过后点击保存就完成了。</p>
+<h2 id="完成"><a href="#完成" class="headerlink" title="完成"></a>完成</h2><p>现在 AWS Auto Scaling 扩展出的新实例后，都会触发 CloudWatch Events 向 AWS Lambda 发送一个事件调用 Lambda 函数，函数中的 Python 代码会为新实例添加一个 Name 标签。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>此方案相比我最初的方案，有以下几个优点：</p>
+<ol>
+<li>通过事件触发脚本，不需要定时扫描，及时有效。</li>
+<li>做到了无服务器部署，避免了一些维护工作。</li>
+<li>可灵活配置，AWS Lambda 可复用。</li>
+</ol>
+<p>又一次感受到了 AWS 的强大，完整的生态环境提供一整套的服务支持，只有想不到，没有做不到。<br>这一次尝试也给我了很多启发，后续可以好好思考如何利用好这些功能，在工作生活中实现更多的自动化。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//first-try-aws-lambda-with-cloudwatch-events/" target="_blank" title="CloudWatch Events配合AWS Lambda使用初体验">https://chowyi.com//first-try-aws-lambda-with-cloudwatch-events/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+  <a href="/tags#CloudWatch" >
+    <span class="tag-code">CloudWatch</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/thoughts-about-the-core-and-essence-of-aws-auto-scaling/">
+        <span class="nav-arrow">← </span>
+        
+          一点思考——AWS Auto Scaling的核心与本质——CloudWatch
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/aws-lambda-faq/">
+        
+          AWS Lambda常见问题
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%96%B9%E6%A1%88%E6%80%BB%E8%A7%88"><span class="toc-nav-text">方案总览</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%80%90%E6%AD%A5%E9%85%8D%E7%BD%AE"><span class="toc-nav-text">逐步配置</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#AWS-Lambda"><span class="toc-nav-text">AWS Lambda</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%BF%90%E8%A1%8C%E5%87%BD%E6%95%B0%E8%A7%92%E8%89%B2"><span class="toc-nav-text">添加运行函数角色</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#%E5%88%9B%E5%BB%BA%E5%87%BD%E6%95%B0"><span class="toc-nav-text">创建函数</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%8C%E6%88%90"><span class="toc-nav-text">完成</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//first-try-aws-lambda-with-cloudwatch-events/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

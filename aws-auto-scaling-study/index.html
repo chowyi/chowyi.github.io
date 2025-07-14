@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      AWS Auto Scaling 学习与踩坑 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>AWS Auto Scaling 学习与踩坑</h2>
+  <p class="post-date">2018-07-02</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//aws-auto-scaling-study/" target="_blank" title="AWS Auto Scaling 学习与踩坑">https://chowyi.com//aws-auto-scaling-study/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>最近工作不太顺，总踩坑，当然这是客观原因。主观因素呢，就归结于自己经验不足。</p>
+<p>这又刚被 AWS Auto Scaling 给坑了，于是学习总结了一番，记录下来，主要是关于 Auto Scaling 的详细介绍和容易犯错踩坑的地方。方便以后自己查询，也希望能帮到看到这篇文章的人。</p>
+<span id="more"></span>
+
+
+<h2 id="什么是-Auto-Scaling-Group"><a href="#什么是-Auto-Scaling-Group" class="headerlink" title="什么是 Auto Scaling Group"></a>什么是 Auto Scaling Group</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html">Amazon EC2 Auto Scaling 用户指南</a></p>
+<p>Amazon EC2 Auto Scaling 帮助您确保您具有适量的 Amazon EC2 实例可用于处理您的应用程序负载。您可创建 EC2 实例的集合，称为 Auto Scaling 组 。您可以指定每个 Auto Scaling 组中最少的实例数量，Auto Scaling 会确保您的组中的实例永远不会低于这个数量。您可以指定每个 Auto Scaling 组中最大的实例数量，Auto Scaling 会确保您的组中的实例永远不会高于这个数量。如果您在创建组的时候或在创建组之后的任何时候指定了所需容量，Auto Scaling 会确保您的组一直具有此数量的实例。如果您指定了扩展策略，则 Auto Scaling 可以在您的应用程序的需求增加或降低时启动或终止实例。</p>
+<p>例如，以下 Auto Scaling 组的最小容量为 1 个实例，所需容量为 2 个实例，最大容量为和 4 个实例。您制定的扩展策略是按照您指定的条件，在最大最小实例数范围内调整实例的数量。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/aws-auto-scaling-example.png" alt="aws-auto-scaling-example.png"></p>
+</blockquote>
+<h2 id="创建-Auto-Scaling-Group"><a href="#创建-Auto-Scaling-Group" class="headerlink" title="创建 Auto Scaling Group"></a>创建 Auto Scaling Group</h2><p>创建 Auto Scaling Group 有三种方式：</p>
+<ol>
+<li>使用 <strong>EC2实例</strong> 创建</li>
+<li>使用 <strong>启动配置</strong> 创建</li>
+<li>使用 <strong>Launch Templates(启动模板)</strong> 创建</li>
+</ol>
+<h3 id="使用-EC2实例-创建"><a href="#使用-EC2实例-创建" class="headerlink" title="使用 EC2实例 创建"></a>使用 EC2实例 创建</h3><p>使用 <strong>EC2实例</strong> 创建 Auto Scaling Group需要满足以下条件：</p>
+<ol>
+<li>实例位于您要创建 Auto Scaling 组的可用区中。</li>
+<li>实例不是其他 Auto Scaling 组的成员。</li>
+<li>实例处于 running 状态。</li>
+<li>用于启动实例的 AMI 必须仍然存在。</li>
+</ol>
+<h4 id="创建步骤"><a href="#创建步骤" class="headerlink" title="创建步骤"></a>创建步骤</h4><ol>
+<li><p>在 EC2 列表找到用于创建 Auto Scaling Group 的实例，操作 -&gt; 实例设置 -&gt; 附加到 Auto Scaling 组。<br><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-ec2-1.png" alt="create-asg-by-ec2-1.png"></p>
+</li>
+<li><p>在弹出的对话框中选择附加到“<strong>新的 Auto Scaling 组</strong>”，设置一个组名称。<br><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-ec2-2.png" alt="create-asg-by-ec2-2.png"></p>
+</li>
+<li><p>创建成功，在 Auto Scaling Group 列表中查看创建好的组，检查配置（后面详细介绍）。<br><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-ec2-3.png" alt="create-asg-by-ec2-3.png"></p>
+</li>
+<li><p>在 Auto Scaling Group 属性的<em>实例</em>页签可以看到前面选择的 EC2 实例。最好为此实例设置<strong>缩减保护</strong>。<br><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-ec2-4.png" alt="create-asg-by-ec2-4.png"></p>
+</li>
+</ol>
+<h4 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h4><ol>
+<li>如果该 EC2 实例已经关联在<strong>一个</strong> ELB 上，则由此创建的 Auto Scaling Group 也会关联到相同的 ELB。</li>
+<li>如果该 EC2 实例已经关联在<strong>一个以上（不包含一个）</strong> ELB上，则由此创建的 Auto Scaling Group 不会关联任何的 ELB。</li>
+</ol>
+<h3 id="使用-启动配置-创建"><a href="#使用-启动配置-创建" class="headerlink" title="使用 启动配置 创建"></a>使用 启动配置 创建</h3><ol>
+<li><p>创建新的<strong>启动配置</strong>（或选择已有的启动配置）<br><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-1.png" alt="create-asg-by-launchconf-1.png"></p>
+<ol>
+<li><p>选择 <strong>AMI映像</strong><br> <img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-2.png" alt="create-asg-by-launchconf-1.png"></p>
+</li>
+<li><p>选择配置合适的<strong>实例类型</strong><br> <img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-3.png" alt="create-asg-by-launchconf-2.png"></p>
+</li>
+<li><p>设置启动配置的名称<br> <img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-4.png" alt="create-asg-by-launchconf-3.png"></p>
+</li>
+<li><p>添加存储<br> <img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-5.png" alt="create-asg-by-launchconf-4.png"></p>
+</li>
+<li><p>配置安全组</p>
+</li>
+</ol>
+</li>
+<li><p>创建 <strong>Auto Scaling 组</strong></p>
+<ol>
+<li><p>设置组名、组大小、网络及可用区<br> <img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-6.png" alt="create-asg-by-launchconf-4.png"></p>
+</li>
+<li><p>设置扩展策略<br> <img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/create-asg-by-launchconf-7.png" alt="create-asg-by-launchconf-4.png"></p>
+</li>
+<li><p>配置通知</p>
+</li>
+<li><p>配置标签</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="使用-Launch-Templates-启动模板-创建"><a href="#使用-Launch-Templates-启动模板-创建" class="headerlink" title="使用 Launch Templates(启动模板) 创建"></a>使用 Launch Templates(启动模板) 创建</h3><p>暂未使用，待研究。</p>
+<h2 id="Auto-Scaling-Group-配置详解"><a href="#Auto-Scaling-Group-配置详解" class="headerlink" title="Auto Scaling Group 配置详解"></a>Auto Scaling Group 配置详解</h2><p>点击创建好的 Auto Scaling Group 可以在下方的属性面板中查看它的详细配置，一个有 9 个页签，下面详细说明。</p>
+<h3 id="详细信息"><a href="#详细信息" class="headerlink" title="详细信息"></a>详细信息</h3><p><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/auto-scaling-group-conf-detail-1.png" alt="auto-scaling-group-conf-detail-1.png"></p>
+<ol>
+<li><p>启动配置<br> 可以选择使用<strong>启动配置</strong>还是<strong>启动模板</strong>来在自动扩容时启动新的实例。两者作用相似，都可以设置自动扩容新实例所需的 <strong>AMI、实例类型、存储、安全组</strong>等。<br> 此配置还可以随时更改。</p>
+</li>
+<li><p>Classic 负载均衡器 和 目标组<br> 前者用于设置 ASG 与 Classic ELB(s) 关联，后者用于设置 ASG 与 Application Load Balancer(s) 或 Network Load Balancer(s) 的目标组（Target Group(s))关联。<br> 将 ASG 与 ELB 关联后，ASG 组内的实例都将自动的挂载到 ELB 上，新增或分离的实例也将同步在 ELB 上挂载或摘掉。<br> 每个 ASG 最多可以关联 10 个 ELB，可关联目标组的数量未测试。</p>
+</li>
+<li><p>所需容量、最大、最小<br> 最大、最小指定了 ASG 在自动扩容或缩减时不能超过的上下范围。所需容量必须在最大、最小值之间，代表当前对实例数量的需求，ASG 会通过自动扩容或缩减将正常的实例数量维持在所需容量。</p>
+</li>
+<li><p>运行状况检查类型<br> 运行状况检查类型有两个可选性：<strong>EC2、ELB</strong>。</p>
+<p> EC2： 对 EC2 实例进行状态检查，可以在实例的属性面板查看。关机和重启都会导致状态检查不通过。<br> <img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/ec2-status-check.png" alt="ec2-status-check.png"></p>
+<p> ELB： 使用 ELB 提供的健康检查。</p>
+</li>
+<li><p>运行状况检查宽限期<br> 通常，刚刚投入使用的 Auto Scaling 实例需要预热才能通过 Auto Scaling 运行状况检查。Auto Scaling 等运行状况检查宽限期结束才检查实例的运行状况。为了给实例提供足够的预热时间，请确保运行状况检查宽限期包含应用程序的预期启动时间。</p>
+</li>
+<li><p>终止策略<br> 终止策略有 5 个可选项：Default、OldestInstance、OldestLaunchConfiguration、NewestInstance、ClosestToNextInstanceHour。</p>
+<ol>
+<li><p>Default(默认终止策略): 默认终止策略可帮助确保您的网络架构均匀分布到多个可用区。</p>
+<blockquote>
+<ol>
+<li><p>如果多个可用区中都有实例，选择有最多实例并且至少一个实例不受缩小保护的可用区。如果有多个可用区有此数目的实例，则选择使用最旧启动配置的实例所在的可用区。</p>
+</li>
+<li><p>确定所选可用区中哪些不受保护的实例使用最旧启动配置。如果有一个此类实例，则终止该实例。</p>
+</li>
+<li><p>如果有多个实例使用最旧启动配置，则确定哪些不受保护的实例最接近下个计费小时。(这将帮助您最大程度地使用您的 EC2 实例并管理 Amazon EC2 使用成本。)如果有一个此类实例，则终止该实例。</p>
+</li>
+<li><p>如果有多个不受保护的实例最接近下个计费小时，则随机选择其中一个实例。</p>
+</li>
+</ol>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/termination-policy-default-flowchart-diagram.png" alt="termination-policy-default-flowchart-diagram.png"></p>
+</blockquote>
+</li>
+<li><p>OldestInstance<br> 终止组中最旧的实例。当您将 Auto Scaling 组中的实例升级为新的 EC2 实例类型，可以逐渐将较旧类型的实例替换为较新类型的实例时，此选项十分有用。</p>
+</li>
+<li><p>OldestLaunchConfiguration<br> 终止组中最新的实例。如果要测试新的启动配置但不想在生产中保留它时，此策略非常有用。</p>
+</li>
+<li><p>NewestInstance<br> 终止采用最旧启动配置的实例。如果要更新某个组并且逐步淘汰先前配置中的实例时，此策略非常有用。</p>
+</li>
+<li><p>ClosestToNextInstanceHour<br> 终止最接近下个计费小时的实例。此策略将帮助您最大程度地使用您的实例并管理 Amazon EC2 使用成本。</p>
+</li>
+</ol>
+</li>
+<li><p>默认冷却时间</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/autoscaling/ec2/userguide/Cooldown.html">Amazon EC2 Auto Scaling 用户指南：适用于 Amazon EC2 Auto Scaling 的扩展冷却时间
+</a></p>
+<p>在实例投入使用之前，这些实例使用配置脚本安装和配置软件。因此，实例从启动到投入使用大约需要两到三分钟的时间。实际时间取决于诸多因素，如实例大小和是否有启动脚本要完成等。</p>
+<p>现在出现了流量高峰，从而导致 CloudWatch 警报触发。该警报触发时，Auto Scaling 组会启动一个实例来帮助处理增加的需求。但是存在一个问题：该实例需要几分钟的时间才能启动。在此期间，CloudWatch 警报可能会继续触发，从而导致 Auto Scaling 组在警报每次出现时都另外启动一个实例。</p>
+<p>但是，有了冷却时间，Auto Scaling 组在启动一个实例后，将暂停所有简单扩展策略或手动扩展引起的扩展活动，直至经过了指定时间量。（默认值为 300 秒。）这样，新启动的实例有时间开始处理应用程序流量。冷却时间过后，所有暂停的扩展操作都会恢复。如果 CloudWatch 警报再次触发，则 Auto Scaling 组将启动另一个实例，而冷却时间也会再次生效。不过，如果新增的实例足以将 CPU 使用率降为正常水平，则该组会保持其当前大小。</p>
+</blockquote>
+</li>
+<li><p>暂停的进程</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/autoscaling/ec2/userguide/as-suspend-resume-processes.html">Amazon EC2 Auto Scaling 用户指南：暂停和恢复扩展流程</a></p>
+<p>您可以暂停然后恢复您的 Auto Scaling 组的一个或多个扩展流程。如果需要调查配置问题或与 Web 应用程序相关的其他问题，然后在不触发扩展流程的前提下对应用程序进行更改，则此设置很有用。</p>
+</blockquote>
+<p> Amazon EC2 Auto Scaling 支持以下扩展流程：</p>
+<ul>
+<li>Launch</li>
+<li>Terminate</li>
+<li>HealthCheck</li>
+<li>ReplaceUnhealthy</li>
+<li>AZRebalance</li>
+<li>AlarmNotification</li>
+<li>ScheduledActions</li>
+<li>AddToLoadBalancer</li>
+</ul>
+</li>
+<li><p>实例保护<br> 如果已设定好保护免于缩减，新启动的实例在默认情况下将被保护免于缩减。在缩减时 Auto Scaling 将不会选择被保护的实例成为要终止的实例。更改此一选项将不会影响现有实例。</p>
+</li>
+</ol>
+<h3 id="活动历史记录"><a href="#活动历史记录" class="headerlink" title="活动历史记录"></a>活动历史记录</h3><p>此页签可以看到该 Auto Scaling Group 扩容、缩减、添加、分离等活动记录。</p>
+<h3 id="扩展策略"><a href="#扩展策略" class="headerlink" title="扩展策略"></a>扩展策略</h3><p>扩展策略用于根据需求变化动态的进行扩展或缩减。扩展策略有三种：</p>
+<ol>
+<li>目标跟踪扩展策略</li>
+<li>简单的扩展策略</li>
+<li>带步骤的扩展策略</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/autoscaling/ec2/userguide/as-scaling-target-tracking.html">Amazon EC2 Auto Scaling 用户指南：适用于 Amazon EC2 Auto Scaling 的目标跟踪扩展策略</a></p>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><p><em>实例</em>页签可以看到关联在此 ASG 中的 EC2 实例。可以在这里设置<strong>缩减保护</strong>，分离实例等操作。</p>
+<h3 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h3><p><em>标签</em>页签既可以为此 ASG 组添加标签，也可以为此 ASG 组自动扩容创建出的实例打标签。将标签后面的<strong>标记新实例</strong>选项设置为<strong>是</strong>，则此标签将附加在自动扩展出的实例上。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/auto-scaling-group-conf-tag-1.png" alt="auto-scaling-group-conf-tag-1.png"></p>
+<h3 id="计划的操作"><a href="#计划的操作" class="headerlink" title="计划的操作"></a>计划的操作</h3><p>待学习。</p>
+<h3 id="生命周期挂钩"><a href="#生命周期挂钩" class="headerlink" title="生命周期挂钩"></a>生命周期挂钩</h3><p>待学习。</p>
+<h2 id="实例保护（缩减保护）"><a href="#实例保护（缩减保护）" class="headerlink" title="实例保护（缩减保护）"></a>实例保护（缩减保护）</h2><p>缩减保护可以避免在 ASG 组在所需容量减少时终止（terminated）实例。</p>
+<p>在 ASG 组属性面板实例标签中可以为组中的实例单独添加或取消缩减保护，也可以设置 ASG 的实例保护属性为“保护免于缩减”，这样 ASG 组启动实例时会自动为实例添加实例保护。</p>
+<p><strong>[注意]</strong> 实例保护并不能针对以下情况保护 Auto Scaling 实例</p>
+<ol>
+<li>实例保护不能阻止手动在控制台去终止实例。（这不废话嘛……终止保护可以阻止手动终止实例，不过跟此话题无关。）<br> <strong>再注意：</strong> 终止保护可以阻止手动终止实例，但不能阻止 ASG 缩减去终止实例！</li>
+<li><strong>实例未通过运行状况检查的情况下的运行状况检查更换。</strong>(这点很重要！就是说，即使设置了实例保护，去关机或重启，都会导致状况检查不通过而被terminated)</li>
+<li>Spot 实例中断。</li>
+</ol>
+<h2 id="设为备用"><a href="#设为备用" class="headerlink" title="设为备用"></a>设为备用</h2><p>这是个非常有用的功能！合理使用<strong>设为备用</strong>功能在需要对 ASG 组中的实例维护进行关机、重启等操作时可以省去很多麻烦。<br>在上一节实例保护的介绍中说了，即使设置了实例保护，当实例关机时，仍然会被 ASG 自动 terminated（危险！）。此时就可以使用<strong>设为备用</strong>这个操作。<br>将实例<strong>设为备用</strong>，会首先将该实例从 ASG 关联的 ELB 中取消注册，然后根据设置减小 ASG 的所需容量（不启动新实例）或启动新的实例（所需容量保持不变）。Amazon EC2 Auto Scaling 不对处于备用状态的实例执行运行状况检查。当实例处于备用状态时，其运行状况将反映您将实例置于备用状态之前，实例具有的状态，直到将实例恢复为可用。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/set-asg-instance-standby.png" alt="set-asg-instance-standby.png"></p>
+<p>因为此时 Auto Scaling 不会对备用实例运行状况检查，所以可以进行关机维护等操作而不必担心被自动 terminated。<br>维护完成后，将实例重新<strong>设为可用</strong>，ASG 的所需容量会自动增加，实例也会重新注册到 ASG 关联的 ELB 上。</p>
+<p><strong>注意：</strong></p>
+<ol>
+<li>在将实例从备用状态<strong>设为可用</strong>前，请务必确定该实例已经正常运行可以通过状况检查，否则在<strong>设为可用</strong>后会被立刻 terminated （即使你设置了实例保护和终止保护，都没用）！</li>
+<li>如果 ASG 设置了多个可用区，<strong>设为备用</strong>后导致各可用区中实例数量不一致，Auto Scaling 将会重新平衡可用区，即 terminated 实例较多的可用区中的一台，在实例较少的可用区中新启动一台。要避免自动平衡可用区，可以在 ASG 中设置暂停进程 <strong>AZRebalance</strong>。</li>
+</ol>
+<h2 id="常用操作总结"><a href="#常用操作总结" class="headerlink" title="常用操作总结"></a>常用操作总结</h2><h3 id="1-重启、关机-ASG-中的实例"><a href="#1-重启、关机-ASG-中的实例" class="headerlink" title="1. 重启、关机 ASG 中的实例"></a>1. 重启、关机 ASG 中的实例</h3><p>为避免 ASG 将实例自动 terminated，需按以下步骤执行：</p>
+<ol>
+<li>在 ASG 属性面板<em>实例</em>页签将要维护的实例<strong>设为备用</strong>。（此操作会将实例从 ASG 关联的 ELB 中取消注册，如要求不影响业务，请确保仍有其他正常运行的实例）</li>
+<li>进行重启、关机等维护操作。</li>
+<li>在<strong>设为可用</strong>前，确保实例已启动，运行正常。</li>
+<li>将实例<strong>设为启用</strong>。（一定要确保检查步骤3，否则会导致<strong>设为启用</strong>后被立即 terminated）</li>
+</ol>
+<h3 id="2-删除-Auto-Scaling-Group"><a href="#2-删除-Auto-Scaling-Group" class="headerlink" title="2. 删除 Auto Scaling Group"></a>2. 删除 Auto Scaling Group</h3><p>在删除 Auto Scaling 组时，其所需值、最小值和最大值均会被设置为 0。因此 ASG 中的实例将会被 terminated。<br>如仅需删除 Auto Scaling Group 而保持原有实例不变，需按一下步骤执行：</p>
+<ol>
+<li>在 ASG 属性面板<em>实例</em>页签将实例逐一分离。（分离操作会导致实例从 ASG 关联的 ELB 中取消注册，如要求不影响业务，需<strong>逐一</strong>分离，挂载 ELB）</li>
+<li>确保 ASG 中已没有实例，分离出去的实例已经重新注册到原有的 ELB 上。</li>
+<li>删除 ASG（若不需要备份，也请一并删除启动配置）。</li>
+</ol>
+<h3 id="3-附加实例到-ASG-中"><a href="#3-附加实例到-ASG-中" class="headerlink" title="3. 附加实例到 ASG 中"></a>3. 附加实例到 ASG 中</h3><p>要附加到 ASG 中的实例需满足以下条件：</p>
+<ol>
+<li>实例处于 running 状态。</li>
+<li>用于启动实例的 AMI 必须仍然存在。</li>
+<li>实例不是其他 Auto Scaling 组的成员。</li>
+<li>实例与 Auto Scaling 组位于同一可用区。</li>
+<li>如果 Auto Scaling 组具有附加的传统负载均衡器，则实例和该负载均衡器必须都位于 EC2- 或同一 VPC 中。如果 Auto Scaling 组具有附加的目标组，则实例和负载均衡器必须都位于同一 VPC 中。</li>
+</ol>
+<p>为避免可能出现的危险操作，在附加实例到 ASG 组中，需按一下步骤执行：</p>
+<ol>
+<li>检查 ASG 中的配置，是否关联了 ELB，要添加的实例是否确实要注册到这些 ELB</li>
+<li>检查 ASG 中的配置，ASG 的状况检查类型是 EC2 还是 ELB，要添加的实例是否能通过状况检查。</li>
+<li>检查 ASG 中的配置，新附加的实例是否添加了<strong>实例保护</strong>，根据场景判断是否需要添加<strong>实例保护</strong>。</li>
+</ol>
+<h3 id="4-从-ASG-中分离实例"><a href="#4-从-ASG-中分离实例" class="headerlink" title="4. 从 ASG 中分离实例"></a>4. 从 ASG 中分离实例</h3><p>如果不希望使用 ASG 管理实例了，可以在 ASG 的属性面板<em>实例</em>页签将实例从 ASG 中分离。分离时，若勾选“将一个新实例添加到 Auto Scaling 组以均衡负载”，ASG 将保持所需容量不变，分离指定实例，然后新启动一台实例来代替分离出去的实例。若取消勾选此项，则 ASG 的所需容量将会自动减一（若减一后小于最小值，将不能分离）。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/aws-auto-scaling-study/detach-instance-from-asg.png" alt="detach-instance-from-asg.png"></p>
+<p><strong>注意：</strong></p>
+<ol>
+<li>分离出的实例将会自动从 ASG 关联的 ELB 上取消注册！</li>
+<li>如果 ASG 设置了多个可用区，分离后导致各可用区中实例数量不一致，Auto Scaling 将会重新平衡可用区，即 terminated 实例较多的可用区中的一台，在实例较少的可用区中新启动一台。要避免自动平衡可用区，可以在 ASG 中设置暂停进程<strong>AZRebalance</strong>。</li>
+</ol>
+<h3 id="5-两种组织-ASG-实例的方式对比"><a href="#5-两种组织-ASG-实例的方式对比" class="headerlink" title="5. 两种组织 ASG 实例的方式对比"></a>5. 两种组织 ASG 实例的方式对比</h3><p>假设系统日常需要 2 台实例支撑业务运行，高峰是需要 4 台实例。有如下两种方式设置 Auto Scaling Group。</p>
+<p><strong>方式 1：</strong></p>
+<p>2 台实例不使用 ASG 管理，用于支撑日常业务。设置 ASG 最小 0，最大 2，所需 2，用于支撑高峰时业务。</p>
+<p>优点：</p>
+<ul>
+<li>配置简单，适用于对 ASG 不熟悉的同学使用。对原有系统架构添加 Auto Scaling 功能时不影响原系统架构。</li>
+<li>2 台 ASG 组外的实例不受 ASG 配置的影响，可以避免因 ASG 配置错误造成意外的实例 terminated 或在 ELB 上取消注册。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>无法使用目标跟踪的扩展策略。扩展策略只能监控 ASG 组中的实例。</li>
+<li>不能统一的修改 ASG 组内外实例的 ELB。</li>
+</ul>
+<p><strong>方式 2：</strong></p>
+<p>实例全部附加到 ASG 管理，日常用的 2 台实例一定要设置<strong>实例保护</strong>。设置 ASG 最小 2， 最大 4，所需 2，配置动态扩展策略。</p>
+<p>优点：</p>
+<ul>
+<li>统一管理，对 ASG 添加 ELB 等设置可以批量的应用在各实例上。</li>
+<li>可以应用各种动态扩展策略。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>需要熟知 ASG 的各项设置与功能特性。否则容易造成实例意外 terminated 或在 ELB 上取消注册，导致影响线上业务。（这个其实不能算是缺点。）</li>
+</ul>
+<h2 id="心得体会"><a href="#心得体会" class="headerlink" title="心得体会"></a>心得体会</h2><ol>
+<li>线上操作一定要非常小心！想清前因后果，不做不确定的操作，不要想当然。</li>
+<li>熟读文档很重要！AWS 的文档写的很棒很细致，不过本地化还不够，有些翻译有些别扭不好理解。也因此有了这篇文章。</li>
+<li>AWS EC2 Auto Scaling 真的功能很多，很强大！</li>
+<li>凡事都有两面。功能强大意味着使用复杂！不熟悉的话真的有很多坑！血泪的教训！</li>
+<li>又攒经验了！</li>
+</ol>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//aws-auto-scaling-study/" target="_blank" title="AWS Auto Scaling 学习与踩坑">https://chowyi.com//aws-auto-scaling-study/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AutoScaling" >
+    <span class="tag-code">AutoScaling</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/aws-route53-failover-with-cloudwatch/">
+        <span class="nav-arrow">← </span>
+        
+          AWS Route53配合CloudWatch自定义监控实现故障转移
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/aws-auto-scaling-with-latest-image/">
+        
+          为AWS Auto Scaling持续提供最新映像
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Auto-Scaling-Group"><span class="toc-nav-text">什么是 Auto Scaling Group</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%88%9B%E5%BB%BA-Auto-Scaling-Group"><span class="toc-nav-text">创建 Auto Scaling Group</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BD%BF%E7%94%A8-EC2%E5%AE%9E%E4%BE%8B-%E5%88%9B%E5%BB%BA"><span class="toc-nav-text">使用 EC2实例 创建</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#%E5%88%9B%E5%BB%BA%E6%AD%A5%E9%AA%A4"><span class="toc-nav-text">创建步骤</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-nav-text">注意事项</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BD%BF%E7%94%A8-%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE-%E5%88%9B%E5%BB%BA"><span class="toc-nav-text">使用 启动配置 创建</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E4%BD%BF%E7%94%A8-Launch-Templates-%E5%90%AF%E5%8A%A8%E6%A8%A1%E6%9D%BF-%E5%88%9B%E5%BB%BA"><span class="toc-nav-text">使用 Launch Templates(启动模板) 创建</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Auto-Scaling-Group-%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3"><span class="toc-nav-text">Auto Scaling Group 配置详解</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF"><span class="toc-nav-text">详细信息</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%B4%BB%E5%8A%A8%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95"><span class="toc-nav-text">活动历史记录</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%89%A9%E5%B1%95%E7%AD%96%E7%95%A5"><span class="toc-nav-text">扩展策略</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%AE%9E%E4%BE%8B"><span class="toc-nav-text">实例</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%A0%87%E7%AD%BE"><span class="toc-nav-text">标签</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E8%AE%A1%E5%88%92%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-nav-text">计划的操作</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%8C%82%E9%92%A9"><span class="toc-nav-text">生命周期挂钩</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%9E%E4%BE%8B%E4%BF%9D%E6%8A%A4%EF%BC%88%E7%BC%A9%E5%87%8F%E4%BF%9D%E6%8A%A4%EF%BC%89"><span class="toc-nav-text">实例保护（缩减保护）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%AE%BE%E4%B8%BA%E5%A4%87%E7%94%A8"><span class="toc-nav-text">设为备用</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E6%80%BB%E7%BB%93"><span class="toc-nav-text">常用操作总结</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-%E9%87%8D%E5%90%AF%E3%80%81%E5%85%B3%E6%9C%BA-ASG-%E4%B8%AD%E7%9A%84%E5%AE%9E%E4%BE%8B"><span class="toc-nav-text">1. 重启、关机 ASG 中的实例</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-%E5%88%A0%E9%99%A4-Auto-Scaling-Group"><span class="toc-nav-text">2. 删除 Auto Scaling Group</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-%E9%99%84%E5%8A%A0%E5%AE%9E%E4%BE%8B%E5%88%B0-ASG-%E4%B8%AD"><span class="toc-nav-text">3. 附加实例到 ASG 中</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#4-%E4%BB%8E-ASG-%E4%B8%AD%E5%88%86%E7%A6%BB%E5%AE%9E%E4%BE%8B"><span class="toc-nav-text">4. 从 ASG 中分离实例</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#5-%E4%B8%A4%E7%A7%8D%E7%BB%84%E7%BB%87-ASG-%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E5%BC%8F%E5%AF%B9%E6%AF%94"><span class="toc-nav-text">5. 两种组织 ASG 实例的方式对比</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%BF%83%E5%BE%97%E4%BD%93%E4%BC%9A"><span class="toc-nav-text">心得体会</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//aws-auto-scaling-study/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

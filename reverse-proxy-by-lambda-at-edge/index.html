@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      AWS Lambda@Edge实现反向代理 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>AWS Lambda@Edge实现反向代理</h2>
+  <p class="post-date">2019-02-21</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//reverse-proxy-by-lambda-at-edge/" target="_blank" title="AWS Lambda@Edge实现反向代理">https://chowyi.com//reverse-proxy-by-lambda-at-edge/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>前面几篇文章记录了我学习使用 AWS Lambda@Edge 由浅入深的过程，通过 Lambda@Edge 实现了请求重定向和动态生成响应：</p>
+<ul>
+<li><a href="/handle-request-like-nginx-by-lambda-at-edge/">AWS Lambda@Edge小试牛刀——代替Nginx处理请求</a></li>
+<li><a href="/two-ways-to-redirect-domain-zone-apex/">使用Route53配置顶级域名跳转的两种方式——Lambda@Edge再显身手</a></li>
+<li><a href="/aws-lambda-generate-response/">AWS Lambda@Edge动态生成响应</a></li>
+</ul>
+<p>今天再进一步，使用 Lambda@Edge 实现反向代理。</p>
+<span id="more"></span>
+
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>使用 Lambda@Edge 替代了之前 Nginx 重定向、静态资源托管等功能后，我在想能不能彻底把我们的 Nginx 服务器干掉，既节省成本，又省心。那就要试验一下 Nginx 另一大常用功能——反向代理能不能在 Lambda@Edge 上实现。</p>
+<h2 id="动手前的一些思考"><a href="#动手前的一些思考" class="headerlink" title="动手前的一些思考"></a>动手前的一些思考</h2><ol>
+<li><p>反向代理和请求重定向有什么区别？<br> 请求重定向的过程：  </p>
+<pre><code> 1. Client 发送 request 到 Server(HTTPServer/Nginx/Lambda@Edge)。
+ 2. Server 收到 request 后，返回 redirectResponse（状态码为 301 或 302，Headers包含 Location 属性）。
+ 3. Client 收到 response 后，取得 Headers 中的 Location 属性值。
+ 4. Client 再次发送 request 到 Location 指向的 Server。
+</code></pre>
+<p> 请求重定向的整个过程中，Client 一共发送了两次 request，两次 request 相对独立。Client 明确的知道响应是谁返回的。</p>
+<p> 反向代理的过程：</p>
+<pre><code> 1. Client 发送 request 到 Server(HTTPServer/Nginx/Lambda@Edge)。
+ 2. Server 收到 request 后保持连接，将请求转发至配置中预设的 backend，等待 backend 响应。
+ 3. Server 收到 backend 的 response 后，再转回给 Client。
+</code></pre>
+<p> 反向代理的过程中：对 Client 来说，只有一次请求一次响应，反向代理服务器（Server）代理了到 backend 间请求和响应转发的过程。Client 只能看到反向代理服务，并不关心响应到底是谁生成的。</p>
+</li>
+<li><p>如何实现请求和响应的转发？<br> 如果从字面上理解”转发“这个词就把问题想复杂了，我们并不需要真正的把从 Client 接到的 request ”转发“ 到 backend，实际上我们只需要重新发送一个与原请求内容一致的 request 即可，”转发“响应也是同理。只要符合 HTTP 协议所制定的规则，我们可以根据需求生成并发送各种各样的请求或响应。</p>
+</li>
+<li><p>在转发请求和响应的过程中，具体要转发什么内容？  </p>
+<ul>
+<li>Path</li>
+<li>Headers</li>
+<li>Content</li>
+</ul>
+</li>
+</ol>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>对 Lambda@Edge 的编程模型（解析请求，生成响应，callback机制）我已经非常熟悉了，我现在需要去了解一下 nodejs 处理 http 请求的相关模块，因为我是 Python 技能栈，对 nodejs 还不太熟悉，而我的 Lambda 函数是 nodejs 写的。</p>
+<h3 id="在-nodejs-中发送-http-请求"><a href="#在-nodejs-中发送-http-请求" class="headerlink" title="在 nodejs 中发送 http 请求"></a>在 nodejs 中发送 http 请求</h3><p>在 Lambda 中使用原生的库更加方便一些，虽然现在 AWS 也提供了 Layer 功能来管理第三方组件。NodeJs 自带 http 和 https 两个模块用来处理请求相关功能。<br>查<a target="_blank" rel="noopener" href="https://nodejs.org/api/http.html#http_http_request_options_callback">官方文档</a>看一下，很简单。下面是文档中的例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> postData = querystring.<span class="title function_">stringify</span>(&#123;</span><br><span class="line">  <span class="string">&#x27;msg&#x27;</span>: <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> options = &#123;</span><br><span class="line">  <span class="attr">hostname</span>: <span class="string">&#x27;www.google.com&#x27;</span>,</span><br><span class="line">  <span class="attr">port</span>: <span class="number">80</span>,</span><br><span class="line">  <span class="attr">path</span>: <span class="string">&#x27;/upload&#x27;</span>,</span><br><span class="line">  <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">  <span class="attr">headers</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/x-www-form-urlencoded&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;Content-Length&#x27;</span>: <span class="title class_">Buffer</span>.<span class="title function_">byteLength</span>(postData)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> req = http.<span class="title function_">request</span>(options, <span class="function">(<span class="params">res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`STATUS: <span class="subst">$&#123;res.statusCode&#125;</span>`</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`HEADERS: <span class="subst">$&#123;<span class="built_in">JSON</span>.stringify(res.headers)&#125;</span>`</span>);</span><br><span class="line">  res.<span class="title function_">setEncoding</span>(<span class="string">&#x27;utf8&#x27;</span>);</span><br><span class="line">  res.<span class="title function_">on</span>(<span class="string">&#x27;data&#x27;</span>, <span class="function">(<span class="params">chunk</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`BODY: <span class="subst">$&#123;chunk&#125;</span>`</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">  res.<span class="title function_">on</span>(<span class="string">&#x27;end&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;No more data in response.&#x27;</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">req.<span class="title function_">on</span>(<span class="string">&#x27;error&#x27;</span>, <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">`problem with request: <span class="subst">$&#123;e.message&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// write data to request body</span></span><br><span class="line">req.<span class="title function_">write</span>(postData);</span><br><span class="line">req.<span class="title function_">end</span>();</span><br></pre></td></tr></table></figure>
+
+<p>唯一要注意的是文档中下面这句话：</p>
+<blockquote>
+<p>Note that in the example req.end() was called. With http.request() one must always call req.end() to signify the end of the request - even if there is no data being written to the request body.</p>
+</blockquote>
+<p>一开始没注意看，以为调用了 <code>http.request()</code> 就发送请求了呢，浪费了很多时间调试。看文档还是要仔细！</p>
+<h3 id="生成响应"><a href="#生成响应" class="headerlink" title="生成响应"></a>生成响应</h3><p>在 <code>http.request()</code> 方法的回调中，就可以拿到 backend 响应并生成新的 response，然后调用 Lambda@Edge 的 callback 返回给 Client 了。这里要注意的是：</p>
+<ol>
+<li>不能直接将 <code>http.request()</code> 回调中的响应通过 <code>callback</code> 函数返回给 Client，也好理解，毕竟格式不一样嘛。</li>
+<li>Lambda@Edge 中请求和响应的 Headers 中的属性值都是 Array，需要这样写：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> headers = &#123;<span class="string">&#x27;host&#x27;</span>: [&#123;<span class="string">&#x27;key&#x27;</span>: <span class="string">&#x27;Host&#x27;</span>, <span class="string">&#x27;value&#x27;</span>: <span class="string">&#x27;example.com&#x27;</span>&#125;]&#125;</span><br></pre></td></tr></table></figure>
+(Headers 中的属性名大小写不敏感）</li>
+<li>在 Lambda@Edge 中有一些标头（Headers）被列在黑名单中不能添加或修改，还有一些标头在特定的生命周期中是只读的。如果尝试添加或修改这些 Headers，Lambda@Edge 会返回 502。所以在将 backend 返回的响应转回 Client 前，要把 Headers 中的这些标头过滤掉。详见文档：<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AmazonCloudFront/latest/DeveloperGuide/lambda-requirements-limits.html#lambda-header-restrictions">Lambda 函数的要求和限制</a></li>
+</ol>
+<h3 id="我的代码"><a href="#我的代码" class="headerlink" title="我的代码"></a>我的代码</h3><p>下面是我编写的 Lambda 函数的完整代码，实现了 Nginx 的 rewrite 和 proxy_pass 功能，可以通过配置灵活添加多个 server 或 location。我对 NodeJs 的了解有限，如有不妥之处，恳请指出。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&#x27;use strict&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> url = <span class="built_in">require</span>(<span class="string">&#x27;url&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> pathUtil = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&#x27;http&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> https = <span class="built_in">require</span>(<span class="string">&#x27;https&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> servers = [</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;test.example.net&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;locations&#x27;</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;/&#x27;</span>: &#123;</span><br><span class="line">                <span class="string">&#x27;rewrite&#x27;</span>: &#123;</span><br><span class="line">                    <span class="string">&#x27;status&#x27;</span>: <span class="string">&#x27;302&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;statusDescription&#x27;</span>: <span class="string">&#x27;Moved Temporarily&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;location&#x27;</span>: <span class="string">&#x27;https://m.example.com&#x27;</span>,</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&#x27;/aaa&#x27;</span>: &#123;</span><br><span class="line">                <span class="string">&#x27;proxy_pass&#x27;</span>: <span class="string">&#x27;http://download.example.net&#x27;</span>,</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&#x27;/bbb&#x27;</span>: &#123;</span><br><span class="line">                <span class="string">&#x27;proxy_pass&#x27;</span>: <span class="string">&#x27;http://download.example.net&#x27;</span>,</span><br><span class="line">            &#125;,</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">LambdaViewerRequestReadOnlyHeaders</span> = [<span class="string">&#x27;Content-Length&#x27;</span>,<span class="string">&#x27;Host&#x27;</span>,<span class="string">&#x27;Transfer-Encoding&#x27;</span>,<span class="string">&#x27;Via&#x27;</span>];</span><br><span class="line"><span class="keyword">const</span> lambdaHeaderBlacklist = [<span class="string">&#x27;Connection&#x27;</span>, <span class="string">&#x27;Expect&#x27;</span>, <span class="string">&#x27;Keep-alive&#x27;</span>,<span class="string">&#x27;Proxy-Authenticate&#x27;</span>,<span class="string">&#x27;Proxy-Authorization&#x27;</span>,<span class="string">&#x27;Proxy-Connection&#x27;</span>,<span class="string">&#x27;Trailer&#x27;</span>,<span class="string">&#x27;Upgrade&#x27;</span>,<span class="string">&#x27;X-Accel-Buffering&#x27;</span>,<span class="string">&#x27;X-Accel-Charset&#x27;</span>,<span class="string">&#x27;X-Accel-Limit-Rate&#x27;</span>,<span class="string">&#x27;X-Accel-Redirect&#x27;</span>,<span class="string">&#x27;X-Amz-Cf-*&#x27;</span>,<span class="string">&#x27;X-Amzn-*&#x27;</span>,<span class="string">&#x27;X-Cache&#x27;</span>,<span class="string">&#x27;X-Ede-*&#x27;</span>,<span class="string">&#x27;X-Forwarded-Proto&#x27;</span>,<span class="string">&#x27;X-Real-IP&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">isForbidHeader</span>(<span class="params">headerName, forbidHeaders</span>)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i&lt;forbidHeaders.<span class="property">length</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(headerName.<span class="title function_">toLowerCase</span>() === forbidHeaders[i].<span class="title function_">toLowerCase</span>())&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">exports</span>.<span class="property">handler</span> = <span class="function">(<span class="params">event, context, callback</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> request = event.<span class="property">Records</span>[<span class="number">0</span>].<span class="property">cf</span>.<span class="property">request</span>;</span><br><span class="line">    <span class="keyword">const</span> oldURI = request.<span class="property">uri</span>;</span><br><span class="line">    <span class="keyword">const</span> method = request.<span class="property">method</span>;</span><br><span class="line">    <span class="keyword">let</span> host = request.<span class="property">headers</span>.<span class="property">host</span>[<span class="number">0</span>].<span class="property">value</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i&lt;servers.<span class="property">length</span>;i++)&#123;</span><br><span class="line">        <span class="keyword">let</span> server = servers[i];</span><br><span class="line">        <span class="keyword">if</span>(server.<span class="property">name</span> !== host)&#123;</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(server.<span class="property">locations</span>)&#123;</span><br><span class="line">                <span class="keyword">for</span>(<span class="keyword">let</span> path <span class="keyword">in</span> server.<span class="property">locations</span>)&#123;</span><br><span class="line">                    <span class="keyword">if</span>(path !== oldURI)&#123;</span><br><span class="line">                        <span class="keyword">continue</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">let</span> location = server.<span class="property">locations</span>[path];</span><br><span class="line">                    <span class="keyword">if</span>(location.<span class="property">rewrite</span>)&#123;</span><br><span class="line">                        <span class="keyword">const</span> response = &#123;</span><br><span class="line">                            <span class="attr">status</span>: location.<span class="property">rewrite</span>.<span class="property">status</span>,</span><br><span class="line">                            <span class="attr">statusDescription</span>: location.<span class="property">rewrite</span>.<span class="property">statusDescription</span>,</span><br><span class="line">                            <span class="attr">headers</span>: &#123;</span><br><span class="line">                                <span class="attr">location</span>: [&#123;</span><br><span class="line">                                    <span class="attr">key</span>: <span class="string">&#x27;Location&#x27;</span>,</span><br><span class="line">                                    <span class="attr">value</span>: location.<span class="property">rewrite</span>.<span class="property">location</span>,</span><br><span class="line">                                &#125;]</span><br><span class="line">                            &#125;,</span><br><span class="line">                        &#125;;</span><br><span class="line">                        <span class="title function_">callback</span>(<span class="literal">null</span>, response);</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span>(location.<span class="property">proxy_pass</span>)&#123;</span><br><span class="line">                        <span class="keyword">let</span> parsedUrl = url.<span class="title function_">parse</span>(location.<span class="property">proxy_pass</span>);</span><br><span class="line">                        <span class="keyword">let</span> reqClient = parsedUrl.<span class="property">protocol</span> === <span class="string">&#x27;https&#x27;</span>? <span class="attr">https</span>: http;</span><br><span class="line">                        <span class="keyword">let</span> headers = &#123;&#125;;</span><br><span class="line">                        <span class="keyword">for</span>(<span class="keyword">let</span> headName <span class="keyword">in</span> request.<span class="property">headers</span>)&#123;</span><br><span class="line">                            <span class="keyword">if</span>(headName.<span class="title function_">toLowerCase</span>() === <span class="string">&#x27;host&#x27;</span>)&#123;</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                            headers[headName] = request.<span class="property">headers</span>[headName][<span class="number">0</span>].<span class="property">value</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">let</span> options = &#123;</span><br><span class="line">                            <span class="attr">hostname</span>: parsedUrl.<span class="property">host</span>,</span><br><span class="line">                            <span class="attr">port</span>: parsedUrl.<span class="property">protocol</span> === <span class="string">&#x27;https&#x27;</span>? <span class="number">443</span>: <span class="number">80</span>,</span><br><span class="line">                            <span class="attr">path</span>: pathUtil.<span class="title function_">join</span>(parsedUrl.<span class="property">pathname</span>, oldURI) + (request.<span class="property">querystring</span>?(<span class="string">&#x27;?&#x27;</span>+request.<span class="property">querystring</span>):<span class="string">&#x27;&#x27;</span>),</span><br><span class="line">                            <span class="attr">method</span>: method,</span><br><span class="line">                            <span class="attr">headers</span>: headers,</span><br><span class="line">                        &#125;;</span><br><span class="line">                        reqClient.<span class="title function_">request</span>(</span><br><span class="line">                            options,</span><br><span class="line">                            <span class="function">(<span class="params">resp</span>) =&gt;</span> &#123;</span><br><span class="line">                                <span class="keyword">let</span> content = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">                                resp.<span class="title function_">on</span>(<span class="string">&#x27;data&#x27;</span>, <span class="function">(<span class="params">chunk</span>) =&gt;</span> &#123; content += chunk; &#125;);</span><br><span class="line">                                resp.<span class="title function_">on</span>(<span class="string">&#x27;end&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">                                    <span class="keyword">let</span> headers = &#123;&#125;;</span><br><span class="line">                                    <span class="keyword">for</span>(<span class="keyword">let</span> name <span class="keyword">in</span> resp.<span class="property">headers</span>)&#123;</span><br><span class="line">                                        <span class="keyword">if</span>(!<span class="title function_">isForbidHeader</span>(name, lambdaHeaderBlacklist.<span class="title function_">concat</span>(<span class="title class_">LambdaViewerRequestReadOnlyHeaders</span>)))&#123;</span><br><span class="line">                                            headers[name] = [&#123;<span class="string">&#x27;key&#x27;</span>: name, <span class="string">&#x27;value&#x27;</span>: resp.<span class="property">headers</span>[name]&#125;];</span><br><span class="line">                                        &#125;</span><br><span class="line">                                    &#125;</span><br><span class="line">                                    <span class="keyword">const</span> response = &#123;</span><br><span class="line">                                        <span class="attr">status</span>: resp.<span class="property">statusCode</span>,</span><br><span class="line">                                        <span class="attr">statusDescription</span>: <span class="string">&#x27;OK&#x27;</span>,</span><br><span class="line">                                        <span class="attr">body</span>: content,</span><br><span class="line">                                        <span class="attr">headers</span>: headers,</span><br><span class="line">                                    &#125;;</span><br><span class="line">                                    <span class="title function_">callback</span>(<span class="literal">null</span>, response);</span><br><span class="line">                                    <span class="keyword">return</span>;</span><br><span class="line">                                &#125;);</span><br><span class="line">                            &#125;</span><br><span class="line">                        ).<span class="title function_">end</span>();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>要仔细看文档。在 nodejs 的 <code>http.request()</code>后要调用 <code>end()</code> 方法触发请求和 Lambda 黑名单标头两处我都浪费了很多时间去调试，这是应该可以避免的。</li>
+<li>看清本质，不论是 Nginx 还是 Lambda@Edge 或是其他什么 Http 服务器，本质都是处理 HTTP 请求和响应，都遵循 HTTP 协议。</li>
+<li>AWS Lambda 太好用了！</li>
+</ol>
+<h2 id="更正（2019-02-26）"><a href="#更正（2019-02-26）" class="headerlink" title="更正（2019-02-26）"></a>更正（2019-02-26）</h2><p>重定向和反向代理的逻辑不适合放在同一个 Lambda 函数中。  </p>
+<p>实现重定向的 Lambda@Edge 函数部署在 ViewerRequest 可以在更贴近用户的边缘节点计算，达到更快的响应。但部署在 ViewerRequest 的 Lambda 函数有最多 5 秒的超时限制，因此如果反向代理的源站响应时间过长或请求过大，Lambda 就会产生 Timeout 的错误并向客户端返回503。而 OriginRequest 则可以设置最多 30 秒的超时时间。因此把实现反向代理的 Lambda 函数部署在 OriginRequest 也许是个更好的选择，并且可以利用 CloudFront 的缓存功能。  </p>
+<p>但是，将同一个站点的不同逻辑配置在两个 Lambda 函数中不利于后续的管理和维护。Lambda@Edge 的使用场景还需要谨慎考虑。</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//reverse-proxy-by-lambda-at-edge/" target="_blank" title="AWS Lambda@Edge实现反向代理">https://chowyi.com//reverse-proxy-by-lambda-at-edge/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#AWS" >
+    <span class="tag-code">AWS</span>
+  </a>
+
+  <a href="/tags#AWS Lambda" >
+    <span class="tag-code">AWS Lambda</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/aws-lambda-generate-response/">
+        <span class="nav-arrow">← </span>
+        
+          AWS Lambda@Edge动态生成响应
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/the-way-of-cloudfront-domain-hijacking/">
+        
+          CloudFront域名劫持的原理与保护
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%8A%A8%E6%89%8B%E5%89%8D%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83"><span class="toc-nav-text">动手前的一些思考</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%9E%E8%B7%B5"><span class="toc-nav-text">实践</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E5%9C%A8-nodejs-%E4%B8%AD%E5%8F%91%E9%80%81-http-%E8%AF%B7%E6%B1%82"><span class="toc-nav-text">在 nodejs 中发送 http 请求</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E7%94%9F%E6%88%90%E5%93%8D%E5%BA%94"><span class="toc-nav-text">生成响应</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#%E6%88%91%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-nav-text">我的代码</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%9B%B4%E6%AD%A3%EF%BC%882019-02-26%EF%BC%89"><span class="toc-nav-text">更正（2019-02-26）</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//reverse-proxy-by-lambda-at-edge/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

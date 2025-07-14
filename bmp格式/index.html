@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      bmp格式 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>bmp格式</h2>
+  <p class="post-date">2013-04-17</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/bmp格式/" target="_blank" title="bmp格式">https://chowyi.com/bmp格式/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>摘自：<a target="_blank" rel="noopener" href="http://blog.csdn.net/you_lan_hai/article/details/6770471">http://blog.csdn.net/you_lan_hai/article/details/6770471</a></p>
+<p>24位以上的位图文件包含3个部分：位图文件头（BITMAPFILEHEADER）、位图信息头(BITMAPINFOHEADER)、位图数据。</p>
+<span id="more"></span>
+
+<p>下面是MSDN中两个信息头的具体定义：</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">typedef struct tagBITMAPFILEHEADER &#123; </span><br><span class="line">  <span class="type">WORD</span>    bfType; //图像类型：必须是‘<span class="type">BM</span>’(<span class="type">BM</span>的16进制编码为：0x4d42)</span><br><span class="line">  <span class="type">DWORD</span>   bfSize; //文件大小。包含着两个结构，以及数据的总大小。</span><br><span class="line"></span><br><span class="line">  <span class="type">WORD</span>    bfReserved1; //保留值。必须为0</span><br><span class="line">  <span class="type">WORD</span>    bfReserved2; //保留值。必须为0</span><br><span class="line">  <span class="type">DWORD</span>   bfOffBits;   //从文件开头到数据的偏移量。也就是结构<span class="type">BITMAPFILEHEADER</span>和结构<span class="type">BITMAPINFOHEADER</span>的大小</span><br><span class="line"></span><br><span class="line">&#125; <span class="type">BITMAPFILEHEADER</span>, *<span class="type">PBITMAPFILEHEADER</span>; </span><br><span class="line">typedef struct tagBITMAPINFOHEADER&#123;</span><br><span class="line">  <span class="type">DWORD</span>  biSize; //当前结构体的大小。</span><br><span class="line">  <span class="type">LONG</span>   biWidth; //位图的宽度。单位是像素</span><br><span class="line">  <span class="type">LONG</span>   biHeight; //位图高度。单位是像素</span><br><span class="line">  <span class="type">WORD</span>   biPlanes; //位图平面个数。必须是1</span><br><span class="line">  <span class="type">WORD</span>   biBitCount //位图的位数，也就是位图深度。可以是1、4、8、16、24、32。16位以下的位图文件含有调色板信息。</span><br><span class="line">  <span class="type">DWORD</span>  biCompression; //压缩方式。位图没有压缩，赋予<span class="type">BI_RGB</span>参数（也就是0）。</span><br><span class="line">  <span class="type">DWORD</span>  biSizeImage; //位图数据占用的字节数。可以设置为默认值0。</span><br><span class="line">  <span class="type">LONG</span>   biXPelsPerMeter; //指定目标设备水平分辨率，单位是每米的像素个数。可设置为0</span><br><span class="line">  <span class="type">LONG</span>   biYPelsPerMeter; //指定目标设备垂直分辨率，同上。</span><br><span class="line">  <span class="type">DWORD</span>  biClrUsed; //指定本图像实际用到的像素。可设置为0</span><br><span class="line">  <span class="type">DWORD</span>  biClrImportant; //指定本图像重要的颜色个数。可设置为0，表示所有颜色都重要。</span><br><span class="line">&#125; <span class="type">BITMAPINFOHEADER</span>, *<span class="type">PBITMAPINFOHEADER</span>; </span><br></pre></td></tr></table></figure>
+
+<p>接下来就是位图数据了：</p>
+<p>位图按行存贮，位图的宽度不等于位图的行字节数。每个像素占用 biBitCount&#x2F;8 个字节，且每行占用的字节数必须是4字节的整数倍！例如：101*101*24的位图，行占用字节数为：101*3&#x3D;303，而303%4！&#x3D;0，所以行 占用字节数需修改为304，此时位图数据的实际大小为304*101，上面的biSizeImage就可设置为304*101。</p>
+<p>下面是保存位图文件的结构体填充例：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">BITMAPFILEHEADER bmheader;</span><br><span class="line">    memset(&amp;bmheader,<span class="number">0</span>,<span class="keyword">sizeof</span>(bmheader));</span><br><span class="line">    bmheader.bfType=<span class="number">0x4d42</span>;     <span class="comment">//图像格式。必须为&#x27;BM&#x27;格式。</span></span><br><span class="line">    bmheader.bfOffBits = <span class="keyword">sizeof</span>(BITMAPFILEHEADER)+<span class="keyword">sizeof</span>(BITMAPINFOHEADER); <span class="comment">//从文件开头到数据的偏移量</span></span><br><span class="line">    bmheader.bfSize = m_nWidthBytes*m_nHeight + bmheader.bfOffBits;<span class="comment">//文件大小</span></span><br><span class="line"></span><br><span class="line">    BITMAPINFOHEADER bmInfo;</span><br><span class="line">    memset(&amp;bmInfo,<span class="number">0</span>,<span class="keyword">sizeof</span>(bmInfo));</span><br><span class="line">    bmInfo.biSize = <span class="keyword">sizeof</span>(bmInfo);</span><br><span class="line">    bmInfo.biWidth = m_nWidth; </span><br><span class="line">    bmInfo.biHeight = m_nHeight; </span><br><span class="line">    bmInfo.biPlanes = <span class="number">1</span>; </span><br><span class="line">    bmInfo.biBitCount =  m_nDeep;</span><br><span class="line">    bmInfo.biCompression = BI_RGB;</span><br></pre></td></tr></table></figure>
+
+<p>注：m_nWidthBytes 可这样计算：int m_nWidthBytes &#x3D; ((m_nWidth*m_nDeep&#x2F;8 + 3)&#x2F;4) * 4;</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/bmp格式/" target="_blank" title="bmp格式">https://chowyi.com/bmp格式/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#bmp格式" >
+    <span class="tag-code">bmp格式</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/vs2010%E9%85%8D%E7%BD%AEQt%E7%8E%AF%E5%A2%83%E5%B0%8F%E8%AE%B0/">
+        <span class="nav-arrow">← </span>
+        
+          vs2010配置Qt环境小记
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/symbian-control-win-with-accelerator-1/">
+        
+          手机重力感应控制电脑（一）
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="nav">none</ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com/bmp格式/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

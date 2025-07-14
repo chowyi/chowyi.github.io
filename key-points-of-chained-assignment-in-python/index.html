@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Python连续赋值的两个要点 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Python连续赋值的两个要点</h2>
+  <p class="post-date">2019-05-13</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//key-points-of-chained-assignment-in-python/" target="_blank" title="Python连续赋值的两个要点">https://chowyi.com//key-points-of-chained-assignment-in-python/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>写 Python 四年有余了，常见的坑和奇淫巧技也都知道一些。今天在 Python 连续赋值上遇到了一个新的知识点，学习记录一下。</p>
+<p>Python 连续赋值容易导致错误的情况有两个知识点：</p>
+<ol>
+<li>相同的引用</li>
+<li>赋值的顺序（本次探讨的重点）</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="相同的引用"><a href="#相同的引用" class="headerlink" title="相同的引用"></a>相同的引用</h2><p>这个有点 Python 经验的同学都知道或者很好理解，对可变对象的赋值，其实赋的是可变对象的引用。<br>在下面的代码中，因为<code>[&#39;hello&#39;]</code>是一个列表，即可变对象，变量<code>a</code>和<code>b</code>都是这个同一个列表的引用。因此，对<code>b</code>修改时，<code>a</code>的值也变了，因为它们本来就指向同一个对象。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">s1 = s2 = <span class="string">&#x27;hello&#x27;</span></span><br><span class="line">s2 += <span class="string">&#x27;world&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(s1)    <span class="comment"># Output: &#x27;hello&#x27;   </span></span><br><span class="line">  </span><br><span class="line">a = b = [<span class="string">&#x27;hello&#x27;</span>]</span><br><span class="line">b.append(<span class="string">&#x27;world&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(a)    <span class="comment"># Output: [&#x27;hello&#x27;, &#x27;world&#x27;]</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">id</span>(a) == <span class="built_in">id</span>(b))   <span class="comment"># Output: True</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="赋值的顺序"><a href="#赋值的顺序" class="headerlink" title="赋值的顺序"></a>赋值的顺序</h2><p>通常我们并不是太关心在使用连续赋值过程中赋值的顺序，就像下面这两行代码，赋值的先后次序并不影响结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s1 = s2 = <span class="string">&#x27;hello&#x27;</span></span><br><span class="line">a = b = [<span class="string">&#x27;hello&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<p>但到底是：</p>
+<ul>
+<li>是先把<code>&#39;hello&#39;</code>赋值给<code>s2</code>，然后把<code>s2</code>赋值给<code>s1</code>吗？</li>
+<li>还是把<code>&#39;hello&#39;</code>赋值给<code>s2</code>，然后<code>&#39;hello&#39;</code>赋值给<code>s1</code>呢？</li>
+<li>又或者是把<code>&#39;hello&#39;</code>赋值给<code>s1</code>，然后<code>&#39;hello&#39;</code>赋值给<code>s2</code>呢？</li>
+</ul>
+<p>在下面这个例子中让我犯了难。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ListNode</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="variable language_">self</span>.val = x</span><br><span class="line">        <span class="variable language_">self</span>.<span class="built_in">next</span> = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;-&gt;&#x27;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>, ([<span class="variable language_">self</span>.val, <span class="variable language_">self</span>.<span class="built_in">next</span>.val] <span class="keyword">if</span> <span class="variable language_">self</span>.<span class="built_in">next</span> <span class="keyword">else</span> [<span class="variable language_">self</span>.val])))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    a = ListNode(<span class="number">0</span>)</span><br><span class="line">    a = a.<span class="built_in">next</span> = ListNode(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">    b = ListNode(<span class="number">0</span>)</span><br><span class="line">    b.<span class="built_in">next</span> = ListNode(<span class="number">1</span>)</span><br><span class="line">    b = b.<span class="built_in">next</span></span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Output:<br>1-&gt;1<br>1</p>
+</blockquote>
+<p>我本期望赋值操作可以从右向左进行赋值，让上面代码中的变量<code>a</code>和<code>b</code>有相同的结果。即：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = a.<span class="built_in">next</span> = ListNode(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>我期望上面的语句等同于</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a.<span class="built_in">next</span> = ListNode(<span class="number">1</span>)</span><br><span class="line">a = a.<span class="built_in">next</span></span><br></pre></td></tr></table></figure>
+
+<p>事与愿违，解释器总是很忠实的按照原有的设计去执行代码。那么它到底是怎么做的呢？<br>我们可以<code>import dis</code>，把 python 代码反汇编来看一下。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> dis</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ListNode</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="variable language_">self</span>.val = x</span><br><span class="line">        <span class="variable language_">self</span>.<span class="built_in">next</span> = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;-&gt;&#x27;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>, ([<span class="variable language_">self</span>.val, <span class="variable language_">self</span>.<span class="built_in">next</span>.val] <span class="keyword">if</span> <span class="variable language_">self</span>.<span class="built_in">next</span> <span class="keyword">else</span> [<span class="variable language_">self</span>.val])))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    a = ListNode(<span class="number">0</span>)</span><br><span class="line">    a = a.<span class="built_in">next</span> = ListNode(<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line"></span><br><span class="line">    b = ListNode(<span class="number">0</span>)</span><br><span class="line">    b.<span class="built_in">next</span> = ListNode(<span class="number">1</span>)</span><br><span class="line">    b = b.<span class="built_in">next</span></span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    dis.dis(main)</span><br></pre></td></tr></table></figure>
+
+<p>下面看看 Line 14, 18, 19 翻译过来的汇编码：</p>
+<p>汇编语言我并不了解，下面的注释是我根据命令名称的猜测，如有错误恳请指出。</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="number"> 14 </span>         <span class="number"> 8 </span>LOAD_GLOBAL             <span class="number"> 0 </span>(ListNode)    // 加载ListNode</span><br><span class="line">            <span class="number"> 10 </span>LOAD_CONST              <span class="number"> 2 </span>(1)            // 加载常量 1</span><br><span class="line">            <span class="number"> 12 </span>CALL_FUNCTION           <span class="number"> 1 </span>               // 调用函数（可能是ListNode的构造函数）</span><br><span class="line">            <span class="number"> 14 </span>DUP_TOP</span><br><span class="line">            <span class="number"> 16 </span>STORE_FAST              <span class="number"> 0 </span>(a)            // 赋值给变量 a</span><br><span class="line">            <span class="number"> 18 </span>LOAD_FAST               <span class="number"> 0 </span>(a)            // 加载变量 a</span><br><span class="line">            <span class="number"> 20 </span>STORE_ATTR              <span class="number"> 1 </span>(next)        // 赋值给属性 next</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="number"> 18 </span>        <span class="number"> 38 </span>LOAD_GLOBAL             <span class="number"> 0 </span>(ListNode)    // 加载ListNode</span><br><span class="line">            <span class="number"> 40 </span>LOAD_CONST              <span class="number"> 2 </span>(1)            // 加载常量 1</span><br><span class="line">            <span class="number"> 42 </span>CALL_FUNCTION           <span class="number"> 1 </span>               // 调用函数（可能是ListNode的构造函数）</span><br><span class="line">            <span class="number"> 44 </span>LOAD_FAST               <span class="number"> 1 </span>(b)            // 加载变量 b</span><br><span class="line">            <span class="number"> 46 </span>STORE_ATTR              <span class="number"> 1 </span>(next)        // 赋值给属性 next</span><br><span class="line"></span><br><span class="line"><span class="number"> 19 </span>        <span class="number"> 48 </span>LOAD_FAST               <span class="number"> 1 </span>(b)            // 加载变量 b</span><br><span class="line">            <span class="number"> 50 </span>LOAD_ATTR               <span class="number"> 1 </span>(next)        // 加载变量 b 的属性 next</span><br><span class="line">            <span class="number"> 52 </span>STORE_FAST              <span class="number"> 1 </span>(b)            // 赋值给变量 b</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>由汇编码就很容易看出，在 Python 中类似<code>a = b = &#39;hello&#39;</code>的连续赋值过程，实际上是将最右侧的常量或变量，对其左侧<code>=</code>前的各变量从左至右依次赋值。<br>即：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = b = <span class="string">&#x27;hello&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>等同于</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="string">&#x27;hello&#x27;</span></span><br><span class="line">b = <span class="string">&#x27;hello&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>回到上面让我犯难的例子中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = a.<span class="built_in">next</span> = ListNode(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>等同于</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_ = ListNode(<span class="number">1</span>)  </span><br><span class="line">a = _</span><br><span class="line">a.<span class="built_in">next</span> = _</span><br><span class="line"><span class="comment"># 注意：这里我用_暂存了对象，整个过程中只创建了一个对象</span></span><br></pre></td></tr></table></figure>
+
+<p>而不是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a.<span class="built_in">next</span> = ListNode(<span class="number">1</span>)</span><br><span class="line">a = a.<span class="built_in">next</span></span><br></pre></td></tr></table></figure>
+
+<p>了解了原理，要想实现我期望的效果，其实只要调换一下顺序就行，像下面这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a.<span class="built_in">next</span> = a = ListNode(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p>不过这样降低了可读性，不利于理解，最好还是不要这样写！</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>这种错误隐秘难调，最好不要使用连续赋值（Chained Assignment）。</li>
+<li>对基础知识点要加强学习。</li>
+<li>连续赋值在其他编程语言中似乎不是这样的，Python 是个特例，这点有待考证！！！</li>
+</ol>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//key-points-of-chained-assignment-in-python/" target="_blank" title="Python连续赋值的两个要点">https://chowyi.com//key-points-of-chained-assignment-in-python/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/the-way-of-cloudfront-domain-hijacking/">
+        <span class="nav-arrow">← </span>
+        
+          CloudFront域名劫持的原理与保护
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/vary-response-header-causes-miss-cdn-cache/">
+        
+          Vary response header导致的CDN预热无效
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%9B%B8%E5%90%8C%E7%9A%84%E5%BC%95%E7%94%A8"><span class="toc-nav-text">相同的引用</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%B5%8B%E5%80%BC%E7%9A%84%E9%A1%BA%E5%BA%8F"><span class="toc-nav-text">赋值的顺序</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//key-points-of-chained-assignment-in-python/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

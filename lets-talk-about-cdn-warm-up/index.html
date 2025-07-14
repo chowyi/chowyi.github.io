@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      CDN预热是怎么回事儿 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>CDN预热是怎么回事儿</h2>
+  <p class="post-date">2020-09-28</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//lets-talk-about-cdn-warm-up/" target="_blank" title="CDN预热是怎么回事儿">https://chowyi.com//lets-talk-about-cdn-warm-up/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>做运维工作总免不了跟 CDN 打交道。在我的工作中最常用到的，一个是阿里云 CDN，一个是 AWS CloudFront。由于众所周知的原因，通常我们在国内使用阿里云 CDN，在国外使用 AWS CloudFront。这里我就不比较孰优孰劣了，CDN 技术是一个很大的话题，今天只想简单聊聊 CDN 预热是怎么回事儿。</p>
+<span id="more"></span>
+
+<h2 id="CDN-如何向用户提供内容"><a href="#CDN-如何向用户提供内容" class="headerlink" title="CDN 如何向用户提供内容"></a>CDN 如何向用户提供内容</h2><p>这里引用一段 CloudFront 的<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/zh_cn/AmazonCloudFront/latest/DeveloperGuide/HowCloudFrontWorks.html">文档</a>来说明：</p>
+<blockquote>
+<ol>
+<li>用户访问您的网站或应用程序，并请求一个或多个文件，例如图像文件和 HTML 文件。</li>
+<li>DNS 将请求传送到以最佳方式满足该请求的 CloudFront POP（边缘站点），通常是以延迟衡量的最近 CloudFront 边缘站点，然后将请求传送到该边缘站点。</li>
+<li>在 POP 中，CloudFront 检查其缓存中是否存在所请求的文件。如果这些文件在缓存中，CloudFront 将它们发回给用户。如果这些文件没有 位于缓存中，它会执行以下操作：<br> a. CloudFront 将该请求和分配中的规范进行比较，然后根据相应文件类型将对文件的请求转发到您的源服务器，例如，将对图像文件的请求转发到 Amazon S3 存储桶，而将对 HTML 文件的请求转发到 HTTP 服务器。<br> b. 源服务器将这些文件发回边缘站点。<br> c. 在源中的第一个字节到达后，CloudFront 立即开始将文件转发到用户。CloudFront 还会将文件添加到边缘站点的缓存中，以便下次有人请求这些文件时使用。</li>
+</ol>
+</blockquote>
+<p><img src="https://docs.aws.amazon.com/zh_cn/AmazonCloudFront/latest/DeveloperGuide/images/how-cloudfront-delivers-content.png" alt="CloudFront 如何向用户提供内容"></p>
+<h2 id="什么是-CDN-预热"><a href="#什么是-CDN-预热" class="headerlink" title="什么是 CDN 预热"></a>什么是 CDN 预热</h2><p>从上面的介绍中可以知道，CDN 通过边缘节点中的缓存来加速用户的访问。当某个资源第一次被访问时，由于边缘节点中没有缓存，那就要向源站请求数据。这样会导致某一部分用户访问站点时加载较慢。为了解决这一问题，就要在用户访问之前，提前把站点的资源文件加入边缘节点的缓存，CDN 预热的概念也就由此而来了。</p>
+<p>CloudFront 没有提供预热的功能。阿里云的文档中是这么介绍：</p>
+<blockquote>
+<p>CDN提供资源的刷新和预热功能。通过刷新功能，您可以强制CDN节点回源并获取最新文件；通过预热功能您可以在业务高峰前预热热门资源，提高资源访问效率。</p>
+</blockquote>
+<h2 id="缓存命中率"><a href="#缓存命中率" class="headerlink" title="缓存命中率"></a>缓存命中率</h2><p>缓存命中率是衡量 CDN 加速效果的一项重要指标，它既与 CDN 的服务质量有关，也与使用者的配置及业务场景有关。<br>对于一个静态站点来说，在CDN 经过预热后，理想的缓存命中率应该在 99% 以上。</p>
+<h2 id="我遇到的问题"><a href="#我遇到的问题" class="headerlink" title="我遇到的问题"></a>我遇到的问题</h2><p>在近期的一次业务活动中，为了应对业务流量高峰，我们对业务使用的阿里云 CDN 提前进行了预热操作，操作记录表明预热进度 100%，预热状态完成。但在业务活动开始的前十分钟，我们发现页面资源请求很慢，CDN 的命中率最低时只有 39%。<br><img src="https://blog-1252856176.file.myqcloud.com/post/lets-talk-about-cdn-warm-up/aliyun-cdn-warm-up-log.png" alt="阿里云预热记录"></p>
+<p>通过查阅文档并和阿里云技术支持支持沟通后，得到以下结论： </p>
+<ol>
+<li>阿里云 CDN 边缘节点分为 L1，L2 两级，架构可以抽象为 UserClient –&gt; L1 –&gt; L2 –&gt; Origin 。阿里云提供的预热功能只是将资源缓存在 L2 节点上。用户初次访问某资源时，L1 节点仍需从 L2 取回资源。</li>
+<li>阿里云控制台上显示的预热状态完成，进度100%，仅代表预热任务下发完成，并不代表预热成功，不能说明资源缓存在了边缘节点上。资源能否成功缓存在边缘节点上，受多种因素的影响（链路质量，源站带宽），尤其当源站在海外时，预热效果更差，很可能超过半数以上的 L2 边缘节点都没有成功缓存（但在控制台上看不出来），我上面遇到的问题就是这种情况（通过阿里云技术支持查询后台日志给出的结论）。</li>
+<li>即使 CDN 缓存时间未过期，也可能产生缓存失效的情况。这一点由 CDN 的原理决定，各厂商 CDN 都有这种问题。CDN 的边缘节点是所有用户共享的，边缘节点的缓存容量是有上限的，当边缘节点的容量达到某一阈值时，就会按内部算法剔除较为冷门的资源，即使这些资源还没到过期时间。</li>
+</ol>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><ol>
+<li>AWS CloudFront 本身没有提供预热功能。阿里云 CDN 提供了预热功能，但不可靠。</li>
+<li>业务不能过分依赖于 CDN 的预热，尤其是新业务上线并有突增流量和源站链路不稳定两种情况。</li>
+<li>要理解 CDN 的原理，比如阿里云有两级缓存，比如缓存可能提前失效。</li>
+</ol>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//lets-talk-about-cdn-warm-up/" target="_blank" title="CDN预热是怎么回事儿">https://chowyi.com//lets-talk-about-cdn-warm-up/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CDN" >
+    <span class="tag-code">CDN</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/terraform-configuration-language-common-usages/">
+        <span class="nav-arrow">← </span>
+        
+          Terraform Configuration Language常用代码段
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/talk-about-http-header-vary-again/">
+        
+          再聊 HTTP Header Vary
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#CDN-%E5%A6%82%E4%BD%95%E5%90%91%E7%94%A8%E6%88%B7%E6%8F%90%E4%BE%9B%E5%86%85%E5%AE%B9"><span class="toc-nav-text">CDN 如何向用户提供内容</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-CDN-%E9%A2%84%E7%83%AD"><span class="toc-nav-text">什么是 CDN 预热</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%8E%87"><span class="toc-nav-text">缓存命中率</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%88%91%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-nav-text">我遇到的问题</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-nav-text">结论</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//lets-talk-about-cdn-warm-up/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

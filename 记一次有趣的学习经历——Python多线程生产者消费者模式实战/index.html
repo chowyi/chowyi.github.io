@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      记一次有趣的学习经历——Python多线程生产者消费者模式实战 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>记一次有趣的学习经历——Python多线程生产者消费者模式实战</h2>
+  <p class="post-date">2017-04-19</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/记一次有趣的学习经历——Python多线程生产者消费者模式实战/" target="_blank" title="记一次有趣的学习经历——Python多线程生产者消费者模式实战">https://chowyi.com/记一次有趣的学习经历——Python多线程生产者消费者模式实战/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>从接触Python到现在也有将近两年的时间了，工作中对异步任务的处理一直依靠Celery框架来完成,对Python多线程这部分知识一直没有一个感性直接的认识。这两天正好遇到一个小任务，在遇到问题–寻求解决方案–完成任务的过程中，学习了Python多线程的知识并切身体会到了它的优势与应用场景，觉得非常有趣，记录分享在这里。</p>
+<span id="more"></span>
+
+<h2 id="任务需求"><a href="#任务需求" class="headerlink" title="任务需求"></a>任务需求</h2><p>现在有一个excel文件包含上千条url,它们在工作表的第一列（格式如下）。任务要求检查这些url的可访问性，把对应url请求的Http响应码存入第二列，把页面内容保存在第三列。</p>
+<table>
+<thead>
+<tr>
+<th>&nbsp;</th>
+<th>A</th>
+<th>B</th>
+<th>C</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><a target="_blank" rel="noopener" href="https://www.baidu.com/">https://www.baidu.com</a></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>2</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/">https://github.com</a></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>3</td>
+<td><a target="_blank" rel="noopener" href="https://www.python.org/">https://www.python.org</a></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</tbody></table>
+<h2 id="尝试"><a href="#尝试" class="headerlink" title="尝试"></a>尝试</h2><p>任务需求看起来简单且清晰，我想了一下，Python有xlrd和xlwt用来读写excel, 用requests来做Http请求，没有技术难点，那么开始写代码吧。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf8 -*-</span></span><br><span class="line"><span class="keyword">import</span> xlrd</span><br><span class="line"><span class="keyword">import</span> xlwt</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="comment"># 新建输出excel文件</span></span><br><span class="line">    output_file = xlwt.Workbook(encoding = <span class="string">&#x27;utf-8&#x27;</span>)     </span><br><span class="line">    output_table = output_file.add_sheet(<span class="string">&#x27;sheet1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 打开保存了url信息的excel文件</span></span><br><span class="line">    url_file = xlrd.open_workbook(<span class="string">&#x27;url.xlsx&#x27;</span>)</span><br><span class="line">    url_table = url_file.sheets()[<span class="number">0</span>]</span><br><span class="line">    nrows = url_table.nrows</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> row_num <span class="keyword">in</span> xrange(nrows):</span><br><span class="line">        row = url_table.row_values(row_num)</span><br><span class="line">        url = row[<span class="number">0</span>]</span><br><span class="line">        output_table.write(row_num, <span class="number">0</span>, url)</span><br><span class="line">        <span class="built_in">print</span> <span class="string">&#x27;get url: %s&#x27;</span> % url</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            resp = requests.get(url)</span><br><span class="line">            status_code = resp.status_code</span><br><span class="line">            output_table.write(row_num, <span class="number">1</span>, status_code)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> status_code == requests.codes.ok:</span><br><span class="line">                <span class="keyword">try</span>:</span><br><span class="line">                    content = resp.content[:<span class="number">32000</span>]</span><br><span class="line">                    output_table.write(row_num, <span class="number">2</span>, content)</span><br><span class="line">                <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                    <span class="built_in">print</span> url, e.message</span><br><span class="line"></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            output_table.write(row_num, <span class="number">1</span>, <span class="string">&#x27;Error&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    output_file.save(<span class="string">&#x27;./output.xls&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p>测试运行，代码工作正常，只是速度太慢了，检查千余项url至少要花费1小时以上，不给力啊！</p>
+<h2 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h2><p>上面的代码已经跑通了业务逻辑，但阻塞式的等待网络请求响应花费了太多时间，如果能并发的向多个url发出请求互不等待就好了。这样多线程的方案就呼之欲出了。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"># -*- coding:utf8 -*-</span><br><span class="line"><span class="keyword">import</span> xlrd</span><br><span class="line"><span class="keyword">import</span> xlwt</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"># 并发线程数</span><br><span class="line">THREAD_NUM = <span class="number">30</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> testUrl(url, index, table):</span><br><span class="line">    <span class="keyword">print</span> <span class="string">&#x27;get url: %s&#x27;</span> % url</span><br><span class="line">    table.<span class="keyword">write</span>(index, <span class="number">0</span>, url)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        resp = requests.get(url)</span><br><span class="line">        status_code = resp.status_code</span><br><span class="line">        table.<span class="keyword">write</span>(index, <span class="number">1</span>, status_code)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> status_code == requests.codes.ok:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                content = resp.content[:<span class="number">32000</span>]</span><br><span class="line">                table.<span class="keyword">write</span>(index, <span class="number">2</span>, content)</span><br><span class="line">            except Exception as e:</span><br><span class="line">                <span class="keyword">print</span> url, e.message</span><br><span class="line">    except:</span><br><span class="line">        table.<span class="keyword">write</span>(index, <span class="number">1</span>, <span class="string">&#x27;Error&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> batchTestUrls(rows, table):</span><br><span class="line">    <span class="keyword">for</span> row in rows:</span><br><span class="line">        testUrl(row[<span class="string">&#x27;url&#x27;</span>], row[<span class="string">&#x27;row_num&#x27;</span>], table)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> main():</span><br><span class="line">    output_file = xlwt.Workbook(encoding = <span class="string">&#x27;utf-8&#x27;</span>)     </span><br><span class="line">    output_table = output_file.add_sheet(<span class="string">&#x27;sheet1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    rows = []</span><br><span class="line"></span><br><span class="line">    url_file = xlrd.open_workbook(<span class="string">&#x27;url.xlsx&#x27;</span>)</span><br><span class="line">    url_table = url_file.sheets()[<span class="number">0</span>]</span><br><span class="line">    nrows = url_table.nrows</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> row_num in xrange(nrows):</span><br><span class="line">        row = url_table.row_values(row_num)</span><br><span class="line">        url = row[<span class="number">0</span>]</span><br><span class="line">        rows.<span class="keyword">append</span>(&#123;<span class="string">&#x27;row_num&#x27;</span>: row_num, <span class="string">&#x27;url&#x27;</span>: url&#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">size</span> = len(rows) / THREAD_NUM</span><br><span class="line">    <span class="keyword">for</span> i in range(THREAD_NUM):</span><br><span class="line">        <span class="keyword">if</span> i == THREAD_NUM - <span class="number">1</span>:</span><br><span class="line">            rows_slice = rows[i*<span class="keyword">size</span>:]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            rows_slice = rows[i*<span class="keyword">size</span>: i*<span class="keyword">size</span>+<span class="keyword">size</span>]</span><br><span class="line">        t = threading.Thread(target=batchTestUrls, args=(rows_slice, output_table))</span><br><span class="line">        t.start()</span><br><span class="line">        t.<span class="keyword">join</span>()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    output_file.save(<span class="string">&#x27;./output.xls&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>在上面的代码中我设置了30个线程，把所有的url切片分给这些线程同时执行网络请求。<br>测试运行，看起来好很多了，比起第一版代码效率有了明显提升。<br>但很快我就发现了新的问题：因为一开始就把url切片分给了多个线程，在程序运行一段时间后，有些线程已经完成任务停止工作了，有些线程还在孤军奋战，这显然是浪费了资源嘛。<br>还能再给力一点吗？</p>
+<h2 id="完善"><a href="#完善" class="headerlink" title="完善"></a>完善</h2><p>第二版代码最大的问题就是多线程资源没有充分的利用起来，一开始就给这些线程分配定量的工作，干的快线程的完成任务就闲下来了。如果能让这些线程在完成一项工作之后主动获取新的工作就好了。<br>想到这一点，方案就清晰了：<br>现在我只要把待处理的工作都放在一个任务队列里，然后让线程们自己去任务队列认领工作，完成一项就再认领一项，直到队列中没有任务为止。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf8 -*-</span></span><br><span class="line"><span class="keyword">import</span> xlwt</span><br><span class="line"><span class="keyword">import</span> xlrd</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> Queue <span class="keyword">import</span> Queue</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 并发线程数</span></span><br><span class="line">THREADS_NUM = <span class="number">30</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">testUrl</span>(<span class="params">url, index, table</span>):</span><br><span class="line">    <span class="built_in">print</span> <span class="string">&#x27;get url: %s&#x27;</span> % url</span><br><span class="line">    table.write(index, <span class="number">0</span>, url)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        resp = requests.get(url)</span><br><span class="line">        status_code = resp.status_code</span><br><span class="line">        table.write(index, <span class="number">1</span>, status_code)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> status_code == requests.codes.ok:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                content = resp.content[:<span class="number">32000</span>]</span><br><span class="line">                table.write(index, <span class="number">2</span>, content)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                <span class="built_in">print</span> url, e.message</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        table.write(index, <span class="number">1</span>, <span class="string">&#x27;Error&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Producer</span>(threading.Thread):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, queue</span>):</span><br><span class="line">        threading.Thread.__init__(<span class="variable language_">self</span>, name=name)</span><br><span class="line">        <span class="variable language_">self</span>.queue = queue</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        url_file = xlrd.open_workbook(<span class="string">&#x27;url.xlsx&#x27;</span>)</span><br><span class="line">        url_table = url_file.sheets()[<span class="number">0</span>]</span><br><span class="line">        nrows = url_table.nrows</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> row_num <span class="keyword">in</span> xrange(nrows):</span><br><span class="line">            row = url_table.row_values(row_num)</span><br><span class="line">            url = row[<span class="number">0</span>]</span><br><span class="line">            <span class="variable language_">self</span>.queue.put((row_num, url))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Consumer</span>(threading.Thread):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, name, queue, table</span>):</span><br><span class="line">        threading.Thread.__init__(<span class="variable language_">self</span>, name=name)</span><br><span class="line">        <span class="variable language_">self</span>.queue = queue</span><br><span class="line">        <span class="variable language_">self</span>.table = table</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> <span class="variable language_">self</span>.queue.empty():</span><br><span class="line">            index, url = <span class="variable language_">self</span>.queue.get()</span><br><span class="line">            testUrl(url, index, <span class="variable language_">self</span>.table)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    file = xlwt.Workbook(encoding = <span class="string">&#x27;utf-8&#x27;</span>)     </span><br><span class="line">    table = file.add_sheet(<span class="string">&#x27;sheet1&#x27;</span>) </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    queue = Queue()</span><br><span class="line">    producer = Producer(<span class="string">&#x27;Producer&#x27;</span>, queue)</span><br><span class="line"></span><br><span class="line">    consumers = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(THREADS_NUM):</span><br><span class="line">        consumer = Consumer(<span class="string">&#x27;Consumer_%s&#x27;</span> % <span class="built_in">str</span>(i), queue, table)</span><br><span class="line">        consumers.append(consumer)</span><br><span class="line"></span><br><span class="line">    producer.start()</span><br><span class="line">    producer.join()</span><br><span class="line">    <span class="keyword">for</span> consumer <span class="keyword">in</span> consumers:</span><br><span class="line">        consumer.start()</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> consumer <span class="keyword">in</span> consumers:</span><br><span class="line">        consumer.join()</span><br><span class="line"></span><br><span class="line">    file.save(<span class="string">&#x27;./output.xls&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span> <span class="string">&#x27;All threads finished!&#x27;</span></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    start = time()</span><br><span class="line">    main()</span><br><span class="line">    end = time()</span><br><span class="line">    <span class="built_in">print</span> <span class="string">&#x27;time used %s seconds&#x27;</span> % <span class="built_in">str</span>(end - start)</span><br></pre></td></tr></table></figure>
+<p>上面的代码使用Python的Queue做任务队列，编写了一个Producer类向队列里插入任务，编写了一个Consumer类从队列里获取并完成任务。现在只要实例化多个Consumer，它们就会不知疲倦的工作起来啦。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>Python多线程使用场景：<br>  在IO密集型的任务中使用多线程可以显著提升程序效率。本次任务中有大量的时间耗费在等待网络请求响应而CPU处于空闲状态，是一个应用多线程的典型场景。</li>
+<li>在Python中如何创建多线程：<br>  Thread是Python中的线程类，有两种使用方法：<br>  方法一：  <figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">def <span class="keyword">action</span>(arg):</span><br><span class="line">    # <span class="keyword">do</span> something</span><br><span class="line">    <span class="built_in">print</span> <span class="string">&#x27;action %s&#x27;</span> % arg</span><br><span class="line"></span><br><span class="line">for i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">    t = threading.Thread(<span class="keyword">target</span>=<span class="keyword">action</span>, args=(i,))</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+
+  方法二：  <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TaskThread</span>(threading.<span class="title class_">Thread</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params"><span class="variable language_">self</span>, arg</span>)</span><br><span class="line">        <span class="variable language_">super</span>(<span class="title class_">TaskThread</span>, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.arg = arg</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params"><span class="variable language_">self</span></span>):</span><br><span class="line">        <span class="comment"># do something</span></span><br><span class="line">        print <span class="string">&#x27;arg is :%s&#x27;</span> % <span class="variable language_">self</span>.arg</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</span><br><span class="line">    t = <span class="title class_">TaskThread</span>(i)</span><br><span class="line">    t.start()</span><br></pre></td></tr></table></figure>
+  join()方法<blockquote>
+<p>join([timeout])</p>
+</blockquote>
+<blockquote>
+<p>Wait until the thread terminates. This blocks the calling thread until the thread whose join() method is called terminates – either normally or through an unhandled exception – or until the optional timeout occurs.</p>
+</blockquote>
+<blockquote>
+<p>When the timeout argument is present and not None, it should be a floating point number specifying a timeout for the operation in seconds (or fractions thereof). As join() always returns None, you must call isAlive() after join() to decide whether a timeout happened – if the thread is still alive, the join() call timed out.</p>
+</blockquote>
+<blockquote>
+<p>When the timeout argument is not present or None, the operation will block until the thread terminates.</p>
+</blockquote>
+<blockquote>
+<p>A thread can be join()ed many times.</p>
+</blockquote>
+<blockquote>
+<p>join() raises a RuntimeError if an attempt is made to join the current thread as that would cause a deadlock. It is also an error to join() a thread before it has been started and attempts to do so raises the same exception.<br>  简单的说就是：阻塞当前上下文环境的线程，直到调用此方法的线程终止或到达指定的timeout（可选参数）。</p>
+</blockquote>
+</li>
+<li>Queue的使用：<br>  Python的Queue模块中的Queue类实现了一个线程安全的队列，在多线程编程中十分有用，避免了自己去操作锁的麻烦。</li>
+</ul>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/记一次有趣的学习经历——Python多线程生产者消费者模式实战/" target="_blank" title="记一次有趣的学习经历——Python多线程生产者消费者模式实战">https://chowyi.com/记一次有趣的学习经历——Python多线程生产者消费者模式实战/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Python" >
+    <span class="tag-code">Python</span>
+  </a>
+
+  <a href="/tags#多线程" >
+    <span class="tag-code">多线程</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/periodictask-object-has-no-attr-in-django-celery-3_1_17/">
+        <span class="nav-arrow">← </span>
+        
+          django-celery beat 报错
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/hello-electron/">
+        
+          Hello Electron
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BB%BB%E5%8A%A1%E9%9C%80%E6%B1%82"><span class="toc-nav-text">任务需求</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%B0%9D%E8%AF%95"><span class="toc-nav-text">尝试</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E4%BF%AE%E6%94%B9"><span class="toc-nav-text">修改</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%AE%8C%E5%96%84"><span class="toc-nav-text">完善</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com/记一次有趣的学习经历——Python多线程生产者消费者模式实战/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

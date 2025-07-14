@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      《程序员教程（第三版）》学习笔记——01.十进制浮点数转化为IEEE754标准单精度浮点数 | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>《程序员教程（第三版）》学习笔记——01.十进制浮点数转化为IEEE754标准单精度浮点数</h2>
+  <p class="post-date">2012-07-23</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/《程序员教程（第三版）》学习笔记——01.十进制浮点数转化为IEEE754标准单精度浮点数/" target="_blank" title="《程序员教程（第三版）》学习笔记——01.十进制浮点数转化为IEEE754标准单精度浮点数">https://chowyi.com/《程序员教程（第三版）》学习笔记——01.十进制浮点数转化为IEEE754标准单精度浮点数/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <h2 id="工业标准IEEE754"><a href="#工业标准IEEE754" class="headerlink" title="工业标准IEEE754"></a>工业标准IEEE754</h2><p>1985年IEEE（Institute of Electrical and Electronics Engineers）提出了IEEE754标准。该标准被广泛采用，其表示形式如下：</p>
+<span id="more"></span>
+
+<p><code>| S |    P    |      M      |</code>  </p>
+<p>其中S为符号位，0为正数，1为负数。P为阶码，通常用移码表示，M为尾数，用原码表示，根据二进制的规格化方法，最高数字位总是1，该标准将这个1缺省存储，使得尾数表示范围比实际存储的多一位。  </p>
+<p>目前，计算机中主要使用三种形式的IEEE754浮点数。  </p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>单精度浮点数</th>
+<th>双精度浮点数</th>
+<th>扩充精度浮点数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>浮点数字长</td>
+<td>32</td>
+<td>64</td>
+<td>80</td>
+</tr>
+<tr>
+<td>尾数长度</td>
+<td>23</td>
+<td>52</td>
+<td>64</td>
+</tr>
+<tr>
+<td>符号位长度</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>阶码长度</td>
+<td>8</td>
+<td>11</td>
+<td>15 +16383</td>
+</tr>
+<tr>
+<td>可表示的实数范围</td>
+<td>10<sup>-38</sup> ~ 10<sup>38</sup></td>
+<td>10<sup>-308</sup> ~ 10<sup>308</sup></td>
+<td>10<sup>-4932</sup> ~ 10<sup>4932</sup></td>
+</tr>
+</tbody></table>
+<h2 id="将十进制数转化为点精度浮点数（IEEE754标准）"><a href="#将十进制数转化为点精度浮点数（IEEE754标准）" class="headerlink" title="将十进制数转化为点精度浮点数（IEEE754标准）"></a>将十进制数转化为点精度浮点数（IEEE754标准）</h2><ol>
+<li>将十进制数转换为二进制数。</li>
+<li>对二进制数进行规格化处理，保证最高位为1，去掉最高位并扩展为规定的23位尾数。</li>
+<li>求阶码。用移码表示，偏移量为规定的127.</li>
+</ol>
+<p>例：用IEEE754标准将176.0625转换为单精度浮点数。</p>
+<ol>
+<li>将176.0625转换为二进制为 10110000.0001</li>
+<li>规格化处理：10110000.0001&#x3D;1.01100000001 × 2^7 。舍去最高位并扩展为23位尾数为<br> 01100000001000000000000</li>
+<li>阶码为7，加上偏移量+127为134，用移码表示为10000110</li>
+</ol>
+<p>因此结果表示如下：0 10000110 01100000001000000000000</p>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="/《程序员教程（第三版）》学习笔记——01.十进制浮点数转化为IEEE754标准单精度浮点数/" target="_blank" title="《程序员教程（第三版）》学习笔记——01.十进制浮点数转化为IEEE754标准单精度浮点数">https://chowyi.com/《程序员教程（第三版）》学习笔记——01.十进制浮点数转化为IEEE754标准单精度浮点数/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#浮点数" >
+    <span class="tag-code">浮点数</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/flash%E7%A7%92%E8%A1%A8%E7%9A%84%E5%88%B6%E4%BD%9C%E5%8F%8A%E5%8F%98%E6%85%A2%E5%8E%9F%E5%9B%A0/">
+        <span class="nav-arrow">← </span>
+        
+          flash秒表的制作及变慢原因
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/%E3%80%8A%E7%A8%8B%E5%BA%8F%E5%91%98%E6%95%99%E7%A8%8B%EF%BC%88%E7%AC%AC%E4%B8%89%E7%89%88%EF%BC%89%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E2%80%94%E2%80%9402.BCD%E7%BC%96%E7%A0%81/">
+        
+          《程序员教程（第三版）》学习笔记——02.BCD编码
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%B7%A5%E4%B8%9A%E6%A0%87%E5%87%86IEEE754"><span class="toc-nav-text">工业标准IEEE754</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%B0%86%E5%8D%81%E8%BF%9B%E5%88%B6%E6%95%B0%E8%BD%AC%E5%8C%96%E4%B8%BA%E7%82%B9%E7%B2%BE%E5%BA%A6%E6%B5%AE%E7%82%B9%E6%95%B0%EF%BC%88IEEE754%E6%A0%87%E5%87%86%EF%BC%89"><span class="toc-nav-text">将十进制数转化为点精度浮点数（IEEE754标准）</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com/《程序员教程（第三版）》学习笔记——01.十进制浮点数转化为IEEE754标准单精度浮点数/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

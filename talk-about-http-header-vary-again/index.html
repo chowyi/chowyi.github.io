@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="每天进步一点点，努力做更好的自己！">
+  <meta name="keyword" content="">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      再聊 HTTP Header Vary | Yi&#39;s Blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>Yi's Blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">Tags</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/categories/" class="item-link">Categories</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">Tags</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/categories/" class="menu-link">Categories</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>再聊 HTTP Header Vary</h2>
+  <p class="post-date">2020-11-04</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content">
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//talk-about-http-header-vary-again/" target="_blank" title="再聊 HTTP Header Vary">https://chowyi.com//talk-about-http-header-vary-again/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+      <p>几个月前写过一篇关于 HTTP Header <code>Vary</code> 的<a href="https://chowyi.com/vary-response-header-causes-miss-cdn-cache/">文章</a>。上次它给我带来了一些麻烦，今天再来聊聊它，这次看看它是怎么帮到我的。</p>
+<span id="more"></span>
+
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ol>
+<li>我有一些静态资源文件存储在阿里云 OSS Bucket 中，前置 CDN 做缓存，并在 CDN 上绑定了自定义域名（假设域名为 xxx.com）。</li>
+<li>有多个站点 aaa.com, bbb.com, ccc.com 等需要发起 XHR 请求经过 CDN 取得存储桶中的静态资源 <code>xxx.com/test.js</code>。</li>
+<li>上述调用显然会遇到跨域问题。（<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">什么是跨域资源共享CORS？</a>）</li>
+<li>解决跨域问题也很简单，在响应头中指定 <code>Access-Control-Allow-Origin</code> 即可。阿里云 OSS 提供了配置 CORS 规则的功能。</li>
+</ol>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/talk-about-http-header-vary-again/cors_conf.png" alt="aliyun_console_cors_conf"></p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>通过查看 <code>Access-Control-Allow-Origin</code> 的<a href="">文档</a>可以知道，它只能有一个值，要么设置为<code>*</code>允许所有站点CORS，要么指定允许单个站点CORS <code>Access-Control-Allow-Origin: https://developer.mozilla.org</code>。如果要允许多个站点CORS怎么做呢？那就需要在后端添加逻辑，对请求返回响应的时候，将相应的 <code>Origin</code> 设置为 <code>Access-Control-Allow-Origin</code> 的值。显然阿里云考虑到了这一点，可以为 OSS Bucket 配置多条 CORS 规则，针对不同来源的请求可以给出不同的响应头。</p>
+<p>配置完成，接下来开始测试。<br>从 aaa.com 发起 XHR 请求资源，响应头为 <code>access-control-allow-origin: http://www.aaa.com</code>，没有问题。</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/talk-about-http-header-vary-again/cors_allowed.png" alt="cors_allowed"></p>
+<p>从 bbb.com 发起 XHR 请求资源，响应头还是为 <code>access-control-allow-origin: http://www.aaa.com</code>，CORS头不匹配，跨域请求被拦截。</p>
+<p>原来从 bbb.com 发起的请求复用了 CDN 上之前对 aaa.com 响应的缓存！</p>
+<p><img src="https://blog-1252856176.file.myqcloud.com/post/talk-about-http-header-vary-again/cors_not_allowed.png" alt="cors_not_allowed"></p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>看到报错,我马上就想起来在阿里云控制台上配置 CORS 规则的时候，就看到了有一个 Response Vary 选项。当时没太理解这个选项有什么用，现在恍然大悟，勾选上就可以了。  </p>
+<p>在阿里云 OSS 控制台配置 CORS 规则的时候，勾选上 Response Vary 选项，在返回的响应头中除了 <code>Access-Control-Allow-Origin</code> 还会添加 <code>Vary: Orign</code>。这个头部告诉 CDN，如果两个请求的<code>Origin</code>头部的值不同，就不能共用同一份缓存。  </p>
+<p>现在去刷新CDN缓存，然后重新从 aaa.com 和 bbb.com 分别发起请求，可以看到它们都得到了正确的响应。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li><a href="https://chowyi.com/vary-response-header-causes-miss-cdn-cache/">上一次</a>因为阿里云CDN智能压缩功能自动添加的 <code>Vary: Accept-Encoding</code> 头部导致用预热的缓存不能被用户请求复用。需要去掉这个头部。</li>
+<li>这一次因为缺少了 <code>Vary: Origin</code> 导致多个源共用了同一份缓存，CORS 策略失效。</li>
+<li>我在最初没有配置 <code>Vary: Origin</code> 暴露出两个问题：<br> 3.1 我对 <code>Access-Control-Allow-Origin</code> 不够了解，以为它可以有逗号分隔的多个值。<br> 3.2 我对 <code>Vary</code> 了解不够深刻，经过之前的学习后，没能想到更多实际的应用场景（比如本次遇到的问题）。</li>
+<li>表扬阿里云，OSS 控制台上可以轻松的配置这些选项。</li>
+<li>吐槽阿里云，文档不清晰，看了没看懂。SDK 功能不全，还不支持配置 Response Vary。</li>
+</ol>
+
+      <div>
+    <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>作者:  </strong>Yi Chow
+        </li>
+        <li class="post-copyright-link">
+        <strong>原文链接:  </strong>
+        <a href="//talk-about-http-header-vary-again/" target="_blank" title="再聊 HTTP Header Vary">https://chowyi.com//talk-about-http-header-vary-again/</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明:   </strong>
+        文章采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)">CC BY-NC-SA 4.0</a>
+        协议进行授权，转载请注明出处!
+        </li>
+    </ul>
+</div>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CDN" >
+    <span class="tag-code">CDN</span>
+  </a>
+
+  <a href="/tags#HttpHeader" >
+    <span class="tag-code">HttpHeader</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/lets-talk-about-cdn-warm-up/">
+        <span class="nav-arrow">← </span>
+        
+          CDN预热是怎么回事儿
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/build-p2p-connection-by-python-socket/">
+        
+          Python socket 建立P2P连接测试与总结
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E9%97%AE%E9%A2%98"><span class="toc-nav-text">问题</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E8%A7%A3%E5%86%B3"><span class="toc-nav-text">解决</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'https://chowyi.com//talk-about-http-header-vary-again/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2025 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a> with <a href="https://github.com/yanm1ng/hexo-theme-vexo" target="_blank">Vexo</a>
+  </p>
+  <p class="copyright">
+    文章采用 BY-NC-SA 协议进行授权，如需转载请注明
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class=""><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
