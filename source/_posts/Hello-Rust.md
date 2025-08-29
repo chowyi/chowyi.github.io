@@ -972,7 +972,17 @@ fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
 
 ## 自动化测试
 
-(先跳过这一章，优先学习语言特性)
+要把函数标注为测试函数，只要在函数定义的的`fn`行之前加上`#[test]`。  
+`assert!` 宏用来断言布尔值类型的结果，值为`false`时调用`panic!`宏。  
+`assert_eq!` 宏用来断言相等，`assert_ne!` 宏用来断言不相等，相比`assert!`这两个宏会在失败时打印出导致失败的具体值。  
+
+`assert!`、`assert_eq!` 和 `assert_ne!` 宏都有一个额外的可选参数，用来指定断言失败时的错误信息。这个参数会传递给`format!`宏，所以其中可以包含字符串占位符。
+
+`#[should_panic]`表示期待测试用例发生 panic 才认为测试通过。  
+`#[should_panic(expected = "some keyword")]` 可以指定期待的 panic 应该包含的错误文本，这样可以精确的匹配具体的 panic。
+
+测试函数还可以通过返回`Result<T, E>`来表示测试通过或失败。
+
 
 ## 构建命令行程序
 
@@ -1029,3 +1039,155 @@ fn add_one(x: &i32) -> i32 {
     x + 1
 }
 ```
+
+## Cargo 及 Cratea.io 相关内容
+
+### 发布配置 release profiles
+
+在 Cargo.toml 中添加 `[profile.*]` 来为不同的发布场景添加设置，并在编译时通过制定参数来选用不同的配置 `cargo build --release`。  
+内置的发布场景有4种：`dev`, `release`, `test`, and `bench`, 详见 [Cargo 文档](https://doc.rust-lang.org/cargo/reference/profiles.html)。
+
+### 文档注释
+
+使用三斜杠`///`开始文档注释，三斜杠后可以写 markdown 格式的注释。`rustdoc`工具可以以此生成HTML文档。  
+`cargo doc --open`可以构建并在浏览器中打开文档。
+
+文档注释中的代码块甚至还能作为测试来运行！
+```rust
+/// # Examples
+///
+/// ```
+/// let arg = 5;
+/// let answer = adder::add_one(arg);
+///
+/// assert_eq!(6, answer);
+/// ```
+pub fn add_one(x: i32) -> i32 {
+    x + 1
+}
+```
+运行`cargo test`就可以看到测试结果。这样可以保证代码和注释一致。
+
+### 使用 pub use 导出公有 API
+
+有时类型定义在很深的层级中，`pub use`可以将类型重导出 re-export 到一个公开的位置方便用户使用。
+
+### 发布 crate 到 Crates.io
+
+以后再学习吧。
+
+### 工作空间
+
+工作空间中可以包含多个 crates，可以是多个二级制项目和多个库。要创建一个工作空间，只需要在一个文件夹下添加`Cargo.toml`并添加内容：
+```toml
+[workspace]
+resolver = "3
+```
+`resolver = "3`应该是指解析器版本。
+
+在工作空间下就可以想之前一样使用`cargo new xxxx`来创建crate了。
+
+> cargo 并不假定工作空间中的 Crates 会相互依赖，所以需要显式表明工作空间中 crate 的依赖关系。
+
+工作空间下的一个 crate 如果要引用另一个 crate，需要在 crate 下的 Cargo.toml 中添加路径依赖，类似：
+```toml
+[dependencies]
+add_one = { path = "../add_one" }
+```
+
+`cargo run`和`cargo test`可以通过`-p`参数加包名来指定使用哪个包。
+
+### cargo install
+
+使用 `cargo install xxx`来安装 crates.io 上的二级制包。默认安装路径 `$HOME/.cargo/bin`。
+
+## 智能指针
+
+前面介绍的的**引用**就是指针中的最常见的一种。引用通常只借用数据，而智能指针大部分情况下拥有数据。  
+**智能指针**表现类似指针，但拥有额外的元数据。`String` 和 `Vec<T>` 就是智能指针。  
+智能指针通常用结构体实现，我们还能编写自己智能指针。
+
+### Box<T>
+
+用来把数据存放在堆上，把指针数据留在栈上。
+
+```rust
+fn main() {
+    let b = Box::new(5);
+    println!("b = {b}");
+}
+```
+
+在创建类似于链表这样的数据结构时用 Box 来递归的引用类型。例如：
+```rust
+enum List {
+    Cons(i32, Box<List>),
+    Nil,
+}
+
+use crate::List::{Cons, Nil};
+
+fn main() {
+    let list = Cons(1, Box::new(Cons(2, Box::new(Cons(3, Box::new(Nil))))));
+}
+```
+
+`Box<T>` 实现了 `Deref` trait 和 `Drop` trait。所以可以像使用引用一样来用它。
+
+### Deref trait
+
+下面的实例，实现了一个 `MyBox<T>` 类型，并实现了其 `Deref` trait。
+```rust
+use std::ops::Deref;
+
+struct MyBox<T>(T);
+
+impl<T> MyBox<T> {
+    fn new(x: T) -> MyBox<T> {
+        MyBox(x)
+    }
+}
+
+impl<T> Deref for MyBox<T> {
+    type Target = T; // 定义了用于此 trait 的关联类型。后面学习。
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+fn main() {
+    let x = 5;
+    let y = MyBox::new(x);
+
+    assert_eq!(5, x);
+    assert_eq!(5, *y);
+}
+```
+`struct MyBox<T>(T);`这一句是声明一个泛型元组结构体。接下来为 `MyBox<T>` 添加了 `new` 方法并实现了 `deref` trait。
+
+> 注意，每次当我们在代码中使用 * 时， * 运算符都被替换成了先调用 deref 方法再接着使用 * 解引用的操作，且只会发生一次，不会对 * 操作符无限递归替换
+
+### Deref 强制转换
+
+在上面 `MyBox<T>` 的例子中继续添加代码：
+```rust
+fn hello(name: &str) {
+    println!("Hello, {name}!");
+}
+
+fn main() {
+    let m = MyBox::new(String::from("Rust"));
+    hello(&m);
+    hello(&(*m)[..]); // 与上面一行等效
+}
+```
+> Rust 可以通过 deref 调用将 &MyBox<String> 变为 &String。标准库中提供了 String 上的 Deref 实现，其会返回字符串 slice，这可以在 Deref 的 API 文档中看到。Rust 再次调用 deref 将 &String 变为 &str，这就符合 hello 函数的定义了。
+
+(心声：`hello(&(*m)[..]);`虽然麻烦且一下不容易看懂，但是我是能理解的。对于`hello(&m);`为什么是`&m`而不是`m`?)
+
+> 当所涉及到的类型定义了 Deref trait，Rust 会分析这些类型并使用任意多次 Deref::deref 调用以获得匹配参数的类型。这些解析都发生在编译时，所以利用 Deref 强制转换并没有运行时开销！
+
+### Deref 强制转换如何与可变性交互
+
+后面再学习吧，这一部分还需要再好好理解一下。
